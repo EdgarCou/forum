@@ -17,7 +17,7 @@ import (
 )
 
 var db *sql.DB
-var store = sessions.NewCookieStore([]byte("menu-classique-burger"))
+var store = sessions.NewCookieStore([]byte("Edd-Key"))
 
 func main() {
 	dbPath := "utilisateurs.db"
@@ -35,7 +35,7 @@ func main() {
 		email TEXT NOT NULL UNIQUE,
 		password TEXT NOT NULL,
 		profile_picture TEXT
-	)`)
+		)`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,6 +45,7 @@ func main() {
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/logout", logoutHandler)
+	http.HandleFunc("/profile", userHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server started at :8080")
@@ -55,7 +56,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "session")
     username, ok := session.Values["username"]
 
-    if !ok {
+    data := struct {
+        IsLoggedIn     bool
+        Username       string
+        ProfilePicture string
+    }{
+        IsLoggedIn:     ok,
+        Username:       "",
+        ProfilePicture: "",
+    }
+	if !ok {
         tmpl, err := template.ParseFiles("templates/index.html")
         if err != nil {
             http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
@@ -63,21 +73,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
         }
         tmpl.Execute(w, nil)
         return
-    }
+    }else if ok {
+        var profilePicture string
+        err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+        if err != nil && err != sql.ErrNoRows {
+            http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+            return
+        }
 
-    var profilePicture string
-    err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-    if err != nil {
-        http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
-        return
-    }
-
-    data := struct {
-        Username       string
-        ProfilePicture string
-    }{
-        Username:       username.(string),
-        ProfilePicture: profilePicture,
+        data.Username = username.(string)
+        data.ProfilePicture = profilePicture
     }
 
     tmpl, err := template.ParseFiles("templates/index.html")
