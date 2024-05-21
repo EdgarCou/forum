@@ -33,7 +33,7 @@ func main() {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL UNIQUE,
 		email TEXT NOT NULL UNIQUE,
-		mot_de_passe TEXT NOT NULL,
+		password TEXT NOT NULL,
 		profile_picture TEXT
 	)`)
 	if err != nil {
@@ -41,7 +41,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/register", registerHandler)
+	http.HandleFunc("/signup", registerHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/logout", logoutHandler)
@@ -90,15 +90,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		http.ServeFile(w, r, "templates/signup.html")
-		} else if r.Method == "POST" {
-		username := r.FormValue("username")
-		email := r.FormValue("email")
-		password := r.FormValue("password")
+			username := r.FormValue("username")
+			email := r.FormValue("email")
+			password := r.FormValue("password")
 
+			println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
 		if err != nil {
-			http.Error(w, "Erreur lors de l'inscription", http.StatusInternalServerError)
+			http.Error(w, "Erreur lors de l'inscription" + err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -131,7 +130,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		session.Values["username"] = username
 		session.Save(r, w)
 
-		http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
@@ -210,7 +209,7 @@ func ajouterUtilisateur(username, email, motDePasse, profilePicture string) erro
 		return err
 	}
 
-	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, mot_de_passe, profile_picture) VALUES (?, ?, ?, ?)`,
+	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture) VALUES (?, ?, ?, ?)`,
 		username, email, hashedPassword, profilePicture)
 	if err != nil {
 		return err
