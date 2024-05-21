@@ -219,7 +219,7 @@ func ajouterUtilisateur(username, email, motDePasse, profilePicture string) erro
 
 func verifierUtilisateur(username, motDePasse string) error {
 	var motDePasseDB string
-	err := db.QueryRowContext(context.Background(), "SELECT mot_de_passe FROM utilisateurs WHERE username = ?", username).Scan(&motDePasseDB)
+	err := db.QueryRowContext(context.Background(), "SELECT password FROM utilisateurs WHERE username = ?", username).Scan(&motDePasseDB)
 	if err != nil {
 		return err
 	}
