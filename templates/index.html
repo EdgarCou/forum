@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/popup.css">
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+    <title>Forum</title>
+</head>
+<body>
+    <header>
+        <a class="title"></a>
+        <section class="button-connection">
+            <a href="#login" onclick="togglePopup()">Login</a>
+            <a href="signup.html">Sign Up</a>
+        </section>
+    </header>
+    <main>
+        <div id="wrapper">
+            <form action="" id =loginForm>
+                <h1>Login</h1>
+                <div class="input-box-login">
+                    <input type="text" id="email" placeholder="Email" required>
+                    <i class="material-icons">
+                        account_circle
+                    </i>
+                </div>
+                <div class="input-box-login">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <i class="material-icons">
+                        lock
+                    </i>
+                </div>
+    
+                <div class="remember-forgot">
+                    <label class="checkbox-popup"><input type="checkbox">Remember me</label>
+                    <a href="#">Forgot password?</a>
+                </div>
+
+                <div class="loginStatus" id = "loginStatus">
+
+                </div>
+    
+                <button type="submit" class="btn-login"> Login </button>
+
+                <div class="signup-link">
+                    <p>Don't have an account? <a href="signup.html">Signup now</a></p>
+                </div>
+                <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
+                    <i class="material-icons">
+                        close
+                    </i>
+                </a>
+            </form>
+        </div>
+
+    </main>
+    <script src="/JS/login.js"></script>
+</body>
+</html>

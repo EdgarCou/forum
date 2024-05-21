@@ -1,0 +1,103 @@
+body {
+    font-family: 'Alatsi', sans-serif;
+    margin: 3%;
+    background-color: black;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.ball-logo-signup {
+    width: 100px;
+    height: 75px;
+    border: none;
+}
+
+
+#signup-wrapper {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    margin-top: 5%;
+    width: 420px;
+    border: 1px solid rgb(255, 255, 255, 0.3);
+    background-color: rgba(5, 5, 5, 0.3);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    color:white;
+    border-radius: 10px;
+    padding: 30px 40px;
+    z-index: 1;
+}  
+
+#signup-wrapper h1 {
+    font-size: 3rem;
+    text-align: center;
+}
+
+.exit {
+    position: absolute;
+    top: 50px;
+    left: 80px;
+    margin: 50px;
+    cursor: pointer;
+    color: white;
+}
+
+/* Styles pour les téléphones */
+@media screen and (max-width: 767px) {
+    body {
+        margin: 0;
+    }
+
+    .GT-logo-signup {
+        width: 100px;
+        height: 100px;
+    }
+
+    #signup-wrapper {
+        width: 60%;
+    }
+
+    #signup-wrapper h1 {
+        font-size: 2rem;
+    }
+
+    .input-box-login {
+        margin: 10px 0;
+    }
+
+    .input-box-login input {
+        height: 40px;
+    }
+
+    .btn-login {
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* Styles pour les tablettes */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .GT-logo-signup {
+        width: 120px;
+        height: 120px;
+    }
+
+    #signup-wrapper {
+        width: 70%;
+    }
+
+    #signup-wrapper h1 {
+        font-size: 2.5rem;
+    }
+
+    .input-box-login input {
+        height: 50px;
+    }
+
+    .btn-login {
+        height: 50px;
+        font-size: 1.2rem;
+    }
+}
