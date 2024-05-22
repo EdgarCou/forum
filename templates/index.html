@@ -30,7 +30,7 @@
             <section class="user-bar">
                 {{if .Username}}
                     <span class="pseudo">{{.Username}}</span>
-                    <a href="/profile" class="account-link"><i class="material-icons">
+                    <a href="/user?username={{.Username}}" class="account-link"><i class="material-icons">
                         account_circle
                     </i></a>
                 {{end}} 
