@@ -101,6 +101,7 @@
     color: gray;
     font-weight: 600;
     font-size: 1.3rem;
+    margin-right: 10px;
 }
 
 .btn-login:hover {
@@ -131,3 +132,4 @@
     cursor: pointer;
     color: white;
 }
+

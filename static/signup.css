@@ -6,13 +6,6 @@ body {
     background-repeat: no-repeat;
 }
 
-.ball-logo-signup {
-    width: 100px;
-    height: 75px;
-    border: none;
-}
-
-
 #signup-wrapper {
     position: absolute;
     top: 45%;
@@ -35,14 +28,12 @@ body {
     text-align: center;
 }
 
-.exit {
-    position: absolute;
-    top: 50px;
-    left: 80px;
-    margin: 50px;
-    cursor: pointer;
-    color: white;
+.text-signup {
+    font-size: 1.2rem;
+    text-align: center;
 }
+
+
 
 /* Styles pour les téléphones */
 @media screen and (max-width: 767px) {

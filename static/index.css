@@ -1,3 +1,7 @@
+.home-link {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+}
 .posts{
     display: none;
 }
