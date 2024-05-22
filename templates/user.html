@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/popup.css">
-    <link rel="stylesheet" type="text/css" href="/static/index.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/user.css">
     <title>Forum</title>
 </head>
 <body>
@@ -47,7 +47,36 @@
     </header>
     <div class="line"></div>
     <main>
-        <h1>Forum</h1>
+        <h1>My profil</h1>
+        <div class="view">
+            <section class="profil">
+                <div class="profil-info">
+                    <h2 class="profil-title">My informations</h2>
+                    <i class="material-icons">
+                        account_circle
+                    </i>
+                    <h3>Username : {{.Username}}</h3>
+                    <h3>Email : {{.Email}}</h3>
+                </div>
+                <div class="profil-line"></div>
+                <div class="profil-posts">
+                    <div class="category">
+                        <input type="radio" name="filter" class="filter-radio">
+                        <h3>My posts</h3>
+                    </div>
+                    <div class="category">
+                        <input type="radio" name="filter" class="filter-radio">
+                        <h3>Liked posts</h3>
+                    </div>
+                    <div class="category">
+                        <input type="radio" name="filter" class="filter-radio">
+                        <h3>My comments</h3>
+                    </div>
+                </div>
+            </section>
+            <section class="content">
+            </section>
+        </div>
     </main>
 </body>
 </html>

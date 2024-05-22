@@ -45,9 +45,7 @@ func main() {
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/logout", logoutHandler)
-	http.HandleFunc("/profile", userHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
 	log.Println("Server started at :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -99,12 +97,12 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			email := r.FormValue("email")
 			password := r.FormValue("password")
 
-			println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
-		if err != nil {
-			http.Error(w, "Erreur lors de l'inscription" + err.Error(), http.StatusInternalServerError)
-			return
-		}
+        if err != nil {
+            w.Header().Set("Content-Type", "text/html")
+            fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
+            return
+        }
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -119,24 +117,25 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		http.ServeFile(w, r, "templates/login.html")
-	} else if r.Method == "POST" {
-		username := r.FormValue("username")
-		password := r.FormValue("password")
+    if r.Method == "GET" {
+        http.ServeFile(w, r, "templates/login.html")
+    } else if r.Method == "POST" {
+        username := r.FormValue("username")
+        password := r.FormValue("password")
 
-		err := verifierUtilisateur(username, password)
-		if err != nil {
-			http.Error(w, "Nom d'utilisateur ou mot de passe incorrect", http.StatusUnauthorized)
-			return
-		}
+        err := verifierUtilisateur(username, password)
+        if err != nil {
+            w.Header().Set("Content-Type", "text/html")
+            fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
+            return
+        }
 
-		session, _ := store.Get(r, "session")
-		session.Values["username"] = username
-		session.Save(r, w)
+        session, _ := store.Get(r, "session")
+        session.Values["username"] = username
+        session.Save(r, w)
 
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	}
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+    }
 }
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
@@ -159,10 +158,12 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 			Username       string
 			Email          string
 			ProfilePicture string
+			IsLoggedIn	 bool
 		}{
 			Username:       username,
 			Email:          email,
 			ProfilePicture: profilePicture,
+			IsLoggedIn:     username != "",
 		}
 
 		tmpl, err := template.ParseFiles("templates/user.html")
@@ -200,6 +201,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
 	}
 }
+
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")

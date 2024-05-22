@@ -1,0 +1,82 @@
+h1 {
+    text-align: center;
+}
+
+.view {
+    display: flex;
+    gap: 20px;
+}
+
+.profil {
+    display: flex;
+    flex-direction: column;
+    outline: 1px solid white;
+    border-radius: 15px;
+    padding: 10px;
+    width: 30%;
+}
+
+.profil-line {
+    width: 80%;
+    height: 1px;
+    background-color: white;
+    text-align: center;
+    margin: 10px auto;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    outline: 1px solid white;
+    border-radius: 15px;
+    width: 65%;
+}
+
+
+/* Profil info part */ 
+
+.profil-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+}
+
+.category {
+    display: flex;
+    margin: 10px 0;
+    align-items: center;
+}
+
+.filter-radio {
+    appearance: none;
+    background-color: #000000;
+    border: 1px solid #cacece;
+    border-radius: 50px;
+    width: 15px;
+    height: 15px;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+}
+
+.filter-radio:checked {
+    background-color: #e9e9e9;
+    border: 1px solid #c9cacb;
+}
+
+.filter-radio:checked:after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: #ffffff;
+    border: 1px solid #8b8b8b;
+    transform: translate(-50%, -50%);
+}
+
