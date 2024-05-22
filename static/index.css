@@ -5,3 +5,26 @@
 .posts{
     display: none;
 }
+
+#wrapper{
+    display: block;
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    margin-top: 5%;
+    width: 420px;
+    border: 1px solid rgb(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    color:white;
+    border-radius: 10px;
+    padding: 30px 40px;
+    z-index: 1;
+    flex-wrap: wrap;
+}
+
+#createPost{
+    justify-content: left;
+}

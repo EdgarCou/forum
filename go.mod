@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/gorilla/sessions v1.2.2
 	golang.org/x/crypto v0.23.0
+	golang.org/x/text v0.15.0
 	modernc.org/sqlite v1.29.10
 )
 
@@ -14,6 +15,7 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	golang.org/x/sys v0.20.0 // indirect

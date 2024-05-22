@@ -1,19 +1,19 @@
 package main
 
 import (
-	"context"
-	"database/sql"
-	"fmt"
-	"html/template"
-	"io"
-	"log"
-	"net/http"
-	"os"
-	"path/filepath"
+    "context"
+    "database/sql"
+    "fmt"
+    "html/template"
+    "io"
+    "log"
+    "net/http"
+    "os"
+    "path/filepath"
 
-	"github.com/gorilla/sessions"
-	"golang.org/x/crypto/bcrypt"
-	_ "modernc.org/sqlite"
+    "github.com/gorilla/sessions"
+    "golang.org/x/crypto/bcrypt"
+    _ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
@@ -23,7 +23,7 @@ func main() {
 	dbPath := "utilisateurs.db"
 
 	var err error
-	db, err = sql.Open("sqlite", dbPath)
+	db, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,12 +40,25 @@ func main() {
 		log.Fatal(err)
 	}
 
+	var err2 error
+	_, err2 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS posts (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL,
+		content TEXT NOT NULL,
+		tags TEXT
+		)`)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+	
+
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/signup", registerHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/logout", logoutHandler)
 	http.HandleFunc("/profile", userHandler)
+	http.HandleFunc("/createPost", addNewPost)	
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server started at :8080")
@@ -68,7 +81,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if !ok {
         tmpl, err := template.ParseFiles("templates/index.html")
         if err != nil {
-            http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
+            http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
             return
         }
         tmpl.Execute(w, nil)
@@ -87,7 +100,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
     tmpl, err := template.ParseFiles("templates/index.html")
     if err != nil {
-        http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
+        http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
         return
     }
     tmpl.Execute(w, data)
@@ -112,7 +125,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles("templates/signup.html")
 	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
+		http.Error(w, "Erreur de lecture du fichier HTML 3", http.StatusInternalServerError)
 		return
 	}
 	tmpl.Execute(w, nil)
@@ -167,7 +180,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 		tmpl, err := template.ParseFiles("templates/user.html")
 		if err != nil {
-			http.Error(w, "Erreur de lecture du fichier HTML", http.StatusInternalServerError)
+			http.Error(w, "Erreur de lecture du fichier HTML 4", http.StatusInternalServerError)
 			return
 		}
 		tmpl.Execute(w, data)
@@ -234,4 +247,69 @@ func verifierUtilisateur(username, motDePasse string) error {
 		return fmt.Errorf("mot de passe incorrect")
 	}
 	return nil
+}
+
+func addNewPost(w http.ResponseWriter, r *http.Request) {
+	println("addNewPost")
+	if r.Method == "GET" {
+		http.ServeFile(w, r, "templates/index.html")
+	} else if r.Method == "POST" {
+		title := r.FormValue("title")
+		content := r.FormValue("content")
+		tags := r.FormValue("tags")
+
+		err := ajouterPost(title, content, tags)
+		if err != nil {
+    		println(err.Error())
+		} else {
+    		println("Post added successfully")
+			displayPost(w)
+		}		
+	}
+}
+
+func ajouterPost(title string,content string, tags string) error {
+	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags) VALUES (?, ?, ?)`,
+		title, content, tags)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func displayPost(w http.ResponseWriter) {
+	rows, err := db.QueryContext(context.Background(), "SELECT title, content, tags FROM posts")
+	if err != nil {
+		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+
+	var posts []struct {
+		title   string
+		content string
+		tags    string
+	}
+	for rows.Next() {
+		var post struct {
+			title   string
+			content string
+			tags    string
+		}
+		err := rows.Scan(&post.title, &post.content, &post.tags)
+		if err != nil {
+			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
+			return
+		}
+		posts = append(posts, post)
+	}
+
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 5", http.StatusInternalServerError)
+		return
+	}
+	println("etat du post",posts)
+	tmpl.Execute(w, posts)
 }
