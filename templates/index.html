@@ -28,15 +28,15 @@
         </div>
         <div class="log-bar">
             <section class="user-bar">
-                {{if .Username}}
-                    <span class="pseudo">{{.Username}}</span>
-                    <a href="/user?username={{.Username}}" class="account-link"><i class="material-icons">
+                {{if .UserInfo.Username}}
+                    <span class="pseudo">{{.UserInfo.Username}}</span>
+                    <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
                         account_circle
                     </i></a>
                 {{end}} 
             </section>
             <section class="button-connection">
-                {{if .IsLoggedIn}}
+                {{if .UserInfo.IsLoggedIn}}
                     <a href="/logout" class="log-button">Logout</a>
                 {{else}}
                 <a href="/login" class="log-button">Login</a>
@@ -86,13 +86,14 @@
             </div>
         </section>
         <section class="actu">
-            {{range .}}
+            {{range .Posts}}
                 <article class="post">
-                    <h2>{{.title}}</h2>
-                    <p>{{.content}}</p>
-                    <p class="tags">{{.tags}}</p>
+                    <h2>{{.Title}}</h2>
+                    <p>{{.Content}}</p>
+                    <p class="tags">{{.Tags}}</p>
                     <p class="author">By Me</p>
                 </article>
+                <br>
             {{end}}
         </section>
     </main>

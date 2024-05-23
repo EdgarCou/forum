@@ -1,24 +1,46 @@
 package main
 
 import (
-    "context"
-    "database/sql"
-    "fmt"
-    "html/template"
-    "io"
-    "log"
-    "net/http"
-    "os"
-    "path/filepath"
+	"context"
+	"database/sql"
+	"fmt"
+	"html/template"
+	"io"
+	"log"
+	"net/http"
+	"os"
 
-    "github.com/gorilla/sessions"
-    "golang.org/x/crypto/bcrypt"
-    _ "github.com/mattn/go-sqlite3"
+	//"os/user"
+	"path/filepath"
+
+	"github.com/gorilla/sessions"
+	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/crypto/bcrypt"
+	//"golang.org/x/text/language/display"
 )
 
 
 var db *sql.DB
 var store = sessions.NewCookieStore([]byte("Edd-Key"))
+
+type UserInfo struct {
+	IsLoggedIn     bool
+	Email          string
+	Username       string
+	ProfilePicture string
+}
+
+type Post struct {
+	Title   string
+	Content string
+	Tags    string
+}
+
+type FinalData struct {
+	UserInfo UserInfo
+	Posts []Post
+}
+
 
 func main() {
 	dbPath := "utilisateurs.db"
@@ -70,22 +92,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
     session, _ := store.Get(r, "session")
     username, ok := session.Values["username"]
 
-    data := struct {
-        IsLoggedIn     bool
-        Username       string
-        ProfilePicture string
-    }{
-        IsLoggedIn:     ok,
-        Username:       "",
-        ProfilePicture: "",
-    }
+	var data UserInfo
 	if !ok {
         tmpl, err := template.ParseFiles("templates/index.html")
+		log.Println(err)
         if err != nil {
             http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
             return
         }
-        tmpl.Execute(w, nil)
+		newdata := FinalData{data,displayPost(w,r)}
+        tmpl.Execute(w, newdata)
         return
     }else if ok {
         var profilePicture string
@@ -104,7 +120,9 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
         return
     }
-    tmpl.Execute(w, data)
+	post := displayPost(w,r)
+	totalData := FinalData{data,post}
+    tmpl.Execute(w,totalData)
 }
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +147,9 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 3", http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(w, nil)
+	data := UserInfo{}
+	newData := FinalData{data,displayPost(w,r)}
+	tmpl.Execute(w, newData)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -169,22 +189,18 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		data := struct {
-			Username       string
-			Email          string
-			ProfilePicture string
-		}{
-			Username:       username,
-			Email:          email,
-			ProfilePicture: profilePicture,
-		}
+		var newData UserInfo
+		newData.Username = username
+		newData.Email = email	
+		newData.ProfilePicture = profilePicture
+		newData.IsLoggedIn = username != ""
 
 		tmpl, err := template.ParseFiles("templates/user.html")
 		if err != nil {
 			http.Error(w, "Erreur de lecture du fichier HTML 4", http.StatusInternalServerError)
 			return
 		}
-		tmpl.Execute(w, data)
+		tmpl.Execute(w, newData)
 	} else if r.Method == "POST" {
 		file, handler, err := r.FormFile("profile_picture")
 		if err != nil {
@@ -259,17 +275,25 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
 		content := r.FormValue("content")
 		tags := r.FormValue("tags")
 
-		err := ajouterPost(title, content, tags)
+		err := ajouterPostinDb(title, content, tags)
 		if err != nil {
     		println(err.Error())
 		} else {
     		println("Post added successfully")
-			displayPost(w, r)
+			posts := displayPost(w,r)
+			tmpl, err := template.ParseFiles("templates/index.html")
+			if err != nil {
+				http.Error(w, "Erreur de lecture du fichier HTML 5", http.StatusInternalServerError)
+				return
+			}
+			data := UserInfo{}
+			newData := FinalData{data,posts}
+			tmpl.Execute(w, newData)
 		}		
 	}
 }
 
-func ajouterPost(title string,content string, tags string) error {
+func ajouterPostinDb(title string,content string, tags string) error {
 	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags) VALUES (?, ?, ?)`,
 		title, content, tags)
 	if err != nil {
@@ -278,39 +302,25 @@ func ajouterPost(title string,content string, tags string) error {
 	return nil
 }
 
-func displayPost(w http.ResponseWriter, r *http.Request) {
+func displayPost(w http.ResponseWriter, r *http.Request) []Post {
 	rows, err := db.QueryContext(context.Background(), "SELECT title, content, tags FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
-		return
+		return nil
 	}
 	defer rows.Close()
 
 
-	var posts []struct {
-		title   string
-		content string
-		tags    string
-	}
+	var posts []Post
 	for rows.Next() {
-		var post struct {
-			title   string
-			content string
-			tags    string
-		}
-		err := rows.Scan(&post.title, &post.content, &post.tags)
+		var inter Post
+		err := rows.Scan(&inter.Title, &inter.Content, &inter.Tags)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
-			return
+			return nil
 		}
-		posts = append(posts, post)
+		posts = append(posts, inter)
 	}
 
-	tmpl, err := template.ParseFiles("templates/index.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 5", http.StatusInternalServerError)
-		return
-	}
-	println("etat du post",posts)
-	tmpl.Execute(w, posts)
+	return posts
 }
