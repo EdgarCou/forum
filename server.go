@@ -85,12 +85,15 @@ func main() {
 	
 
 	http.HandleFunc("/",homeHandler)
+	http.HandleFunc("/forum",forumHandler)
 	http.HandleFunc("/signup", registerHandler)
+	http.HandleFunc("/members", membersHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/logout", logoutHandler)
 	http.HandleFunc("/profile", userHandler)
 	http.HandleFunc("/createPost", addNewPost)	
+	http.HandleFunc("/about",aboutHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server started at :8080")
@@ -333,4 +336,38 @@ func displayPost(w http.ResponseWriter) []Post {
 	}
 
 	return posts
+}
+
+func forumHandler(w http.ResponseWriter, r *http.Request) {
+	posts := displayPost(w)
+	tmpl, err := template.ParseFiles("templates/forum.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 6", http.StatusInternalServerError)
+		return
+	}
+	data := UserInfo{}
+	newData := FinalData{data,posts}
+	tmpl.Execute(w, newData)
+}
+
+func membersHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/members.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 7", http.StatusInternalServerError)
+		return
+	}
+	data := UserInfo{}
+	newData := FinalData{data,displayPost(w)}
+	tmpl.Execute(w, newData)
+}
+
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/about.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
+		return
+	}
+	data := UserInfo{}
+	newData := FinalData{data,displayPost(w)}
+	tmpl.Execute(w, newData)
 }
