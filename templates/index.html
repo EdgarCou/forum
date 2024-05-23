@@ -51,7 +51,7 @@
         <button id="buttonPost" onclick="newPostPopUp()"> Add new post</button>
         <section class="posts">
             <div id="wrapper">
-                <form action="/" id =createPost method="POST">
+                <form action="/createPost" id =createPost method="POST">
                     <h1>Create new post</h1>
 
                     <label for="title">Title</label>
@@ -85,13 +85,14 @@
                 </form>
             </div>
         </section>
-        <section class="Actu">
-            {{range .Posts}}
+        <section class="actu">
+            {{range .}}
                 <article class="post">
-                    <h2>{{.Title}}</h2>
-                    <p>{{.Content}}</p>
-                    <p class="tags">{{.Tags}}</p>
-                    <p class="author">By
+                    <h2>{{.title}}</h2>
+                    <p>{{.content}}</p>
+                    <p class="tags">{{.tags}}</p>
+                    <p class="author">By Me</p>
+                </article>
             {{end}}
         </section>
     </main>

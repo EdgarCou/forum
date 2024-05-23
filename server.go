@@ -16,6 +16,7 @@ import (
     _ "github.com/mattn/go-sqlite3"
 )
 
+
 var db *sql.DB
 var store = sessions.NewCookieStore([]byte("Edd-Key"))
 
@@ -52,7 +53,7 @@ func main() {
 	}
 	
 
-	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/",homeHandler)
 	http.HandleFunc("/signup", registerHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
@@ -263,7 +264,7 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
     		println(err.Error())
 		} else {
     		println("Post added successfully")
-			displayPost(w)
+			displayPost(w, r)
 		}		
 	}
 }
@@ -277,7 +278,7 @@ func ajouterPost(title string,content string, tags string) error {
 	return nil
 }
 
-func displayPost(w http.ResponseWriter) {
+func displayPost(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.QueryContext(context.Background(), "SELECT title, content, tags FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
