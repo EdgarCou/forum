@@ -93,6 +93,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
     username, ok := session.Values["username"]
 
 	var data UserInfo
+	data.IsLoggedIn = ok
 	if !ok {
         tmpl, err := template.ParseFiles("templates/index.html")
 		log.Println(err)
