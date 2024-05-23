@@ -33,6 +33,7 @@ type UserInfo struct {
 }
 
 type Post struct {
+	Id 	int
 	Title   string
 	Content string
 	Tags    string
@@ -48,7 +49,7 @@ func main() {
 
 	store.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   0, // La session expire lorsque le navigateur est fermé
+		MaxAge:   3600, // La session expire lorsque le navigateur est fermé
 		HttpOnly: true,
 	}
 
@@ -316,7 +317,7 @@ func ajouterPostinDb(title string,content string, tags string) error {
 }
 
 func displayPost(w http.ResponseWriter) []Post {
-	rows, err := db.QueryContext(context.Background(), "SELECT title, content, tags FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
@@ -327,7 +328,7 @@ func displayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Title, &inter.Content, &inter.Tags)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil

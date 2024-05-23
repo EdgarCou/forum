@@ -89,7 +89,7 @@
         </section>
         <section class="actu">
             {{range .Posts}}
-                <article class="post">
+                <article class="post{{.Id}}">
                     <h2>{{.Title}}</h2>
                     <p>{{.Content}}</p>
                     <p class="tags">{{.Tags}}</p>
