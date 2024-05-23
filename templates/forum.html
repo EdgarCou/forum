@@ -94,6 +94,8 @@
                     <p>{{.Content}}</p>
                     <p class="tags">{{.Tags}}</p>
                     <p class="author">By {{.Author}}</p>
+                    <button class="likeButton" onclick="likedButton(event)" >👍</button>
+                    <button class="dislikeButton" onclick="dislikedButton(event)" >👎</button>
                 </article>
                 <br>
             {{end}}
