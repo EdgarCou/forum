@@ -210,8 +210,8 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func ajouterUtilisateur(username, email, motDePasse, profilePicture string) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(motDePasse), bcrypt.DefaultCost)
+func ajouterUtilisateur(username, email, password, profilePicture string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
@@ -224,14 +224,14 @@ func ajouterUtilisateur(username, email, motDePasse, profilePicture string) erro
 	return nil
 }
 
-func verifierUtilisateur(username, motDePasse string) error {
-	var motDePasseDB string
-	err := db.QueryRowContext(context.Background(), "SELECT password FROM utilisateurs WHERE username = ?", username).Scan(&motDePasseDB)
+func verifierUtilisateur(username, password string) error {
+	var passwordDB string
+	err := db.QueryRowContext(context.Background(), "SELECT password FROM utilisateurs WHERE username = ?", username).Scan(&passwordDB)
 	if err != nil {
 		return err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(motDePasseDB), []byte(motDePasse))
+	err = bcrypt.CompareHashAndPassword([]byte(passwordDB), []byte(password))
 	if err != nil {
 		return fmt.Errorf("mot de passe incorrect")
 	}
