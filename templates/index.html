@@ -28,15 +28,15 @@
         </div>
         <div class="log-bar">
             <section class="user-bar">
-                {{if .Username}}
-                    <span class="pseudo">{{.Username}}</span>
-                    <a href="/user?username={{.Username}}" class="account-link"><i class="material-icons">
+                {{if .UserInfo.Username}}
+                    <span class="pseudo">{{.UserInfo.Username}}</span>
+                    <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
                         account_circle
                     </i></a>
                 {{end}} 
             </section>
             <section class="button-connection">
-                {{if .IsLoggedIn}}
+                {{if .UserInfo.IsLoggedIn}}
                     <a href="/logout" class="log-button">Logout</a>
                 {{else}}
                 <a href="/login" class="log-button">Login</a>
@@ -48,6 +48,55 @@
     <div class="line"></div>
     <main>
         <h1>Forum</h1>
+        <button id="buttonPost" onclick="newPostPopUp()"> Add new post</button>
+        <section class="posts">
+            <div id="wrapper">
+                <form action="/createPost" id =createPost method="POST">
+                    <h1>Create new post</h1>
+
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" required>
+                    <br>
+
+                    <label for="content">Content</label>
+                    <textarea id="content" name="content" required></textarea>
+                    <br>
+
+                    <label for="tags">Categorie(s)</label>
+                    <select id="tags" name="tags">
+                        <option value="">Select a category</option>
+                        <option value="category1">Category 1</option>
+                        <option value="category2">Category 2</option>
+                        <option value="category3">Category 3</option>
+                    </select>
+                    <br>
+                
+                    <div class="acceptCondtions">
+                        <label class="checkbox-popup"><input type="checkbox">I agree with <a href="/"> using condtions</a></label>
+                    </div>
+    
+                    <button type="submit" class="btn-login"> Post </button>
+
+                    <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
+                        <i class="material-icons">
+                            close
+                        </i>
+                    </a>
+                </form>
+            </div>
+        </section>
+        <section class="actu">
+            {{range .Posts}}
+                <article class="post">
+                    <h2>{{.Title}}</h2>
+                    <p>{{.Content}}</p>
+                    <p class="tags">{{.Tags}}</p>
+                    <p class="author">By Me</p>
+                </article>
+                <br>
+            {{end}}
+        </section>
     </main>
+<script src="/static/JS/index.js"></script>
 </body>
 </html>
