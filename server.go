@@ -21,7 +21,9 @@ import (
 
 
 var db *sql.DB
-var store = sessions.NewCookieStore([]byte("Edd-Key"))
+
+var store = sessions.NewCookieStore([]byte("something-very-secret"))
+
 
 type UserInfo struct {
 	IsLoggedIn     bool
@@ -43,6 +45,13 @@ type FinalData struct {
 
 
 func main() {
+
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   0, // La session expire lorsque le navigateur est fermé
+		HttpOnly: true,
+	}
+
 	dbPath := "utilisateurs.db"
 
 	var err error
@@ -101,7 +110,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
             return
         }
-		newdata := FinalData{data,displayPost(w,r)}
+		newdata := FinalData{data,displayPost(w)}
         tmpl.Execute(w, newdata)
         return
     }else if ok {
@@ -121,7 +130,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
         return
     }
-	post := displayPost(w,r)
+	post := displayPost(w)
 	totalData := FinalData{data,post}
     tmpl.Execute(w,totalData)
 }
@@ -135,9 +144,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
 		if err != nil {
-			http.Error(w, "Erreur lors de l'inscription" + err.Error(), http.StatusInternalServerError)
-			return
-		}
+            w.Header().Set("Content-Type", "text/html")
+            fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
+            return
+        }
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -149,7 +159,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := UserInfo{}
-	newData := FinalData{data,displayPost(w,r)}
+	newData := FinalData{data,displayPost(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -160,11 +170,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		err := verifierUtilisateur(username, password)
-		if err != nil {
-			http.Error(w, "Nom d'utilisateur ou mot de passe incorrect", http.StatusUnauthorized)
-			return
-		}
+        err := verifierUtilisateur(username, password)
+        if err != nil {
+            w.Header().Set("Content-Type", "text/html")
+            fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
+            return
+        }
 
 		session, _ := store.Get(r, "session")
 		session.Values["username"] = username
@@ -281,7 +292,7 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
     		println(err.Error())
 		} else {
     		println("Post added successfully")
-			posts := displayPost(w,r)
+			posts := displayPost(w)
 			tmpl, err := template.ParseFiles("templates/index.html")
 			if err != nil {
 				http.Error(w, "Erreur de lecture du fichier HTML 5", http.StatusInternalServerError)
@@ -303,7 +314,7 @@ func ajouterPostinDb(title string,content string, tags string) error {
 	return nil
 }
 
-func displayPost(w http.ResponseWriter, r *http.Request) []Post {
+func displayPost(w http.ResponseWriter) []Post {
 	rows, err := db.QueryContext(context.Background(), "SELECT title, content, tags FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
