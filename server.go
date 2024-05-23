@@ -19,11 +19,9 @@ import (
 	//"golang.org/x/text/language/display"
 )
 
-
 var db *sql.DB
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
-
 
 type UserInfo struct {
 	IsLoggedIn     bool
@@ -33,17 +31,17 @@ type UserInfo struct {
 }
 
 type Post struct {
-	Id 	int
+	Id      int
 	Title   string
 	Content string
 	Tags    string
+	Author  string
 }
 
 type FinalData struct {
 	UserInfo UserInfo
-	Posts []Post
+	Posts    []Post
 }
-
 
 func main() {
 
@@ -78,23 +76,23 @@ func main() {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
-		tags TEXT
+		tags TEXT,
+		author TEXT NOT NULL
 		)`)
 	if err2 != nil {
 		log.Fatal(err2)
 	}
-	
 
-	http.HandleFunc("/",homeHandler)
-	http.HandleFunc("/forum",forumHandler)
+	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/forum", forumHandler)
 	http.HandleFunc("/signup", registerHandler)
 	http.HandleFunc("/members", membersHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/logout", logoutHandler)
 	http.HandleFunc("/profile", userHandler)
-	http.HandleFunc("/createPost", addNewPost)	
-	http.HandleFunc("/about",aboutHandler)
+	http.HandleFunc("/createPost", addNewPost)
+	http.HandleFunc("/about", aboutHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server started at :8080")
@@ -102,53 +100,53 @@ func main() {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-    session, _ := store.Get(r, "session")
-    username, ok := session.Values["username"]
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
 
 	var data UserInfo
 	data.IsLoggedIn = ok
 	if !ok {
-        tmpl, err := template.ParseFiles("templates/index.html")
+		tmpl, err := template.ParseFiles("templates/index.html")
 		log.Println(err)
-        if err != nil {
-            http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
-            return
-        }
-		newdata := FinalData{data,displayPost(w)}
-        tmpl.Execute(w, newdata)
-        return
-    }else if ok {
-        var profilePicture string
-        err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-        if err != nil && err != sql.ErrNoRows {
-            http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
-            return
-        }
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
 
-        data.Username = username.(string)
-        data.ProfilePicture = profilePicture
-    }
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
 
-    tmpl, err := template.ParseFiles("templates/index.html")
-    if err != nil {
-        http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
-        return
-    }
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
+		return
+	}
 	post := displayPost(w)
-	totalData := FinalData{data,post}
-    tmpl.Execute(w,totalData)
+	totalData := FinalData{data, post}
+	tmpl.Execute(w, totalData)
 }
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-			username := r.FormValue("username")
-			email := r.FormValue("email")
-			password := r.FormValue("password")
+		username := r.FormValue("username")
+		email := r.FormValue("email")
+		password := r.FormValue("password")
 
-			println(username, email, password)
+		println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
 		if err != nil {
-			http.Error(w, "Erreur lors de l'inscription" + err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Erreur lors de l'inscription"+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -162,7 +160,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := UserInfo{}
-	newData := FinalData{data,displayPost(w)}
+	newData := FinalData{data, displayPost(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -205,7 +203,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 		var newData UserInfo
 		newData.Username = username
-		newData.Email = email	
+		newData.Email = email
 		newData.ProfilePicture = profilePicture
 		newData.IsLoggedIn = username != ""
 
@@ -281,35 +279,62 @@ func verifierUtilisateur(username, motDePasse string) error {
 }
 
 func addNewPost(w http.ResponseWriter, r *http.Request) {
-	println("addNewPost")
+	//println("addNewPost")
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "templates/index.html")
 	} else if r.Method == "POST" {
 		title := r.FormValue("title")
 		content := r.FormValue("content")
 		tags := r.FormValue("tags")
-
-		err := ajouterPostinDb(title, content, tags)
+		session, _ := store.Get(r, "session")
+		author := session.Values["username"].(string)
+		println((author))
+		err := ajouterPostinDb(title, content, tags,author)
 		if err != nil {
-    		println(err.Error())
+			println(err.Error())
 		} else {
-    		println("Post added successfully")
+			println("Post added successfully")
 			posts := displayPost(w)
-			tmpl, err := template.ParseFiles("templates/index.html")
+			tmpl, err := template.ParseFiles("templates/forum.html")
 			if err != nil {
 				http.Error(w, "Erreur de lecture du fichier HTML 5", http.StatusInternalServerError)
 				return
 			}
-			data := UserInfo{}
-			newData := FinalData{data,posts}
+			username, ok := session.Values["username"]
+
+			var data UserInfo
+			data.IsLoggedIn = ok
+			if !ok {
+				tmpl, err := template.ParseFiles("templates/index.html")
+				log.Println(err)
+				if err != nil {
+					http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+					return
+				}
+				newdata := FinalData{data, displayPost(w)}
+				tmpl.Execute(w, newdata)
+				return
+			} else if ok {
+				var profilePicture string
+				err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+				if err != nil && err != sql.ErrNoRows {
+					http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+					return
+				}
+
+				data.Username = username.(string)
+				data.ProfilePicture = profilePicture
+			}
+
+			newData := FinalData{data, posts}
 			tmpl.Execute(w, newData)
-		}		
+		}
 	}
 }
 
-func ajouterPostinDb(title string,content string, tags string) error {
-	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags) VALUES (?, ?, ?)`,
-		title, content, tags)
+func ajouterPostinDb(title string, content string, tags string,author string) error {
+	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author) VALUES (?, ?, ?, ?)`,
+		title, content, tags,author)
 	if err != nil {
 		return err
 	}
@@ -317,18 +342,17 @@ func ajouterPostinDb(title string,content string, tags string) error {
 }
 
 func displayPost(w http.ResponseWriter) []Post {
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
 	}
 	defer rows.Close()
 
-
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
@@ -340,35 +364,111 @@ func displayPost(w http.ResponseWriter) []Post {
 }
 
 func forumHandler(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	var data UserInfo
+	data.IsLoggedIn = ok
+	if !ok {
+		tmpl, err := template.ParseFiles("templates/forum.html")
+		log.Println(err)
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
+
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
 	posts := displayPost(w)
 	tmpl, err := template.ParseFiles("templates/forum.html")
 	if err != nil {
 		http.Error(w, "Erreur de lecture du fichier HTML 6", http.StatusInternalServerError)
 		return
 	}
-	data := UserInfo{}
-	newData := FinalData{data,posts}
+	newData := FinalData{data, posts}
 	tmpl.Execute(w, newData)
 }
 
 func membersHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	var data UserInfo
+	data.IsLoggedIn = ok
+	if !ok {
+		tmpl, err := template.ParseFiles("templates/members.html")
+		log.Println(err)
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
+
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
 	tmpl, err := template.ParseFiles("templates/members.html")
 	if err != nil {
 		http.Error(w, "Erreur de lecture du fichier HTML 7", http.StatusInternalServerError)
 		return
 	}
-	data := UserInfo{}
-	newData := FinalData{data,displayPost(w)}
+	newData := FinalData{data, displayPost(w)}
 	tmpl.Execute(w, newData)
 }
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	var data UserInfo
+	data.IsLoggedIn = ok
+	if !ok {
+		tmpl, err := template.ParseFiles("templates/about.html")
+		log.Println(err)
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
+
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
 	tmpl, err := template.ParseFiles("templates/about.html")
 	if err != nil {
 		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
 		return
 	}
-	data := UserInfo{}
-	newData := FinalData{data,displayPost(w)}
+	newData := FinalData{data, displayPost(w)}
 	tmpl.Execute(w, newData)
 }
