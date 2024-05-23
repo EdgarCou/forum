@@ -144,9 +144,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
 		if err != nil {
-			http.Error(w, "Erreur lors de l'inscription" + err.Error(), http.StatusInternalServerError)
-			return
-		}
+            w.Header().Set("Content-Type", "text/html")
+            fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
+            return
+        }
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -169,11 +170,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		err := verifierUtilisateur(username, password)
-		if err != nil {
-			http.Error(w, "Nom d'utilisateur ou mot de passe incorrect", http.StatusUnauthorized)
-			return
-		}
+        err := verifierUtilisateur(username, password)
+        if err != nil {
+            w.Header().Set("Content-Type", "text/html")
+            fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
+            return
+        }
 
 		session, _ := store.Get(r, "session")
 		session.Values["username"] = username
