@@ -36,6 +36,8 @@ type Post struct {
 	Content string
 	Tags    string
 	Author  string
+	Likes   int
+	Dislikes int
 }
 
 type FinalData struct {
@@ -77,7 +79,9 @@ func main() {
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
 		tags TEXT,
-		author TEXT NOT NULL
+		author TEXT NOT NULL,
+		likes INTEGER DEFAULT 0,
+		dislikes INTEGER DEFAULT 0
 		)`)
 	if err2 != nil {
 		log.Fatal(err2)
@@ -93,6 +97,8 @@ func main() {
 	http.HandleFunc("/profile", userHandler)
 	http.HandleFunc("/createPost", addNewPost)
 	http.HandleFunc("/about", aboutHandler)
+	http.HandleFunc("/like", likeHandler)
+	http.HandleFunc("/dislike", dislikeHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server started at :8080")
@@ -344,7 +350,7 @@ func ajouterPostinDb(title string, content string, tags string,author string) er
 }
 
 func displayPost(w http.ResponseWriter) []Post {
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
@@ -354,7 +360,7 @@ func displayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
@@ -469,6 +475,106 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("templates/about.html")
 	if err != nil {
 		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{data, displayPost(w)}
+	tmpl.Execute(w, newData)
+}
+
+func likeHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("id")
+	if id == "" {
+		http.Error(w, "Post non spécifié", http.StatusBadRequest)
+		return
+	}
+
+	_, err := db.ExecContext(context.Background(), "UPDATE posts SET likes = likes + 1 WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, "Erreur lors de l'ajout du like", http.StatusInternalServerError)
+		return
+	}
+
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	var data UserInfo
+	data.IsLoggedIn = ok
+	if !ok {
+		tmpl, err := template.ParseFiles("templates/forum.html")
+		log.Println(err)
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
+
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
+
+	tmpl, err := template.ParseFiles("templates/forum.html")
+
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{data, displayPost(w)}
+	tmpl.Execute(w, newData)
+
+}
+
+func dislikeHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("id")
+	if id == "" {
+		http.Error(w, "Post non spécifié", http.StatusBadRequest)
+		return
+	}
+
+	_, err := db.ExecContext(context.Background(), "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, "Erreur lors de l'ajout du dislike", http.StatusInternalServerError)
+		return
+	}
+
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	var data UserInfo
+	data.IsLoggedIn = ok
+	if !ok {
+		tmpl, err := template.ParseFiles("templates/forum.html")
+		log.Println(err)
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
+
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
+
+	tmpl, err := template.ParseFiles("templates/forum.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
 		return
 	}
 	newData := FinalData{data, displayPost(w)}

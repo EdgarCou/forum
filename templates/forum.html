@@ -94,8 +94,16 @@
                     <p>{{.Content}}</p>
                     <p class="tags">{{.Tags}}</p>
                     <p class="author">By {{.Author}}</p>
-                    <button class="likeButton" onclick="likedButton(event)" >👍</button>
-                    <button class="dislikeButton" onclick="dislikedButton(event)" >👎</button>
+                    <form action="like" method="POST">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit" class="likeButton" onclick="likedButton(event)" id="{{.Id}}">👍</button>
+                    </form>
+                    <form action="dislike" method="POST">
+                        <input type="hidden" name="id" value="{{.Id}}">
+                        <button type="submit" class="dislikeButton" onclick="dislikedButton(event)" id="{{.Id}}">👎</button>
+                    </form>
+                    <p class="likes">Likes: {{.Likes}}</p>
+                    <p class="dislikes"> Dislikes: {{.Dislikes}}</p>
                 </article>
                 <br>
             {{end}}
