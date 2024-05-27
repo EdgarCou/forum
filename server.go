@@ -16,7 +16,11 @@ import (
 	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
+
 	//"golang.org/x/text/language/display"
+	"github.com/gorilla/websocket"
+	//"strconv"
+	"strings"
 )
 
 var db *sql.DB
@@ -31,18 +35,23 @@ type UserInfo struct {
 }
 
 type Post struct {
-	Id      int
-	Title   string
-	Content string
-	Tags    string
-	Author  string
-	Likes   int
+	Id       int
+	Title    string
+	Content  string
+	Tags     string
+	Author   string
+	Likes    int
 	Dislikes int
 }
 
 type FinalData struct {
 	UserInfo UserInfo
 	Posts    []Post
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
 func main() {
@@ -97,12 +106,21 @@ func main() {
 	http.HandleFunc("/profile", userHandler)
 	http.HandleFunc("/createPost", addNewPost)
 	http.HandleFunc("/about", aboutHandler)
-	http.HandleFunc("/like", likeHandler)
-	http.HandleFunc("/dislike", dislikeHandler)
+	http.HandleFunc("/ws", wsHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	log.Println("Server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server started at :8081")
+	log.Fatal(http.ListenAndServe(":8081", nil))
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close()
+	likeHandlerWs(conn)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -152,10 +170,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
 		if err != nil {
-            w.Header().Set("Content-Type", "text/html")
-            fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
-            return
-        }
+			w.Header().Set("Content-Type", "text/html")
+			fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
+			return
+		}
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -178,12 +196,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-        err := verifierUtilisateur(username, password)
-        if err != nil {
-            w.Header().Set("Content-Type", "text/html")
-            fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
-            return
-        }
+		err := verifierUtilisateur(username, password)
+		if err != nil {
+			w.Header().Set("Content-Type", "text/html")
+			fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
+			return
+		}
 
 		session, _ := store.Get(r, "session")
 		session.Values["username"] = username
@@ -297,7 +315,7 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "session")
 		author := session.Values["username"].(string)
 		println((author))
-		err := ajouterPostinDb(title, content, tags,author)
+		err := ajouterPostinDb(title, content, tags, author)
 		if err != nil {
 			println(err.Error())
 		} else {
@@ -340,9 +358,9 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ajouterPostinDb(title string, content string, tags string,author string) error {
+func ajouterPostinDb(title string, content string, tags string, author string) error {
 	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author) VALUES (?, ?, ?, ?)`,
-		title, content, tags,author)
+		title, content, tags, author)
 	if err != nil {
 		return err
 	}
@@ -481,102 +499,56 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, newData)
 }
 
-func likeHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.FormValue("id")
-	if id == "" {
-		http.Error(w, "Post non spécifié", http.StatusBadRequest)
-		return
-	}
+func likeHandlerWs(conn *websocket.Conn) {
 
-	_, err := db.ExecContext(context.Background(), "UPDATE posts SET likes = likes + 1 WHERE id = ?", id)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'ajout du like", http.StatusInternalServerError)
-		return
-	}
-
-	session, _ := store.Get(r, "session")
-	username, ok := session.Values["username"]
-
-	var data UserInfo
-	data.IsLoggedIn = ok
-	if !ok {
-		tmpl, err := template.ParseFiles("templates/forum.html")
-		log.Println(err)
+	for {
+		messageType, p, err := conn.ReadMessage()
 		if err != nil {
-			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
-			return
-		}
-		newdata := FinalData{data, displayPost(w)}
-		tmpl.Execute(w, newdata)
-		return
-	} else if ok {
-		var profilePicture string
-		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-		if err != nil && err != sql.ErrNoRows {
-			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			log.Printf("Error reading message: %v. Message type: %v. Message: %v", err, messageType, string(p))
 			return
 		}
 
-		data.Username = username.(string)
-		data.ProfilePicture = profilePicture
-	}
+		if messageType == websocket.TextMessage {
 
-	tmpl, err := template.ParseFiles("templates/forum.html")
 
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
-		return
-	}
-	newData := FinalData{data, displayPost(w)}
-	tmpl.Execute(w, newData)
 
-}
+			message := string(p)
+			var id string
+			var query string
+			if strings.HasPrefix(message, "dislike:") {
+				id = strings.TrimPrefix(message, "dislike:")
+				query = "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?"
+			} else {
+				id = strings.TrimPrefix(message, "like:")
+				query = "UPDATE posts SET likes = likes + 1 WHERE id = ?"
+			}
+			_, err := db.ExecContext(context.Background(), query, id)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			
+			// Get the new number of likes or dislikes
+			var likes, dislikes int
+			err = db.QueryRowContext(context.Background(), "SELECT likes, dislikes FROM posts WHERE id = ?", id).Scan(&likes, &dislikes)
+			if err != nil {
+				log.Println(err)
+				return
+			}
 
-func dislikeHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.FormValue("id")
-	if id == "" {
-		http.Error(w, "Post non spécifié", http.StatusBadRequest)
-		return
-	}
-
-	_, err := db.ExecContext(context.Background(), "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?", id)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'ajout du dislike", http.StatusInternalServerError)
-		return
-	}
-
-	session, _ := store.Get(r, "session")
-	username, ok := session.Values["username"]
-
-	var data UserInfo
-	data.IsLoggedIn = ok
-	if !ok {
-		tmpl, err := template.ParseFiles("templates/forum.html")
-		log.Println(err)
-		if err != nil {
-			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
-			return
+			// Send the new number of likes or dislikes to the client
+			// Send the post ID, the new number of likes or dislikes, and the type to the client
+			var response string
+			if query == "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?" {
+				response = fmt.Sprintf("dislikes:%s:%d", id, dislikes)
+			} else {
+				response = fmt.Sprintf("likes:%s:%d", id, likes)
+			}
+			err = conn.WriteMessage(websocket.TextMessage, []byte(response))
+			if err != nil {
+				log.Println(err)
+				return
+			}
 		}
-		newdata := FinalData{data, displayPost(w)}
-		tmpl.Execute(w, newdata)
-		return
-	} else if ok {
-		var profilePicture string
-		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-		if err != nil && err != sql.ErrNoRows {
-			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
-			return
-		}
-
-		data.Username = username.(string)
-		data.ProfilePicture = profilePicture
 	}
-
-	tmpl, err := template.ParseFiles("templates/forum.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
-		return
-	}
-	newData := FinalData{data, displayPost(w)}
-	tmpl.Execute(w, newData)
 }
