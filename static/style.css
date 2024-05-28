@@ -1,9 +1,27 @@
+:root {
+    --bg: rgb(37, 39, 77, 0.85);
+    --grey: #A0A0A0;
+    --blue: #2E9CCA;
+    --black: #17252A;
+}
+
 body {
-    background-color: #000000;
-    font-family: Arial, sans-serif;
-    margin: 1%;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
     padding: 0;
-    color: #ffffff;
+    background-image: url(./IMG/background.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.color-back {
+    background-color: var(--bg);
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
 }
 
 header {
@@ -12,7 +30,6 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1%;
 }
 
 header a {

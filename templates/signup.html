@@ -4,41 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="/static/signup.css">
-    <link rel="stylesheet" type="text/css" href="/static/popup.css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
 <body>
-    <main>
-        <div id="signup-wrapper">
-            <form id ="signupForm" method="POST">
-                <h1>Sign Up</h1>
-                <p class="text-signup">Already have an account?&nbsp;<a href="/login">Login</a></p>
+    <section class="color-back">
+        <main>
+            <section class="welcome-side">
+                <h1>Welcome to <br> Dişki !</h1>
+                <p>Join our community and share your passions:<br> create your account now and connect with like-minded individuals!</p>
+                <div class="social-media">
+                    <a href="/"><i class='bx bxs-home-alt-2'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                    <a href="#"><i class='bx bxl-facebook'></i></a>
+                    <a href="https://github.com/EdgarCou/forum"><i class='bx bxl-github'></i></a>
+                    <a href="#"><i class='bx bxl-instagram-alt'></i></a>
+                </div>
+            </section>
+            <section class="connexion-side">
+                <form id ="signupForm" method="POST">
+                    <h1>Sign Up</h1>
+                    <p class="text-signup">If you already have an account click&nbsp;<a href="/login">Here</a></p>
 
-                <div class="input-box-login">
-                    <input id="username" type="text" name ="username" placeholder="Username" required>
-                    <i class="material-icons">
-                        account_circle
-                    </i>
-                </div>
-                <div class="input-box-login">
-                    <input id="email" type="email" name ="email" placeholder="Email" required>
-                    <i class="material-icons">
-                        account_circle
-                    </i>
-                </div>
-                <div class="input-box-login">
-                    <input id="password" type="password" name="password" placeholder="Password" required>
-                    <i class="material-icons">
-                        lock
-                    </i>
-                </div>
+                    <div class="input-box-login">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" name ="username"  required>
+                    </div>
+                    <div class="input-box-login">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name ="email" required>
+                    </div>
+                    <div class="input-box-login">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password" required>
+                    </div>
 
-                <div class ="signupStatus" id ="signupStatus" style="color:red"></div>
-                
-                <button type="submit" class="btn-login"> Sign up </button>
-            </form>
-        </div>
-    </main>
+                    <div class ="signupStatus" id ="signupStatus" style="color:red"></div>
+                    
+                    <button type="submit">Sign up now</button>
+                    <h4 class="link-signup">By clicking on “Sign up now” you agree to Terms of service | Privacy policy </h4>
+
+                </form>
+            </section>
+        </main>
+    </section>
 </body>
 </html>
