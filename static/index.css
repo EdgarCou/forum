@@ -1,37 +1,184 @@
+
+body {
+    background-image: url(./IMG/background*2.jpg) !important;
+    background-attachment: scroll !important;
+    background-repeat: repeat  !important;
+    background-position: top left !important;
+}
+
+.color-back {
+    height: 375vh !important;
+}
+
+
 .home-link {
     text-decoration: underline;
     text-underline-offset: 0.3em;
 }
-.posts{
-    display: none;
-}
 
-#wrapper{
-    display: block;
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    margin-top: 5%;
-    width: 420px;
-    border: 1px solid rgb(255, 255, 255, 0.3);
-    background-color: rgba(255, 255, 255, 0.6);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    color:white;
-    border-radius: 10px;
-    padding: 30px 40px;
-    z-index: 1;
-    flex-wrap: wrap;
-}
-
-#createPost{
-    justify-content: left;
-}
-
-.actu{
+.home-part {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    flex-direction: column;
+    margin-top: 10%;
+    color: var(--light-grey);
+}
+
+.home-part h1 {
+    font-size: 3em;
+    margin-bottom: 3%;
+}
+
+.home-part h2 {
+    font-size: 2.5em;
+    font-style: italic;
+    margin-bottom: 15%;
+}
+
+.home-part a {
+    color: #29648A;
+    font-size: 1.5em;
+    text-decoration: none;
+    background-color: var(--light-grey);
+    padding: 1%;
+}
+
+/* Button */
+
+.effect {
+    text-align: center;
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+    text-transform: capitalize;
+    padding: 20px 0px;
+    width: 150px;
+    overflow: hidden;
+    border-radius: 2px;
+    margin-bottom: 5%;
+  }
+
+  .effect.effect-3 {
+    transition: all 0.3s linear 0s;
+    
+    &:before {
+      content: "→";
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 100%;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      font-size: 30px;
+      transition: all 0.3s linear 0s;
+    }
+    
+    &:hover {
+      text-indent: -9999px;
+      
+      &:before {
+        top: 0;
+        text-indent: 0;
+      }
+    }
+  }
+
+ /* End button */ 
+
+.beside-part  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10%;
+    color: var(--light-grey);
+}
+
+.beside-part a {
+    color: #29648A;
+    font-size: 1.5em;
+    text-decoration: none;
+    background-color: var(--light-grey);
+    padding: 2%;
+}
+
+.beside-part p {
+    font-size: 2em;
+}
+
+.buble-info {
+    padding: 5%;
+    background-color: transparent;
+    outline: 1px solid var(--light-grey);
+    border-radius: 10px;
+    width: 100%;
+
+}
+
+/* forum part */
+
+.forum1 {
+    margin-left: 80%;
+    margin-bottom: 10%;
+    width: 100%;
+}
+
+.forum2 {
+    margin-right: 80%;
+    width: 70%;
+}
+
+.forum3 {
+    margin-left: 80%;
+    width: 35%;
+    margin-bottom: 15%;
+}
+
+/* Members part */
+
+.members1 {
+    margin-left: 80%;
+    margin-bottom: 10%;
+    width: 100%;
+}
+
+.members2 {
+    margin-right: 90%;
+    width: 90%;
+}
+
+.members3 {
+    margin-left: 60%;
+    margin-bottom: 10%;
+    width: 75%;
+}
+
+.members4 {
+    margin-right: 60%;
+    width: 45%;
+    margin-bottom: 15%;
+}
+
+/* About part */
+
+.about1 {
+    margin-top: 20%;
+    margin-bottom: 15%;
+    width: 60%;
+}
+
+
+/* Footer */
+
+.footer {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    color: var(--light-grey);
+    margin-top: 20%;
 }

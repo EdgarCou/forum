@@ -4,48 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/popup.css">
     <link rel="stylesheet" type="text/css" href="/static/index.css">
+    <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
 <body>
-    <header>
-        <div class="nav-bar">
-            <section class="logo">
-                <a href="/"> 
-                    <img src="/static/IMG/diski.png" alt="logo">
-                </a>
-            </section>
-            <nav> 
-                <ul>
-                    <li class="home-link"><a href="/">Home</a></li>
-                    <li class="forum-link"><a href="/forum">Forum</a></li>
-                    <li class="members-link"><a href="/members">Members</a></li>
-                    <li class="about-link"><a href="/about">About</a></li>
-                </ul>
-            </nav>
+    <div class="color-back">
+        <header>
+            <div class="nav-bar">
+                <section class="logo">
+                    <a href="/"> 
+                        <img src="/static/IMG/diski.png" alt="logo">
+                    </a>
+                </section>
+                <nav> 
+                    <ul>
+                        <li class="home-link"><a href="/">Home</a></li>
+                        <li class="forum-link"><a href="/forum">Forum</a></li>
+                        <li class="members-link"><a href="/members">Members</a></li>
+                        <li class="about-link"><a href="/about">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="log-bar">
+                <section class="user-bar">
+                    {{if .UserInfo.Username}}
+                        <span class="pseudo">{{.UserInfo.Username}}</span>
+                        <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
+                            account_circle
+                        </i></a>
+                    {{end}} 
+                </section>
+                <section class="button-connection">
+                    {{if .UserInfo.IsLoggedIn}}
+                        <a href="/logout" class="log-button">Log out</a>
+                    {{else}}
+                    <a href="/login" class="log-button">Log in</a>
+                    {{end}}
+                </section>
+            </div>
+        </header>
+        <section class="home-part">
+            <h1>You want to talk about something ?</h1>
+            <h2>Come to Dişki !</h2>
+            <a href="/signup" class="index1-btn effect effect-3">JOIN US</a>
+        <section>
+        <section class="beside-part">
+            <p class="buble-info forum1">Exchange with everyone across the world</p>
+            <p class="buble-info forum2">About everything you want !</p>
+            <p class="buble-info forum3">At every time !</p>
+            <a href="/forum" class="index1-btn effect effect-3">FORUM</a>
+        </section>
+        <section class="beside-part">
+            <p class="buble-info members1">Be part of a big community</p>
+            <p class="buble-info members2">Everyone has something to share </p>
+            <p class="buble-info members3">Make your tomorrow’s friends</p>
+            <p class="buble-info members4">Learn from others</p>
+            <a href="/forum" class="index1-btn effect effect-3">MEMBERS</a>
+        </section>
+        <section class="beside-part">
+            <p class="buble-info about1">Learn more about Dişki</p>
+            <a href="/forum" class="index1-btn effect effect-3">ABOUT</a>
+        </section>
+        <div class="footer">
+            <p>© Dişki - 2024</p>
         </div>
-        <div class="log-bar">
-            <section class="user-bar">
-                {{if .UserInfo.Username}}
-                    <span class="pseudo">{{.UserInfo.Username}}</span>
-                    <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
-                        account_circle
-                    </i></a>
-                {{end}} 
-            </section>
-            <section class="button-connection">
-                {{if .UserInfo.IsLoggedIn}}
-                    <a href="/logout" class="log-button">Logout</a>
-                {{else}}
-                <a href="/login" class="log-button">Login</a>
-                <a href="/signup" class="log-button">Sign Up</a>
-                {{end}}
-            </section>
-        </div>
-    </header>
-    <div class="line"></div>
-<script src="/static/JS/index.js"></script>
+    </div>
+
 </body>
 </html>
