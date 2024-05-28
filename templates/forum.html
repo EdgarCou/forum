@@ -88,7 +88,11 @@
             </div>
         </section>
         <section class="actu">
+            
             {{range .Posts}}
+            {{if eq .Id -1}}
+                <p>No post Yet</p>
+            {{else}}
                 <article class="post{{.Id}}">
                     <h2>{{.Title}}</h2>
                     <p>{{.Content}}</p>
@@ -100,6 +104,7 @@
                     <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
                 </article>
                 <br>
+            {{end}}
             {{end}}
         </section>
     </main>
