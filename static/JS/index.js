@@ -17,14 +17,33 @@ socket.onopen = function(event) {
 
 socket.onmessage = function(event) {
     var data = event.data.split(":");
-    var type = data[0];
-    var postId = data[1];
-    var count = data[2];
-    if (type == 'likes') {
-        document.getElementById("likeCount" + postId).innerText = count;
-    } else if (type == 'dislikes') {
-        document.getElementById("dislikeCount" + postId).innerText = count;
+    console.log(data);
+    if (data.length > 3) {
+        var type1 = data[0];
+        var postId1 = data[1];
+        var count1 = data[2];
+        var type2 = data[3];
+        var postId2 = data[4];
+        var count2 = data[5];
+        if (type1 == 'likes') {
+            document.getElementById("likeCount" + postId1).innerText = count1;
+            document.getElementById("dislikeCount" + postId2).innerText = count2;
+        } else if (type1 == 'dislikes') {
+            document.getElementById("dislikeCount" + postId1).innerText = count1;
+            document.getElementById("likeCount" + postId2).innerText = count2;
+        }
+
+    } else {
+        var type = data[0];
+        var postId = data[1];
+        var count = data[2];
+        if (type == 'likes') {
+            document.getElementById("likeCount" + postId).innerText = count;
+        } else if (type == 'dislikes') {
+            document.getElementById("dislikeCount" + postId).innerText = count;
+        }  
     }
+    
 };
 
 var likeButtons = document.getElementsByClassName("likeButton");
