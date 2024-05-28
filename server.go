@@ -16,7 +16,11 @@ import (
 	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
+
 	//"golang.org/x/text/language/display"
+	"github.com/gorilla/websocket"
+	//"strconv"
+	"strings"
 )
 
 var db *sql.DB
@@ -31,16 +35,23 @@ type UserInfo struct {
 }
 
 type Post struct {
-	Id      int
-	Title   string
-	Content string
-	Tags    string
-	Author  string
+	Id       int
+	Title    string
+	Content  string
+	Tags     string
+	Author   string
+	Likes    int
+	Dislikes int
 }
 
 type FinalData struct {
 	UserInfo UserInfo
 	Posts    []Post
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
 func main() {
@@ -77,7 +88,9 @@ func main() {
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
 		tags TEXT,
-		author TEXT NOT NULL
+		author TEXT NOT NULL,
+		likes INTEGER DEFAULT 0,
+		dislikes INTEGER DEFAULT 0
 		)`)
 	if err2 != nil {
 		log.Fatal(err2)
@@ -93,10 +106,21 @@ func main() {
 	http.HandleFunc("/profile", userHandler)
 	http.HandleFunc("/createPost", addNewPost)
 	http.HandleFunc("/about", aboutHandler)
+	http.HandleFunc("/ws", wsHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	log.Println("Server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server started at :8081")
+	log.Fatal(http.ListenAndServe(":8081", nil))
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close()
+	likeHandlerWs(conn)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -146,10 +170,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		println(username, email, password)
 		err := ajouterUtilisateur(username, email, password, "")
 		if err != nil {
-            w.Header().Set("Content-Type", "text/html")
-            fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
-            return
-        }
+			w.Header().Set("Content-Type", "text/html")
+			fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
+			return
+		}
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -172,12 +196,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-        err := verifierUtilisateur(username, password)
-        if err != nil {
-            w.Header().Set("Content-Type", "text/html")
-            fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
-            return
-        }
+		err := verifierUtilisateur(username, password)
+		if err != nil {
+			w.Header().Set("Content-Type", "text/html")
+			fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
+			return
+		}
 
 		session, _ := store.Get(r, "session")
 		session.Values["username"] = username
@@ -291,7 +315,7 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "session")
 		author := session.Values["username"].(string)
 		println((author))
-		err := ajouterPostinDb(title, content, tags,author)
+		err := ajouterPostinDb(title, content, tags, author)
 		if err != nil {
 			println(err.Error())
 		} else {
@@ -334,9 +358,9 @@ func addNewPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ajouterPostinDb(title string, content string, tags string,author string) error {
+func ajouterPostinDb(title string, content string, tags string, author string) error {
 	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author) VALUES (?, ?, ?, ?)`,
-		title, content, tags,author)
+		title, content, tags, author)
 	if err != nil {
 		return err
 	}
@@ -344,7 +368,7 @@ func ajouterPostinDb(title string, content string, tags string,author string) er
 }
 
 func displayPost(w http.ResponseWriter) []Post {
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
@@ -354,7 +378,7 @@ func displayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
@@ -473,4 +497,58 @@ func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	newData := FinalData{data, displayPost(w)}
 	tmpl.Execute(w, newData)
+}
+
+func likeHandlerWs(conn *websocket.Conn) {
+
+	for {
+		messageType, p, err := conn.ReadMessage()
+		if err != nil {
+			log.Printf("Error reading message: %v. Message type: %v. Message: %v", err, messageType, string(p))
+			return
+		}
+
+		if messageType == websocket.TextMessage {
+
+
+
+			message := string(p)
+			var id string
+			var query string
+			if strings.HasPrefix(message, "dislike:") {
+				id = strings.TrimPrefix(message, "dislike:")
+				query = "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?"
+			} else {
+				id = strings.TrimPrefix(message, "like:")
+				query = "UPDATE posts SET likes = likes + 1 WHERE id = ?"
+			}
+			_, err := db.ExecContext(context.Background(), query, id)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			
+			// Get the new number of likes or dislikes
+			var likes, dislikes int
+			err = db.QueryRowContext(context.Background(), "SELECT likes, dislikes FROM posts WHERE id = ?", id).Scan(&likes, &dislikes)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			// Send the new number of likes or dislikes to the client
+			// Send the post ID, the new number of likes or dislikes, and the type to the client
+			var response string
+			if query == "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?" {
+				response = fmt.Sprintf("dislikes:%s:%d", id, dislikes)
+			} else {
+				response = fmt.Sprintf("likes:%s:%d", id, likes)
+			}
+			err = conn.WriteMessage(websocket.TextMessage, []byte(response))
+			if err != nil {
+				log.Println(err)
+				return
+			}
+		}
+	}
 }

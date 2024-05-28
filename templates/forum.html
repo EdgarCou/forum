@@ -74,7 +74,7 @@
                     <br>
                 
                     <div class="acceptCondtions">
-                        <label class="checkbox-popup"><input type="checkbox">I agree with <a href="/"> using condtions</a></label>
+                        <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/"> using condtions</a></label>
                     </div>
     
                     <button type="submit" class="btn-login"> Post </button>
@@ -94,6 +94,10 @@
                     <p>{{.Content}}</p>
                     <p class="tags">{{.Tags}}</p>
                     <p class="author">By {{.Author}}</p>
+                    <button class="likeButton" data-post-id="{{.Id}}" >👍</button>
+                    <button  class="dislikeButton" data-post-id="{{.Id}}">👎</button>
+                    <p id="likeCount{{.Id}}">{{.Likes}}</p>
+                    <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
                 </article>
                 <br>
             {{end}}
