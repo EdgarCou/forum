@@ -6,6 +6,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/popup.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
+    <link rel="stylesheet" type="text/css" href="/static/user.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
@@ -53,7 +54,7 @@
         {{end}}
         <section class="posts">
             <div id="wrapper">
-                <form action="/createPost" id =createPost method="POST">
+                <form action="/createPost" id ="createPost" method="POST">
                     <h1>Create new post</h1>
 
                     <label for="title">Title</label>
@@ -90,14 +91,29 @@
         <section class="actu">
             {{range .Posts}}
                 <article class="post{{.Id}}">
+                    <p class="author">{{.Author}}</p>
                     <h2>{{.Title}}</h2>
                     <p>{{.Content}}</p>
                     <p class="tags">{{.Tags}}</p>
-                    <p class="author">By {{.Author}}</p>
                 </article>
                 <br>
             {{end}}
         </section>
+        <div class="filter">
+            <h2>Filter</h2>
+            <form action="/filter" method="POST">
+                <label for="sort">Sort by</label>
+                <select id="sort" name="sort" required>
+                    <option value="A-Z">A-Z</option>
+                    <option value="Z-A">Z-A</option>
+                    <option value="recent">Newest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="most-com">Most commented</option>
+                    <option value="most-like">Most liked</option>
+                </select>
+                <button type="submit" class="btn-filter"> Filter </button>
+            </form>
+        </div>
     </main>
 <script src="/static/JS/index.js"></script>
 </body>

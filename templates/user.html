@@ -55,22 +55,31 @@
                     <i class="material-icons">
                         account_circle
                     </i>
-                    <h3>Username : {{.Username}}</h3>
-                    <h3>Email : {{.Email}}</h3>
+                    <label for="username">Username</label>
+                    <input type="text" name="username" value="{{.Username}}">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" value="{{.Email}}">
+
+                    <form action="/user" method="POST">
+                        <input type="hidden" name="username" value="{{.Username}}">
+                        <label for="Lastname">Last Name</label>
+                        <input type="text" name="Lastname" id="Lastname" value="{{.Lastname}}">
+                        <label for="Firstname">Firstname : </label>
+                        <input type="text" name="Firstname" id="Firstname" value="{{.Firstname}}">
+                        <label for="bithdate">Birthdate</label>
+                        <input type="date" name="birthdate" id="birthdate" value="{{.Birthdate}}">
+                        <button type="submit">Save Change</button>
+                    </form>
                 </div>
                 <div class="profil-line"></div>
                 <div class="profil-posts">
                     <div class="category">
-                        <input type="radio" name="filter" class="filter-radio">
-                        <h3>My posts</h3>
+                        <input type="checkbox" name="filter" class="filter-radio">
+                        <h3>User Infos</h3>
                     </div>
                     <div class="category">
-                        <input type="radio" name="filter" class="filter-radio">
-                        <h3>Liked posts</h3>
-                    </div>
-                    <div class="category">
-                        <input type="radio" name="filter" class="filter-radio">
-                        <h3>My comments</h3>
+                        <input type="checkbox" name="filter" class="filter-radio">
+                        <h3>User Posts</h3>
                     </div>
                 </div>
             </section>
