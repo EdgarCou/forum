@@ -4,33 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="/static/signup.css">
-    <link rel="stylesheet" type="text/css" href="/static/popup.css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
 <body>
-    <main>
-        <div id="signup-wrapper">
-            <form id ="signupForm" method="POST">
-                <h1>Log in</h1>
-                <p class="text-signup">Don't have an account yet?&nbsp;<a href="/signup">Sign Up</a></h2>
-                <div class="input-box-login">
-                    <input id="username" type="text" name="username" placeholder="Username" required>
-                    <i class="material-icons">
-                        account_circle
-                    </i>
+    <section class="color-back">
+        <main>
+            <section class="welcome-side">
+                <h1>Welcome<br> Back !</h1>
+                <p>Join our community and share your passions:<br> go to your account now and connect with like-minded individuals!</p>
+                <div class="social-media">
+                    <a href="/"><i class='bx bxs-home-alt-2'></i></a>
+                    <a href="#"><i class='bx bxl-twitter'></i></a>
+                    <a href="#"><i class='bx bxl-facebook'></i></a>
+                    <a href="https://github.com/EdgarCou/forum"><i class='bx bxl-github'></i></a>
+                    <a href="#"><i class='bx bxl-instagram-alt'></i></a>
                 </div>
-                <div class="input-box-login">
-                    <input id="password" type="password" name="password" placeholder="Password" required>
-                    <i class="material-icons">
-                        lock
-                    </i>
-                </div>
+            </section>
+            <section class="connexion-side">
+                <form id ="signupForm" method="POST">
+                    <h1>Log in</h1>
+                    <p class="text-signup">If you don’t have an account click&nbsp;<a href="/signup">Here</a></p>
 
-                <div class ="signupStatus" id ="signupStatus" style="color:red"></div>
-                <button type="submit" class="btn-login"> Log in </button>
-            </form>
-        </div>
-    </main>
+                    <div class="input-box-login">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" name ="username"  required>
+                    </div>
+                    <div class="input-box-login">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password" required>
+                    </div>
+
+                    <div class ="signupStatus" id ="signupStatus" style="color:red"></div>
+                    
+                    <button type="submit">Log in now</button>
+                    <h4 class="link-signup">By clicking on “Log in now” you agree to Terms of service | Privacy policy </h4>
+
+                </form>
+            </section>
+        </main>
+    </section>
 </body>
 </html>
