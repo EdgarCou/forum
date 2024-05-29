@@ -15,6 +15,43 @@ socket.onopen = function(event) {
     console.log("Connection established");
 };
 
+var likeButtons = document.getElementsByClassName("likeButton");
+var dislikeButtons = document.getElementsByClassName("dislikeButton");
+
+for (var i = 0; i < likeButtons.length; i++) {
+    likeButtons[i].addEventListener("click", function(event) {
+        event.preventDefault();
+        var postId = this.getAttribute("data-post-id");
+        var thumbIcon = this.querySelector(".like-thumb");
+        if (thumbIcon.style.color == 'blue') { 
+            thumbIcon.style.color = ''; 
+        } else {
+            thumbIcon.style.color = 'blue';
+        }
+        var dislikeIcon = document.querySelector(".disliked-zone .dislikeButton[data-post-id='" + postId + "'] .dislike-thumb");
+        if (dislikeIcon) {
+            dislikeIcon.style.color = 'rgb(217, 217, 217, 0.5)';
+        }
+    });
+}
+
+for (var i = 0; i < dislikeButtons.length; i++) {
+    dislikeButtons[i].addEventListener("click", function(event) {
+        event.preventDefault();
+        var postId = this.getAttribute("data-post-id");
+        var thumbIcon = this.querySelector(".dislike-thumb");
+        if (thumbIcon.style.color == 'red') { 
+            thumbIcon.style.color = ''; 
+        } else {
+            thumbIcon.style.color = 'red';
+        }
+        var likeIcon = document.querySelector(".likeButton[data-post-id='" + postId + "'] .like-thumb");
+        if (likeIcon) {
+            likeIcon.style.color = 'rgb(217, 217, 217, 0.5)';
+        }
+    });
+}
+
 socket.onmessage = function(event) {
     var data = event.data.split(":");
     console.log(data);
