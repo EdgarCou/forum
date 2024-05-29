@@ -5,13 +5,13 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-	"io"
+	//"io"
 	"log"
 	"net/http"
-	"os"
+	//"os"
 
 	//"os/user"
-	"path/filepath"
+	//"path/filepath"
 
 	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
@@ -32,6 +32,9 @@ type UserInfo struct {
 	Email          string
 	Username       string
 	ProfilePicture string
+	Firstname      string
+	Lastname       string
+	Birthdate      string
 }
 
 type Post struct {
@@ -58,7 +61,7 @@ func main() {
 
 	store.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   3600, // La session expire lorsque le navigateur est fermé
+		MaxAge:   3600, // La session expire lorsque le navigateur est fermé, ou au bout de une heure. 
 		HttpOnly: true,
 	}
 
@@ -76,12 +79,14 @@ func main() {
 		username TEXT NOT NULL UNIQUE,
 		email TEXT NOT NULL UNIQUE,
 		password TEXT NOT NULL,
-		profile_picture TEXT
+		profile_picture TEXT,
+		firstname TEXT,
+		lastname TEXT,
+		birthdate TEXT
 		)`)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	var err2 error
 	_, err2 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS posts (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -114,6 +119,15 @@ func main() {
 		)`)
 
 	if err3 != nil {
+		log.Fatal(err3)
+	}
+
+	var err4 error
+	_, err3 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS topics (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL
+		)`)
+	if err4 != nil {
 		log.Fatal(err3)
 	}
 
@@ -189,7 +203,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		println(username, email, password)
-		err := ajouterUtilisateur(username, email, password, "")
+		err := ajouterUtilisateur(username, email, password, "", "", "", "")
 		if err != nil {
 			w.Header().Set("Content-Type", "text/html")
 			fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
@@ -233,16 +247,22 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
-	if username == "" {
-		http.Error(w, "Utilisateur non spécifié", http.StatusBadRequest)
-		return
-	}
+    username := ""
+    if r.Method == "POST" {
+        username = r.FormValue("username")
+    } else {
+        username = r.URL.Query().Get("username")
+    }
+
+    if username == "" {
+        http.Error(w, "Utilisateur non spécifié", http.StatusBadRequest)
+        return
+    }
 
 	if r.Method == "GET" {
-		var email, profilePicture string
-		query := `SELECT email, profile_picture FROM utilisateurs WHERE username = ?`
-		err := db.QueryRowContext(context.Background(), query, username).Scan(&email, &profilePicture)
+		var email, profilePicture, firstname, lastname, birthdate string
+		query := `SELECT email, profile_picture, firstname, lastname, birthdate FROM utilisateurs WHERE username = ?`
+		err := db.QueryRowContext(context.Background(), query, username).Scan(&email, &profilePicture, &firstname, &lastname, &birthdate)
 		if err != nil {
 			http.Error(w, "Utilisateur non trouvé", http.StatusNotFound)
 			return
@@ -252,6 +272,9 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		newData.Username = username
 		newData.Email = email
 		newData.ProfilePicture = profilePicture
+		newData.Firstname = firstname
+		newData.Lastname = lastname
+		newData.Birthdate = birthdate
 		newData.IsLoggedIn = username != ""
 
 		tmpl, err := template.ParseFiles("templates/user.html")
@@ -260,10 +283,18 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		tmpl.Execute(w, newData)
+
 	} else if r.Method == "POST" {
-		file, handler, err := r.FormFile("profile_picture")
+
+		firstname := r.FormValue("Firstname")
+		lastname := r.FormValue("Lastname")
+		birthdate := r.FormValue("birthdate")
+
+		println(firstname, lastname, birthdate)
+
+		/*file, handler, err := r.FormFile("profile_picture")
 		if err != nil {
-			http.Error(w, "Erreur lors du téléchargement du fichier", http.StatusInternalServerError)
+			http.Error(w, "Erreur lors du téléchargement du fichier"+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer file.Close()
@@ -278,12 +309,25 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer f.Close()
 		io.Copy(f, file)
-
-		updateSQL := `UPDATE utilisateurs SET profile_picture = ? WHERE username = ?`
-		_, err = db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
+		*/
+		var err error
+		updateSQL := `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
+result , err := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username, )
 		if err != nil {
 			http.Error(w, "Erreur lors de la mise à jour de la photo de profil", http.StatusInternalServerError)
 			return
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			fmt.Println("Erreur lors de la récupération du nombre de lignes affectées :", err)
+			return
+		}
+
+		if rowsAffected == 0 {
+			fmt.Println("Aucune ligne n'a été mise à jour")
+		} else {
+			fmt.Println("Nombre de lignes mises à jour :", rowsAffected)
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
@@ -297,15 +341,16 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func ajouterUtilisateur(username, email, password, profilePicture string) error {
+func ajouterUtilisateur(username, email, password, profilePicture, lastname, firstname, birthdate string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
-	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture) VALUES (?, ?, ?, ?)`,
-		username, email, hashedPassword, profilePicture)
+	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture, lastname, firstname, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		username, email, hashedPassword, profilePicture, lastname, firstname, birthdate)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -387,6 +432,7 @@ func ajouterPostinDb(title string, content string, tags string, author string) e
 	}
 	return nil
 }
+
 
 func displayPost(w http.ResponseWriter) []Post {
 	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes FROM posts")
