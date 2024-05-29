@@ -6,11 +6,9 @@ import (
 	"html/template"
 	"net/http"
 	"github.com/gorilla/sessions"
-	"github.com/gorilla/websocket"
 	"log"
 )
 
-var db *sql.DB
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
@@ -36,10 +34,6 @@ type FinalData struct {
 	Posts    []Post
 }
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
 
 func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	//println("addNewPost")

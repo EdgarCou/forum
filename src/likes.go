@@ -9,6 +9,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
 func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	username, _ := session.Values["username"]

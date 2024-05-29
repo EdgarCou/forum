@@ -13,6 +13,8 @@ import (
 	"path/filepath"
 )
 
+var db *sql.DB
+
 func WsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

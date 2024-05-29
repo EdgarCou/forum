@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
-	"forum"
+	"forum/src"
 )
 
 var db *sql.DB
+
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
@@ -36,11 +37,6 @@ type FinalData struct {
 	Posts    []Post
 }
 
-//var upgrader = websocket.Upgrader{
-//	ReadBufferSize:  1024,
-//	WriteBufferSize: 1024,
-//}
-
 func main() {
 
 	store.Options = &sessions.Options{
@@ -50,7 +46,6 @@ func main() {
 	}
 
 	dbPath := "utilisateurs.db"
-
 	var err error
 	db, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
@@ -117,7 +112,7 @@ func main() {
 	http.HandleFunc("/ws", forum.WsHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	log.Println("Server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server is listening on port 8080")
+	http.ListenAndServe(":8080", nil)
 }
 
