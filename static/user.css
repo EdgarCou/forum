@@ -131,9 +131,14 @@ main {
     outline: 1px solid var(--blue);
 }
 
+#changeinfo-form #birthdate {
+    width: 50%;
+}
+
 .input-box-login {
     width: 50%;
     display: flex;
     flex-direction: column;
     margin: 20px 0;
 }
+

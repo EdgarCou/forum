@@ -5,9 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"sort"
+
 	//"io"
 	"log"
 	"net/http"
+
 	//"os"
 
 	//"os/user"
@@ -142,6 +145,7 @@ func main() {
 	http.HandleFunc("/createPost", addNewPost)
 	http.HandleFunc("/about", aboutHandler)
 	http.HandleFunc("/ws", wsHandler)
+	http.HandleFunc("/RGPD", RGPDHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server started at :8081")
@@ -456,6 +460,10 @@ func displayPost(w http.ResponseWriter) []Post {
 		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0})
 	}
 
+	sort.Slice(posts, func(i, j int) bool {
+		return i > j
+	})
+
 	return posts
 }
 
@@ -708,4 +716,41 @@ func likeHandlerWs(conn *websocket.Conn, r *http.Request) {
 			}
 		}
 	}
+}
+
+
+func RGPDHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	var data UserInfo
+	data.IsLoggedIn = ok
+	if !ok {
+		tmpl, err := template.ParseFiles("templates/RGPD.html")
+		log.Println(err)
+		if err != nil {
+			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+			return
+		}
+		newdata := FinalData{data, displayPost(w)}
+		tmpl.Execute(w, newdata)
+		return
+	} else if ok {
+		var profilePicture string
+		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+		if err != nil && err != sql.ErrNoRows {
+			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+			return
+		}
+
+		data.Username = username.(string)
+		data.ProfilePicture = profilePicture
+	}
+	tmpl, err := template.ParseFiles("templates/RGPD.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{data, displayPost(w)}
+	tmpl.Execute(w, newData)
 }
