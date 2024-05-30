@@ -1,10 +1,3 @@
-:root {
-    --bg: rgb(37, 39, 77, 0.85);
-    --grey: #A0A0A0;
-    --blue: #2E9CCA;
-    --black: #17252A;
-}
-
 main {
     display: flex;
     align-items: center;

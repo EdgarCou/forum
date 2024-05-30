@@ -5,80 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/popup.css">
+    <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
+    <link rel="stylesheet" type="text/css" href="/static/user.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
 <body>
-    <header>
-        <div class="nav-bar">
-            <section class="logo">
-                <a href="/"> 
-                    <img src="/static/IMG/diski.png" alt="logo">
-                </a>
+    <div class="color-back">
+        <header>
+            <div class="nav-bar">
+                <section class="logo">
+                    <a href="/"> 
+                        <img src="/static/IMG/diski.png" alt="logo">
+                    </a>
+                </section>
+                <nav> 
+                    <ul>
+                        <li class="home-link"><a href="/">Home</a></li>
+                        <li class="forum-link"><a href="/forum">Forum</a></li>
+                        <li class="members-link"><a href="/members">Members</a></li>
+                        <li class="about-link"><a href="/about">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="log-bar">
+                <section class="user-bar">
+                    {{if .UserInfo.Username}}
+                        <span class="pseudo">{{.UserInfo.Username}}</span>
+                        <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
+                            account_circle
+                        </i></a>
+                    {{end}} 
+                </section>
+                <section class="button-connection">
+                    {{if .UserInfo.IsLoggedIn}}
+                        <a href="/logout" class="log-button">Logout</a>
+                    {{else}}
+                    <a href="/login" class="log-button">Login</a>
+                    <a href="/signup" class="log-button">Sign Up</a>
+                    {{end}}
+                </section>
+            </div>
+        </header>
+        <main>
+            {{if .UserInfo.IsLoggedIn}}
+                <button id="buttonPost" onclick="newPostPopUp()"> Add new post</button>
+            {{end}}
+            <section class="posts">
+                <div id="wrapper">
+                    <form action="/createPost" id ="createPost" method="POST">
+                        <h1>Create new post</h1>
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" required>
+                        <br>
+
+                        <label for="content">Content</label>
+                        <textarea id="content" name="content" required></textarea>
+                        <br>
+
+                        <label for="tags">Categorie(s)</label>
+                        <select id="tags" name="tags" required>
+                            <option value="">Select a category</option>
+                            <option value="category1">Category 1</option>
+                            <option value="category2">Category 2</option>
+                            <option value="category3">Category 3</option>
+                        </select>
+                        <br>
+                    
+                        <div class="acceptCondtions">
+                            <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/"> using condtions</a></label>
+                        </div>
+        
+                        <button type="submit" class="btn-login"> Post </button>
+
+                        <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
+                            <i class="material-icons">
+                                close
+                            </i>
+                        </a>
+                    </form>
+                </div>
             </section>
-            <nav> 
-                <ul>
-                    <li class="home-link"><a href="/">Home</a></li>
-                    <li class="forum-link"><a href="/forum">Forum</a></li>
-                    <li class="members-link"><a href="/members">Members</a></li>
-                    <li class="about-link"><a href="/about">About</a></li>
-                </ul>
-            </nav>
-        </div>
-        <div class="log-bar">
-            <section class="user-bar">
-                {{if .UserInfo.Username}}
-                    <span class="pseudo">{{.UserInfo.Username}}</span>
-                    <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
-                        account_circle
-                    </i></a>
-                {{end}} 
-            </section>
-            <section class="button-connection">
-                {{if .UserInfo.IsLoggedIn}}
-                    <a href="/logout" class="log-button">Logout</a>
+            <section class="actu">
+                
+                {{range .Posts}}
+                {{if eq .Id -1}}
+                    <p>No post Yet</p>
                 {{else}}
-                <a href="/login" class="log-button">Login</a>
-                <a href="/signup" class="log-button">Sign Up</a>
+                    <article class="post{{.Id}}">
+                        <div class="top-post">
+                            <p class="author">{{.Author}}</p>
+                            <div class="like-com-zone">
+                                <div class="liked-zone">
+                                    <button class="likeButton forum-btn" data-post-id="{{.Id}}" ><i class="like-thumb material-icons">
+                                        thumb_up
+                                    </i></button>
+                                    <p id="likeCount{{.Id}}">{{.Likes}}</p>
+                                </div>
+                                <div class="disliked-zone">
+                                    <button  class="dislikeButton forum-btn" data-post-id="{{.Id}}"><i class="dislike-thumb material-icons">
+                                        thumb_down
+                                    </i></button>
+                                    <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
+                                </div>
+                                <div class="comment-zone">
+                                    <button class=" commentButton forum-btn" data-post-id="/"><i class="material-icons">
+                                        chat
+                                    </i></button>
+                                    <p id="commentCount">5</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line"></div>
+                        <h2>{{.Title}}</h2>
+                        <p class="post-content">{{.Content}}</p>
+                        <div class="bot-post">
+                            <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
+                                chat
+                            </i></button>
+                            <p class="tags">{{.Tags}}</p>
+                        </div>
+                    </article>
+                    <br>
+                {{end}}
                 {{end}}
             </section>
-        </div>
-    </header>
-    <div class="line"></div>
-    <main>
-        <h1>Forum</h1>
-        {{if .UserInfo.IsLoggedIn}}
-            <button id="buttonPost" onclick="newPostPopUp()"> Add new post</button>
-        {{end}}
-        <section class="posts">
-            <div id="wrapper">
-                <form action="/createPost" id =createPost method="POST">
-                    <h1>Create new post</h1>
-
-                    <label for="title">Title</label>
-                    <input type="text" id="title" name="title" required>
-                    <br>
-
-                    <label for="content">Content</label>
-                    <textarea id="content" name="content" required></textarea>
-                    <br>
-
-                    <label for="tags">Categorie(s)</label>
-                    <select id="tags" name="tags" required>
-                        <option value="">Select a category</option>
-                        <option value="category1">Category 1</option>
-                        <option value="category2">Category 2</option>
-                        <option value="category3">Category 3</option>
-                    </select>
-                    <br>
-                
-                    <div class="acceptCondtions">
-                        <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/"> using condtions</a></label>
-                    </div>
-    
-                    <button type="submit" class="btn-login"> Post </button>
-
+        </main>
+        <script src="/static/JS/index.js"></script>
+    </div>
                     <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
                         <i class="material-icons">
                             close
