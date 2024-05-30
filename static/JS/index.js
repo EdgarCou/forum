@@ -15,6 +15,8 @@ socket.onopen = function(event) {
     console.log("Connection established");
 };
 
+/* 
+
 var likeButtons = document.getElementsByClassName("likeButton");
 var dislikeButtons = document.getElementsByClassName("dislikeButton");
 
@@ -51,6 +53,7 @@ for (var i = 0; i < dislikeButtons.length; i++) {
         }
     });
 }
+*/
 
 socket.onmessage = function(event) {
     var data = event.data.split(":");
