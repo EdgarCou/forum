@@ -1,16 +1,15 @@
 package forum
 
-
 import (
 	"context"
 	"database/sql"
 	"fmt"
 	"html/template"
-	"io"
+	//"io"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
+	//"os"
+	//"path/filepath"
 )
 
 var db *sql.DB
@@ -33,7 +32,10 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		username TEXT NOT NULL UNIQUE,
 		email TEXT NOT NULL UNIQUE,
 		password TEXT NOT NULL,
-		profile_picture TEXT
+		profile_picture TEXT,
+		firstname TEXT,
+		lastname TEXT,
+		birthdate TEXT
 		)`)
 	if err != nil {
 		log.Fatal(err)
@@ -74,6 +76,15 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err3)
 	}
 
+	var err4 error
+	_, err4 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS topics (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL
+	)`)
+
+	if err4 != nil {
+		log.Fatal(err4)
+	}
 
 	session, _ := store.Get(r, "session")
 	username, ok := session.Values["username"]
@@ -119,7 +130,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		println(username, email, password)
-		err := AjouterUtilisateur(username, email, password, "")
+		err := AjouterUtilisateur(username, email, password, "", "", "", "")
 		if err != nil {
 			w.Header().Set("Content-Type", "text/html")
 			fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
@@ -164,16 +175,22 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
-	username := r.URL.Query().Get("username")
+	username := ""
+	if r.Method == "POST" {
+		username = r.FormValue("username")
+	} else {
+		username = r.URL.Query().Get("username")
+	}
+
 	if username == "" {
 		http.Error(w, "Utilisateur non spécifié", http.StatusBadRequest)
 		return
 	}
 
 	if r.Method == "GET" {
-		var email, profilePicture string
-		query := `SELECT email, profile_picture FROM utilisateurs WHERE username = ?`
-		err := db.QueryRowContext(context.Background(), query, username).Scan(&email, &profilePicture)
+		var email, profilePicture, firstname, lastname, birthdate string
+		query := `SELECT email, profile_picture, firstname, lastname, birthdate FROM utilisateurs WHERE username = ?`
+		err := db.QueryRowContext(context.Background(), query, username).Scan(&email, &profilePicture, &firstname, &lastname, &birthdate)
 		if err != nil {
 			http.Error(w, "Utilisateur non trouvé", http.StatusNotFound)
 			return
@@ -183,6 +200,9 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		newData.Username = username
 		newData.Email = email
 		newData.ProfilePicture = profilePicture
+		newData.Firstname = firstname
+		newData.Lastname = lastname
+		newData.Birthdate = birthdate
 		newData.IsLoggedIn = username != ""
 
 		tmpl, err := template.ParseFiles("templates/user.html")
@@ -191,30 +211,50 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		tmpl.Execute(w, newData)
+
 	} else if r.Method == "POST" {
-		file, handler, err := r.FormFile("profile_picture")
-		if err != nil {
-			http.Error(w, "Erreur lors du téléchargement du fichier", http.StatusInternalServerError)
-			return
-		}
-		defer file.Close()
 
-		os.MkdirAll("static/uploads", os.ModePerm)
+		firstname := r.FormValue("Firstname")
+		lastname := r.FormValue("Lastname")
+		birthdate := r.FormValue("birthdate")
 
-		filePath := filepath.Join("static/uploads", handler.Filename)
-		f, err := os.Create(filePath)
-		if err != nil {
-			http.Error(w, "Erreur lors de la sauvegarde du fichier", http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-		io.Copy(f, file)
+		println(firstname, lastname, birthdate)
+		/*file, handler, err := r.FormFile("profile_picture")
+		  if err != nil {
+		      http.Error(w, "Erreur lors du téléchargement du fichier"+err.Error(), http.StatusInternalServerError)
+		      return
+		  }
+		  defer file.Close()
 
-		updateSQL := `UPDATE utilisateurs SET profile_picture = ? WHERE username = ?`
-		_, err = db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
+		  os.MkdirAll("static/uploads", os.ModePerm)
+
+		  filePath := filepath.Join("static/uploads", handler.Filename)
+		  f, err := os.Create(filePath)
+		  if err != nil {
+		      http.Error(w, "Erreur lors de la sauvegarde du fichier", http.StatusInternalServerError)
+		      return
+		  }
+		  defer f.Close()
+		  io.Copy(f, file)
+		*/
+		var err error
+		updateSQL := `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
+		result, err := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username)
 		if err != nil {
 			http.Error(w, "Erreur lors de la mise à jour de la photo de profil", http.StatusInternalServerError)
 			return
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			fmt.Println("Erreur lors de la récupération du nombre de lignes affectées :", err)
+			return
+		}
+
+		if rowsAffected == 0 {
+			fmt.Println("Aucune ligne n'a été mise à jour")
+		} else {
+			fmt.Println("Nombre de lignes mises à jour :", rowsAffected)
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
@@ -227,7 +267,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-
 
 func ForumHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
@@ -340,4 +379,3 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 	newData := FinalData{data, DisplayPost(w)}
 	tmpl.Execute(w, newData)
 }
-

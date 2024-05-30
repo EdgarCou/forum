@@ -3,12 +3,11 @@ package forum
 import (
 	"context"
 	"database/sql"
-	"html/template"
-	"net/http"
 	"github.com/gorilla/sessions"
+	"html/template"
 	"log"
+	"net/http"
 )
-
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
@@ -17,6 +16,9 @@ type UserInfo struct {
 	Email          string
 	Username       string
 	ProfilePicture string
+	Firstname      string
+	Lastname       string
+	Birthdate      string
 }
 
 type Post struct {
@@ -33,7 +35,6 @@ type FinalData struct {
 	UserInfo UserInfo
 	Posts    []Post
 }
-
 
 func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()

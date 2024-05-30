@@ -3,10 +3,10 @@ package forum
 import (
 	"context"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"strings"
-	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -155,4 +155,3 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 		}
 	}
 }
-

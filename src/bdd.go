@@ -1,5 +1,4 @@
-package forum		
-
+package forum
 
 import (
 	"database/sql"
@@ -7,8 +6,7 @@ import (
 	"log"
 )
 
-
-func OpenDb() *sql.DB{
+func OpenDb() *sql.DB {
 	dbPath := "utilisateurs.db"
 	var err error
 	db, err = sql.Open("sqlite3", dbPath)

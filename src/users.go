@@ -6,16 +6,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-func AjouterUtilisateur(username, email, password, profilePicture string) error {
+func AjouterUtilisateur(username, email, password, profilePicture, lastname, firstname, birthdate string) error {
 	db = OpenDb()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
-	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture) VALUES (?, ?, ?, ?)`,
-		username, email, hashedPassword, profilePicture)
+	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture, lastname, firstname, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		username, email, hashedPassword, profilePicture, lastname, firstname, birthdate)
 	if err != nil {
 		return err
 	}

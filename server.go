@@ -2,15 +2,14 @@ package main
 
 import (
 	"database/sql"
-	"log"
-	"net/http"
+	"forum/src"
 	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
-	"forum/src"
+	"log"
+	"net/http"
 )
 
 var db *sql.DB
-
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
@@ -43,10 +42,9 @@ func main() {
 
 	store.Options = &sessions.Options{
 		Path:     "/",
-		MaxAge:   3600, // La session expire lorsque le navigateur est fermé, ou au bout de une heure. 
+		MaxAge:   3600, // La session expire lorsque le navigateur est fermé, ou au bout de une heure.
 		HttpOnly: true,
 	}
-
 
 	http.HandleFunc("/", forum.HomeHandler)
 	http.HandleFunc("/forum", forum.ForumHandler)
@@ -64,5 +62,3 @@ func main() {
 	log.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
-
-
