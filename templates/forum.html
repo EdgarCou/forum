@@ -98,8 +98,10 @@
                     <p>{{.Content}}</p>
                     <p class="tags">{{.Tags}}</p>
                     <p class="author">By {{.Author}}</p>
-                    <button class="likeButton" data-post-id="{{.Id}}" >👍</button>
-                    <button  class="dislikeButton" data-post-id="{{.Id}}">👎</button>
+                    {{if .user.IsLoggedIn}}
+                        <button class="likeButton" data-post-id="{{.Id}}" >👍</button>
+                        <button  class="dislikeButton" data-post-id="{{.Id}}">👎</button>
+                    {{end}}
                     <p id="likeCount{{.Id}}">{{.Likes}}</p>
                     <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
                 </article>
