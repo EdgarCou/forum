@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="/static/popup.css">
     <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
-    <link rel="stylesheet" type="text/css" href="/static/user.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
@@ -88,7 +87,7 @@
                 </div>
             </section>
             <section class="actu">
-                
+                {{$UserInfo := .UserInfo}}
                 {{range .Posts}}
                 {{if eq .Id -1}}
                     <p>No post Yet</p>
@@ -98,15 +97,29 @@
                             <p class="author">{{.Author}}</p>
                             <div class="like-com-zone">
                                 <div class="liked-zone">
-                                    <button class="likeButton forum-btn" data-post-id="{{.Id}}" ><i class="like-thumb material-icons">
+                                    {{if $UserInfo.IsLoggedIn}}
+                                    <button class="likeButton forum-btn" data-post-id="{{.Id}}" ><i class="like-thumb material-icons" >
                                         thumb_up
                                     </i></button>
+                                    {{else}}
+                                    <button class="likeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="like-thumb
+                                        material-icons">
+                                        thumb_up
+                                    </i></button>
+                                    {{end}}
                                     <p id="likeCount{{.Id}}">{{.Likes}}</p>
                                 </div>
                                 <div class="disliked-zone">
-                                    <button  class="dislikeButton forum-btn" data-post-id="{{.Id}}"><i class="dislike-thumb material-icons">
+                                    {{if $UserInfo.IsLoggedIn}}
+                                    <button class="dislikeButton forum-btn" data-post-id="{{.Id}}"><i class="dislike-thumb material-icons">
                                         thumb_down
                                     </i></button>
+                                    {{else}}
+                                    <button class="dislikeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="dislike-thumb
+                                        material-icons">
+                                        thumb_down
+                                    </i></button>
+                                    {{end}}
                                     <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
                                 </div>
                                 <div class="comment-zone">
@@ -134,37 +147,5 @@
         </main>
         <script src="/static/JS/index.js"></script>
     </div>
-                    <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
-                        <i class="material-icons">
-                            close
-                        </i>
-                    </a>
-                </form>
-            </div>
-        </section>
-        <section class="actu">
-            
-            {{range .Posts}}
-            {{if eq .Id -1}}
-                <p>No post Yet</p>
-            {{else}}
-                <article class="post{{.Id}}">
-                    <h2>{{.Title}}</h2>
-                    <p>{{.Content}}</p>
-                    <p class="tags">{{.Tags}}</p>
-                    <p class="author">By {{.Author}}</p>
-                    {{if .user.IsLoggedIn}}
-                        <button class="likeButton" data-post-id="{{.Id}}" >👍</button>
-                        <button  class="dislikeButton" data-post-id="{{.Id}}">👎</button>
-                    {{end}}
-                    <p id="likeCount{{.Id}}">{{.Likes}}</p>
-                    <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
-                </article>
-                <br>
-            {{end}}
-            {{end}}
-        </section>
-    </main>
-<script src="/static/JS/index.js"></script>
 </body>
 </html>

@@ -474,6 +474,7 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		newdata := FinalData{data, displayPost(w)}
+		fmt.Println(newdata.UserInfo.IsLoggedIn)
 		tmpl.Execute(w, newdata)
 		return
 	} else if ok {
