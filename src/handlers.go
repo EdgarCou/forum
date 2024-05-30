@@ -86,6 +86,23 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err4)
 	}
 
+	var err5 error
+	_, err5 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS comments (
+		content TEXT NOT NULL,
+		author TEXT NOT NULL,
+		idpost INTEGER,
+		FOREIGN KEY (author) REFERENCES utilisateurs(username)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+		FOREIGN KEY (idpost) REFERENCES posts(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+	)`)
+
+	if err5 != nil {
+		log.Fatal(err5)
+	}
+
 	session, _ := store.Get(r, "session")
 	username, ok := session.Values["username"]
 
