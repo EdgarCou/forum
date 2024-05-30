@@ -36,6 +36,7 @@ type FinalData struct {
 
 
 func AddNewPost(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
 	//println("addNewPost")
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "templates/index.html")
@@ -90,6 +91,7 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func AjouterPostinDb(title string, content string, tags string, author string) error {
+	db = OpenDb()
 	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author) VALUES (?, ?, ?, ?)`,
 		title, content, tags, author)
 	if err != nil {
@@ -99,6 +101,7 @@ func AjouterPostinDb(title string, content string, tags string, author string) e
 }
 
 func DisplayPost(w http.ResponseWriter) []Post {
+	db = OpenDb()
 	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)

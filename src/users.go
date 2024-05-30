@@ -8,6 +8,7 @@ import (
 
 
 func AjouterUtilisateur(username, email, password, profilePicture string) error {
+	db = OpenDb()
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -22,6 +23,7 @@ func AjouterUtilisateur(username, email, password, profilePicture string) error 
 }
 
 func VerifierUtilisateur(username, password string) error {
+	db = OpenDb()
 	var passwordDB string
 	err := db.QueryRowContext(context.Background(), "SELECT password FROM utilisateurs WHERE username = ?", username).Scan(&passwordDB)
 	if err != nil {

@@ -17,6 +17,7 @@ var upgrader = websocket.Upgrader{
 func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	username, _ := session.Values["username"]
+	db = OpenDb()
 
 	for {
 		messageType, p, err := conn.ReadMessage()

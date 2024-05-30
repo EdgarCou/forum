@@ -26,6 +26,55 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+
+	_, err := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS utilisateurs (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		username TEXT NOT NULL UNIQUE,
+		email TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL,
+		profile_picture TEXT
+		)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var err2 error
+	_, err2 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS posts (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT NOT NULL,
+		content TEXT NOT NULL,
+		tags TEXT,
+		author TEXT NOT NULL,
+		likes INTEGER DEFAULT 0,
+		dislikes INTEGER DEFAULT 0,
+		FOREIGN KEY (author) REFERENCES utilisateurs(username)
+		ON DELETE CASCADE
+    	ON UPDATE CASCADE
+		)`)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	var err3 error
+	_, err3 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS likedBy (
+		username TEXT,
+		idpost INTEGER,
+		type BOOLEAN,
+		PRIMARY KEY (username, idpost, type),
+		FOREIGN KEY (username) REFERENCES utilisateurs(username)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+		FOREIGN KEY (idpost) REFERENCES posts(id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+		)`)
+
+	if err3 != nil {
+		log.Fatal(err3)
+	}
+
+
 	session, _ := store.Get(r, "session")
 	username, ok := session.Values["username"]
 
@@ -114,6 +163,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
 	username := r.URL.Query().Get("username")
 	if username == "" {
 		http.Error(w, "Utilisateur non spécifié", http.StatusBadRequest)
@@ -180,7 +230,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func ForumHandler(w http.ResponseWriter, r *http.Request) {
-
+	db = OpenDb()
 	session, _ := store.Get(r, "session")
 	username, ok := session.Values["username"]
 
@@ -218,6 +268,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func MembersHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
 	session, _ := store.Get(r, "session")
 	username, ok := session.Values["username"]
 
@@ -254,6 +305,7 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
 	session, _ := store.Get(r, "session")
 	username, ok := session.Values["username"]
 

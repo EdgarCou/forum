@@ -9,10 +9,11 @@ function togglePopup(){
 }
 
 
-var socket = new WebSocket("ws://localhost:8081/ws");
+var socket = new WebSocket("ws://localhost:8080/ws");
 
 socket.onopen = function(event) {
-    console.log("Connection established");
+    console.log("WebSocket is open now.");
+    setupEventListeners();
 };
 
 socket.onmessage = function(event) {
@@ -46,23 +47,24 @@ socket.onmessage = function(event) {
     
 };
 
-var likeButtons = document.getElementsByClassName("likeButton");
-for (var i = 0; i < likeButtons.length; i++) {
-    likeButtons[i].addEventListener("click", function(event) {
-        event.preventDefault();
-        var postId = this.getAttribute("data-post-id");
-        socket.send("like:"+postId);
+function setupEventListeners() {
+    var likeButtons = document.getElementsByClassName("likeButton");
+    for (var i = 0; i < likeButtons.length; i++) {
+        likeButtons[i].addEventListener("click", function(event) {
+            event.preventDefault();
+            var postId = this.getAttribute("data-post-id");
+            socket.send("like:"+postId);
+        });
+    }
 
-    });
-}
-
-var dislikeButtons = document.getElementsByClassName("dislikeButton");
-for (var i = 0; i < dislikeButtons.length; i++) {
-    dislikeButtons[i].addEventListener("click", function(event) {
-        event.preventDefault();
-        var postId = this.getAttribute("data-post-id");
-        socket.send("dislike:"+postId);
-    });
+    var dislikeButtons = document.getElementsByClassName("dislikeButton");
+    for (var i = 0; i < dislikeButtons.length; i++) {
+        dislikeButtons[i].addEventListener("click", function(event) {
+            event.preventDefault();
+            var postId = this.getAttribute("data-post-id");
+            socket.send("dislike:"+postId);
+        });
+    }
 }
 
 socket.onerror = function(event) {
