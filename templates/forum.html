@@ -48,6 +48,14 @@
             </div>
         </header>
         <main>
+            <form action="/sort">
+                <label for="sort">
+                    <button type="submit" name="sort" value="oldest">oldest post</button>
+                    <button type="submit" name="sort" value="newest">newest post</button>
+                    <button type="submit" name="sort" value="mostLiked">most liked</button>
+                    <button type="submit" name="sort" value="mostDisliked">most disliked</button>
+                </label>
+            </form>
             {{if .UserInfo.IsLoggedIn}}
                 <button id="buttonPost" onclick="newPostPopUp()"> Add new post</button>
             {{end}}
@@ -88,7 +96,9 @@
             </section>
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
+                {{$Comments := .Comments}}
                 {{range .Posts}}
+                {{ $currentPostId := .Id }}
                 {{if eq .Id -1}}
                     <p>No post Yet</p>
                 {{else}}
@@ -123,10 +133,26 @@
                                     <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
                                 </div>
                                 <div class="comment-zone">
-                                    <button class=" commentButton forum-btn" data-post-id="/"><i class="material-icons">
-                                        chat
-                                    </i></button>
-                                    <p id="commentCount">5</p>
+                                    {{if $UserInfo.IsLoggedIn}}
+                                        <button id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                            chat
+                                        </i></button>
+                                    {{end}}
+                                    <section class="comments{{$currentPostId}}" style="display: none;">
+                                        <div id="wrapper">
+                                            <form action="/CreateComment" id="createcomment" method="POST">
+                                                <h4>Create new comment</h4>
+                                                <textarea name="comment" id="textComment"></textarea>
+                                                <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                                <button type="submit">Add comment</button>
+                                            </form>
+                                            <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
+                                            <i class="material-icons">
+                                                close
+                                            </i>
+                                            </a>
+                                        </div>
+                                    </section>
                                 </div>
                             </div>
                         </div>
@@ -139,6 +165,17 @@
                             </i></button>
                             <p class="tags">{{.Tags}}</p>
                         </div>
+                        {{ $currentPostId := .Id }}
+                        <section class="comments{{$currentPostId}}">
+                            {{range $Comments}}
+                                {{if eq .Idpost $currentPostId}}
+                                    <div class="comment">
+                                        <p>{{.Author}}</p>
+                                        <p>{{.Content}}</p>
+                                    </div>
+                                {{end}}
+                            {{end}}
+                        </section> 
                     </article>
                     <br>
                 {{end}}

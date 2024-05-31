@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
+	//"time"
 )
 
 var db *sql.DB
@@ -31,6 +32,7 @@ type Post struct {
 	Author   string
 	Likes    int
 	Dislikes int
+	Date     string
 }
 
 type FinalData struct {
@@ -57,6 +59,8 @@ func main() {
 	http.HandleFunc("/createPost", forum.AddNewPost)
 	http.HandleFunc("/about", forum.AboutHandler)
 	http.HandleFunc("/ws", forum.WsHandler)
+	http.HandleFunc("/CreateComment", forum.CommentHandler)
+	http.HandleFunc("/sort", forum.SortHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server is listening on port 8080")

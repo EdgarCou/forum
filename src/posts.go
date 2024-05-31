@@ -3,10 +3,17 @@ package forum
 import (
 	"context"
 	"database/sql"
-	"github.com/gorilla/sessions"
+
+	//"fmt"
 	"html/template"
 	"log"
 	"net/http"
+
+	"sort"
+	"time"
+
+	"github.com/gorilla/sessions"
+	//"golang.org/x/text/date"
 )
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
@@ -29,12 +36,21 @@ type Post struct {
 	Author   string
 	Likes    int
 	Dislikes int
+	Date     string
+}
+
+type Comment struct {
+	Content string
+	Author  string
+	Idpost  int
 }
 
 type FinalData struct {
 	UserInfo UserInfo
 	Posts    []Post
+	Comments []Comment
 }
+
 
 func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
@@ -48,7 +64,7 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "session")
 		author := session.Values["username"].(string)
 		println((author))
-		err := AjouterPostinDb(title, content, tags, author)
+		err := AddPostInDb(title, content, tags, author)
 		if err != nil {
 			println(err.Error())
 		} else {
@@ -70,7 +86,7 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
 					return
 				}
-				newdata := FinalData{data, DisplayPost(w)}
+				newdata := FinalData{data, DisplayPost(w),DisplayCommments(w)}
 				tmpl.Execute(w, newdata)
 				return
 			} else if ok {
@@ -85,16 +101,17 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 				data.ProfilePicture = profilePicture
 			}
 
-			newData := FinalData{data, posts}
+			newData := FinalData{data, posts,DisplayCommments(w)}
 			tmpl.Execute(w, newData)
 		}
 	}
 }
 
-func AjouterPostinDb(title string, content string, tags string, author string) error {
+func AddPostInDb(title string, content string, tags string, author string) error {
 	db = OpenDb()
-	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author) VALUES (?, ?, ?, ?)`,
-		title, content, tags, author)
+	date := time.Now()
+	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author,date) VALUES (?, ?, ?, ?, ?)`,
+		title, content, tags, author, date)
 	if err != nil {
 		return err
 	}
@@ -103,7 +120,7 @@ func AjouterPostinDb(title string, content string, tags string, author string) e
 
 func DisplayPost(w http.ResponseWriter) []Post {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes, date FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
@@ -113,7 +130,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
@@ -121,8 +138,14 @@ func DisplayPost(w http.ResponseWriter) []Post {
 		posts = append(posts, inter)
 	}
 	if posts == nil {
-		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0})
+		date := time.Now()
+		date_string := date.Format("2006-01-02 15:04:05")
+		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string})
 	}
+
+	sort.Slice(posts, func(i, j int) bool {
+		return posts[i].Date > posts[j].Date
+	})
 
 	return posts
 }

@@ -3,9 +3,22 @@ function newPostPopUp(){
     document.querySelector('.posts').style.display = 'block';    
 }
 
+function newCommentPopUp(button){
+    button.style.display = 'none';
+    postId = button.getAttribute("data-post-id");
+    document.querySelector('.comments'+postId).style.display = 'block';
+}
+
 function togglePopup(){
     document.querySelector('#buttonPost').style.display = 'block';
     document.querySelector('.posts').style.display = 'none';
+}
+
+function togglePopup2(button){
+    button.style.display = 'block';
+    postId = button.getAttribute("data-post-id");
+    document.querySelector('.comments'+postId).style.display = 'none';
+    document.querySelector('#commentButton'+postId).style.display = 'block';
 }
 
 
