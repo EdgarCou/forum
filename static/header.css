@@ -9,6 +9,7 @@ header {
     align-items: center;
     border-bottom: 0.5px solid var(--light-grey);
     z-index: 1000;
+    
 }
 
 header a {
