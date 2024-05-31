@@ -5,14 +5,15 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+
 	//"time"
 	//"io"
 	"log"
 	"net/http"
+
 	//"os"
 	//"path/filepath"
 	"sort"
-	
 )
 
 var db *sql.DB
@@ -295,36 +296,25 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, newData)
 }
 
+func CheckUserInfo(w http.ResponseWriter, r *http.Request) UserInfo {
+    session, _ := store.Get(r, "session")
+    username, ok := session.Values["username"]
 
-func CheckUserInfo(w http.ResponseWriter, r *http.Request) UserInfo{
-	session, _ := store.Get(r, "session")
-	username, ok := session.Values["username"]
+    var data UserInfo
+    data.IsLoggedIn = ok
+    if ok {
+        var profilePicture string
+        err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+        if err != nil && err != sql.ErrNoRows {
+            http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+            return data
+        }
 
-	var data UserInfo
-	data.IsLoggedIn = ok
-	if !ok {
-		tmpl, err := template.ParseFiles("templates/index.html")
-		log.Println(err)
-		if err != nil {
-			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
-			return data
-		}
-		newdata := FinalData{data, DisplayPost(w), DisplayCommments(w)}
-		tmpl.Execute(w, newdata)
-		return data
-	} else if ok {
-		var profilePicture string
-		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-		if err != nil && err != sql.ErrNoRows {
-			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
-			return data
-		}
+        data.Username = username.(string)
+        data.ProfilePicture = profilePicture
+    }
 
-		data.Username = username.(string)
-		data.ProfilePicture = profilePicture
-	}
-
-	return data
+    return data
 }
 
 func SortHandler(w http.ResponseWriter, r *http.Request) {
@@ -374,40 +364,14 @@ func SortHandler(w http.ResponseWriter, r *http.Request) {
 
 	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w)}
 
-
 	tmpl.Execute(w, newData)
 }
 
 func RGPDHandler(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session")
-	username, ok := session.Values["username"]
-
-	var data UserInfo
-	data.IsLoggedIn = ok
-	if !ok {
-		tmpl, err := template.ParseFiles("templates/RGPD.html")
-		log.Println(err)
-		if err != nil {
-			http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
-			return
-		}
-		tmpl.Execute(w, data)
-		return
-	} else if ok {
-		var profilePicture string
-		err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-		if err != nil && err != sql.ErrNoRows {
-			http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
-			return
-		}
-
-		data.Username = username.(string)
-		data.ProfilePicture = profilePicture
-	}
 	tmpl, err := template.ParseFiles("templates/RGPD.html")
 	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
+		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(w, data)
+	tmpl.Execute(w, nil)
 }
