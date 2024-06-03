@@ -355,12 +355,9 @@ func SortHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
-		return
+	if rows != nil {
+		defer rows.Close()
 	}
-
-	defer rows.Close()
 
 	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w)}
 
