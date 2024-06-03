@@ -131,13 +131,12 @@
                                     </i></button>
                                     {{end}}
                                     <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
+                                    <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
+                                        chat
+                                    </i></button>
+                                    <p id="commentCount">{{.Comments}}</p>
                                 </div>
                                 <div class="comment-zone">
-                                    {{if $UserInfo.IsLoggedIn}}
-                                        <button id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
-                                            chat
-                                        </i></button>
-                                    {{end}}
                                     <section class="comments{{$currentPostId}}" style="display: none;">
                                         <div id="wrapper">
                                             <form action="/CreateComment" id="createcomment" method="POST">
@@ -160,9 +159,11 @@
                         <h2>{{.Title}}</h2>
                         <p class="post-content">{{.Content}}</p>
                         <div class="bot-post">
-                            <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
-                                chat
-                            </i></button>
+                            {{if $UserInfo.IsLoggedIn}}
+                                <button id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                    chat
+                                </i></button>
+                            {{end}}
                             <p class="tags">{{.Tags}}</p>
                         </div>
                         {{ $currentPostId := .Id }}

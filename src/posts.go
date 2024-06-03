@@ -37,6 +37,7 @@ type Post struct {
 	Likes    int
 	Dislikes int
 	Date     string
+	Comments int
 }
 
 type Comment struct {
@@ -120,7 +121,7 @@ func AddPostInDb(title string, content string, tags string, author string) error
 
 func DisplayPost(w http.ResponseWriter) []Post {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes, date FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes, date, comments FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
@@ -130,7 +131,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
@@ -140,7 +141,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	if posts == nil {
 		date := time.Now()
 		date_string := date.Format("2006-01-02 15:04:05")
-		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string})
+		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0})
 	}
 
 	sort.Slice(posts, func(i, j int) bool {

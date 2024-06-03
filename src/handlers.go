@@ -55,9 +55,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		likes INTEGER DEFAULT 0,
 		dislikes INTEGER DEFAULT 0,
 		date TEXT,
+		comments INTEGER DEFAULT 0,
 		FOREIGN KEY (author) REFERENCES utilisateurs(username)
 		ON DELETE CASCADE
     	ON UPDATE CASCADE
+		
 		)`)
 	if err2 != nil {
 		log.Fatal(err2)
