@@ -53,7 +53,7 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w),DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w),DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 

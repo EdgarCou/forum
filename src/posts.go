@@ -46,10 +46,15 @@ type Comment struct {
 	Idpost  int
 }
 
+type Topics struct {
+	Title string
+}
+
 type FinalData struct {
 	UserInfo UserInfo
 	Posts    []Post
 	Comments []Comment
+	Topics   []Topics
 }
 
 
@@ -87,7 +92,7 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
 					return
 				}
-				newdata := FinalData{data, DisplayPost(w),DisplayCommments(w)}
+				newdata := FinalData{data, DisplayPost(w),DisplayCommments(w), DisplayTopics(w)}
 				tmpl.Execute(w, newdata)
 				return
 			} else if ok {
@@ -102,7 +107,7 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 				data.ProfilePicture = profilePicture
 			}
 
-			newData := FinalData{data, posts,DisplayCommments(w)}
+			newData := FinalData{data, posts,DisplayCommments(w), DisplayTopics(w)}
 			tmpl.Execute(w, newData)
 		}
 	}

@@ -116,7 +116,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
 		return
 	}
-	totalData := FinalData{data, DisplayPost(w), DisplayCommments(w)}
+	totalData := FinalData{data, DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, totalData)
 }
 
@@ -144,7 +144,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := UserInfo{}
-	newData := FinalData{data, DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{data, DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -272,7 +272,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 6", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -283,7 +283,7 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 7", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -294,7 +294,7 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -361,7 +361,7 @@ func SortHandler(w http.ResponseWriter, r *http.Request) {
 		defer rows.Close()
 	}
 
-	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w), DisplayTopics(w)}
 
 	tmpl.Execute(w, newData)
 }
