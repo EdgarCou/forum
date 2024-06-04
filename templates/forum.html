@@ -49,18 +49,19 @@
         </header>
         <main>
             <form action="/sort">
-                <label for="sort">
-                    <button type="submit" name="sort" value="oldest">oldest post</button>
-                    <button type="submit" name="sort" value="newest">newest post</button>
-                    <button type="submit" name="sort" value="mostLiked">most liked</button>
-                    <button type="submit" name="sort" value="mostDisliked">most disliked</button>
-                    <button type="submit" name="sort" value="A-Z">A-Z</button>
-                    <button type="submit" name="sort" value="Z-A">Z-A</button>
-
+                <label for="sort" class="deroulant"> Sort by:
+                    <ul class="sous">
+                        <li><button type="submit" name="sort" value="oldest">oldest post</button></li>
+                        <li><button type="submit" name="sort" value="newest">newest post</button></li>
+                        <li><button type="submit" name="sort" value="mostLiked">most liked</button></li>
+                        <li><button type="submit" name="sort" value="mostDisliked">most disliked</button></li>
+                        <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
+                        <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
+                    </ul>
                 </label>
             </form>
             {{if .UserInfo.IsLoggedIn}}
-                <button id="buttonPost" onclick="newPostPopUp()"> Add new post</button>
+                <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
             {{end}}
             <section class="posts">
                 <div id="wrapper">
