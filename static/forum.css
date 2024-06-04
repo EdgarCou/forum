@@ -171,3 +171,13 @@ article .tags{
     align-items: center;
     margin-bottom: 10px;
 }
+
+
+.topics{
+    display: none;
+}
+
+
+.commentArea{
+    display: none;
+}

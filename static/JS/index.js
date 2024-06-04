@@ -21,6 +21,25 @@ function togglePopup2(button){
     document.querySelector('#commentButton'+postId).style.display = 'block';
 }
 
+function togglePopup3(){
+    document.querySelector(".topics").style.display = 'none';
+}
+
+function newTopicPopup(){
+    document.querySelector("#buttonTopic").style.display = 'none';
+    document.querySelector(".topics").style.display = 'block';
+}   
+
+function displayComments(button){
+    postId = button.getAttribute("data-post-id");
+    document.querySelector('#comments'+postId).style.display = 'block';
+    button.onclick = function(){
+        document.querySelector('#comments'+postId).style.display = 'none';
+        button.onclick = function(){
+            displayComments(button);
+        }
+    }
+}
 
 var socket = new WebSocket("ws://localhost:8080/ws");
 

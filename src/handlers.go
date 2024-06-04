@@ -55,9 +55,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		likes INTEGER DEFAULT 0,
 		dislikes INTEGER DEFAULT 0,
 		date TEXT,
+		comments INTEGER DEFAULT 0,
 		FOREIGN KEY (author) REFERENCES utilisateurs(username)
 		ON DELETE CASCADE
     	ON UPDATE CASCADE
+		
 		)`)
 	if err2 != nil {
 		log.Fatal(err2)
@@ -114,7 +116,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
 		return
 	}
-	totalData := FinalData{data, DisplayPost(w), DisplayCommments(w)}
+	totalData := FinalData{data, DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, totalData)
 }
 
@@ -142,7 +144,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := UserInfo{}
-	newData := FinalData{data, DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{data, DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -270,7 +272,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 6", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -281,7 +283,7 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 7", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -292,7 +294,7 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur de lecture du fichier HTML 8", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
@@ -365,14 +367,11 @@ func SortHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
-		return
+	if rows != nil {
+		defer rows.Close()
 	}
 
-	defer rows.Close()
-
-	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w), DisplayTopics(w)}
 
 	tmpl.Execute(w, newData)
 }

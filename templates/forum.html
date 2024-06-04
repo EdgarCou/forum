@@ -62,6 +62,7 @@
             </form>
             {{if .UserInfo.IsLoggedIn}}
                 <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
+                <button id="buttonTopic" onclick="newTopicPopup()">Add new topic</button>
             {{end}}
             <section class="posts">
                 <div id="wrapper">
@@ -77,10 +78,9 @@
 
                         <label for="tags">Categorie(s)</label>
                         <select id="tags" name="tags" required>
-                            <option value="">Select a category</option>
-                            <option value="category1">Category 1</option>
-                            <option value="category2">Category 2</option>
-                            <option value="category3">Category 3</option>
+                            {{range .Topics}}
+                                <option value="{{.Title}}">{{.Title}}</option>
+                            {{end}}
                         </select>
                         <br>
                     
@@ -91,6 +91,22 @@
                         <button type="submit" class="btn-login"> Post </button>
 
                         <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
+                            <i class="material-icons">
+                                close
+                            </i>
+                        </a>
+                    </form>
+                </div>
+            </section>
+            <section class="topics">
+                <div id="wrapperTopic">
+                    <form action="/addTopic" method="POST">
+                        <h1>Create new topic</h1>
+                        <label for="topic">Topic</label>
+                        <input type="text" id="topic" name="topic" required>
+                        <br>
+                        <button type="submit" class="btn-login">Add topic </button>
+                        <a href="javascript:void(0)" onclick="togglePopup3()" class="popup-exit">
                             <i class="material-icons">
                                 close
                             </i>
@@ -136,12 +152,10 @@
                                     </i></button>
                                     {{end}}
                                     <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
-                                </div>
-                                <div class="disliked-zone">
                                     <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
                                         chat
                                     </i></button>
-                                    <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
+                                    <p id="commentCount">{{.Comments}}</p>
                                 </div>
                                 <div class="comment-zone">
                                     <section class="comments{{$currentPostId}}" style="display: none;">
@@ -167,14 +181,14 @@
                         <p class="post-content">{{.Content}}</p>
                         <div class="bot-post">
                             {{if $UserInfo.IsLoggedIn}}
-                                <button id="commentButton{{$currentPostId}}" class="forum-btn" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                <button id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                     chat
                                 </i></button>
                             {{end}}
                             <p class="tags">{{.Tags}}</p>
                         </div>
-                        {{ $currentPostId := .Id }}
-                        <section class="comments{{$currentPostId}}">
+                        <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
+                        <section class="commentArea" id="comments{{$currentPostId}}">
                             {{range $Comments}}
                                 {{if eq .Idpost $currentPostId}}
                                     <div class="comment">
@@ -190,7 +204,7 @@
                 {{end}}
             </section>
         </main>
-        <script src="/static/JS/index.js"></script>
     </div>
+    <script src="/static/JS/index.js"></script>
 </body>
 </html>

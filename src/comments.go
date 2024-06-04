@@ -53,14 +53,22 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w),DisplayCommments(w)}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w),DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
 
-func AddCommentInDb(content, author, id string) error {
+func AddCommentInDb(content, author, id string) error{
 	_, err := db.ExecContext(context.Background(), "INSERT INTO comments (content, author, idpost) VALUES (?, ?, ?)", content, author, id)
-	return err
+	_,err2 := db.ExecContext(context.Background(), "UPDATE posts SET comments = comments + 1 WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+	if err2 != nil {
+		return err2
+	}
+
+	return nil
 }
 
 func DisplayCommments(w http.ResponseWriter) []Comment {
