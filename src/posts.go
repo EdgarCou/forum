@@ -135,11 +135,12 @@ func DisplayPost(w http.ResponseWriter) []Post {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
 		}
+		inter.Date = inter.Date[:16]
 		posts = append(posts, inter)
 	}
 	if posts == nil {
 		date := time.Now()
-		date_string := date.Format("2006-01-02 15:04:05")
+		date_string := date.Format("01-02-2024 15:04")
 		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string})
 	}
 

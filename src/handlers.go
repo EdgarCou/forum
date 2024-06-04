@@ -350,6 +350,16 @@ func SortHandler(w http.ResponseWriter, r *http.Request) {
 		sort.Slice(posts, func(i, j int) bool {
 			return posts[i].Date < posts[j].Date
 		})
+	}else if sortType == "A-Z" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Title < posts[j].Title
+		})
+	}else if sortType == "Z-A" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Title > posts[j].Title
+		}) 
 	} else {
 		http.Error(w, "Tri invalide", http.StatusBadRequest)
 		return
