@@ -48,18 +48,23 @@
             </div>
         </header>
         <main>
-            <form action="/sort">
-                <label for="sort" class="deroulant"> Sort by:
-                    <ul class="sous">
-                        <li><button type="submit" name="sort" value="oldest">oldest post</button></li>
-                        <li><button type="submit" name="sort" value="newest">newest post</button></li>
-                        <li><button type="submit" name="sort" value="mostLiked">most liked</button></li>
-                        <li><button type="submit" name="sort" value="mostDisliked">most disliked</button></li>
-                        <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
-                        <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
-                    </ul>
-                </label>
-            </form>
+            <div class="dropdown">
+                <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by:</button>
+                <form action="/sort">
+                    <label for="sort">
+                            <div id="myDropdown" class="dropdown-content">
+                                <ul>
+                                <li> <button type="submit" name="sort" value="oldest">oldest post</button></li>
+                                <li><button type="submit" name="sort" value="newest">newest post</button></li>
+                                <li><button type="submit" name="sort" value="mostLiked">most liked</button></li>
+                                <li><button type="submit" name="sort" value="mostDisliked">most disliked</button></li>
+                                <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
+                                <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
+                                </ul>
+                            </div>
+                    </label>
+                </form>
+            </div>  
             {{if .UserInfo.IsLoggedIn}}
                 <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
             {{end}}
@@ -190,7 +195,7 @@
                 {{end}}
             </section>
         </main>
-        <script src="/static/JS/index.js"></script>
     </div>
+    <script src="/static/JS/index.js"></script>
 </body>
 </html>

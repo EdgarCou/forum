@@ -21,6 +21,16 @@ function togglePopup2(button){
     document.querySelector('#commentButton'+postId).style.display = 'block';
 }
 
+function myDropdownFunc(button) {
+    document.getElementById("myDropdown").style.display = "block";
+    button.onclick = function() {
+        document.getElementById("myDropdown").style.display = "none";
+        button.onclick = function() {
+            myDropdownFunc(button);
+        }
+    }
+  }
+
 
 var socket = new WebSocket("ws://localhost:8080/ws");
 
