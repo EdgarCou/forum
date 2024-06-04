@@ -62,6 +62,7 @@ func main() {
 	http.HandleFunc("/CreateComment", forum.CommentHandler)
 	http.HandleFunc("/sort", forum.SortHandler)
 	http.HandleFunc("/RGPD", forum.RGPDHandler)
+	http.HandleFunc("/addTopic", forum.AddTopicHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Println("Server is listening on port 8080")
