@@ -1,10 +1,146 @@
+main {
+    margin-top: 8%;
+}
+
 .forum-link {
     text-decoration: underline;
     text-underline-offset: 0.3em;
 }
+
+#buttonPost {
+    border-radius: 5px;
+    background-color: rgb(217, 217, 217, 0.05);
+    color: var(--light-grey);
+    border: none;
+    outline: 0.5px solid var(--light-grey);
+    padding: 0.25% 1.25%;
+    cursor: pointer;
+}
+
+
+
+
+
 .posts{
     display: none;
 }
+
+
+
+.actu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 5%;
+}
+
+article {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: rgb(217, 217, 217, 0.05);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    outline: 0.5px solid var(--light-grey);
+    color: var(--light-grey);
+}
+
+.top-post{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.like-com-zone{
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 5%;
+}
+
+.liked-zone, .disliked-zone, .comment-zone { 
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.liked-zone .material-icons, .disliked-zone .material-icons, .comment-zone .material-icons { 
+    font-size: 1.25em;
+    color:rgb(217, 217, 217, 0.5) ;
+}
+
+.liked-zone p, .disliked-zone p, .comment-zone p { 
+    margin: 0;
+}
+
+.forum-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+
+.author{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-left: 10%;
+}
+
+article h2{
+    margin-left: 5%;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+article .post-content{
+    width: 85%;
+    padding: 1%;
+    margin: 0 auto 5%;
+    font-weight: normal;
+    border-radius: 5px;
+    outline: 0.5px solid var(--light-grey);
+}
+
+article .tags{
+    margin: 0 80% 2%;
+}
+
+.line{
+    margin-right: 60%;
+    height: 0.5px;
+    background-color: var(--light-grey);
+}
+
+.bot-post{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 5%;
+    margin-bottom: 2%;
+}
+
+.bot-post .material-icons{
+    font-size: 1.5em;
+    color:rgb(217, 217, 217, 0.5);
+}
+
+
+
+
+
+
+
+
+
 
 #wrapper{
     display: block;
@@ -34,4 +170,14 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+}
+
+
+.topics{
+    display: none;
+}
+
+
+.commentArea{
+    display: none;
 }

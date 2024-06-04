@@ -1,94 +1,140 @@
-body {
-    font-family: 'Alatsi', sans-serif;
-    margin: 3%;
-    background-color: black;
-    background-size: cover;
-    background-repeat: no-repeat;
+main {
+    display: flex;
+    align-items: center;
+    gap: 10%;
 }
 
-#signup-wrapper {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    margin-top: 5%;
-    width: 420px;
-    border: 1px solid rgb(255, 255, 255, 0.3);
-    background-color: rgba(5, 5, 5, 0.3);
-    -webkit-backdrop-filter: blur(15px);
-    backdrop-filter: blur(15px);
-    color:white;
-    border-radius: 10px;
-    padding: 30px 40px;
-    z-index: 1;
-}  
+/* Left part */
 
-#signup-wrapper h1 {
-    font-size: 3rem;
+.welcome-side {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.welcome-side h1 {
+    padding: 0;
+    font-size: 5em;
+    margin-left: 5%;
+}
+
+.welcome-side p {
+    font-size: 1.2em;
+    margin-left: 7.5%;
+}
+
+.social-media {
+    margin-top: 32.5%;
+    margin-left: 5%;
+}
+
+.social-media a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-right: 10px;
+    transition: .5s;
+}
+
+.social-media a:hover {
+    background: #ffffff;
+}
+
+.social-media a i {
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.social-media a:hover i {
+    color: var(--black);
+}
+
+
+/* Right part */
+
+.connexion-side {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.connexion-side a {
+    color: #A0A0A0;
+    text-decoration: none;
+}
+
+#signupForm {
+    color: white;
+}
+
+#signupForm h1 {
+    text-align: center;
+    font-size: 3em;
+}
+
+#signupForm input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--grey);
+    border-radius: 5px;
+    background: var(--bg);
+    background-color: rgb(217, 217, 217, 0.05);
+    color: white;
+}
+
+#signupForm input::placeholder {
+    color: var(--grey);
+}
+
+#signupForm button {
+    align-items: center;
+    width: 40%;
+    padding: 10px;
+    margin: auto;
+    border: none;
+    border-radius: 5px;
+    background: var(--blue);
+    color: white;
+    cursor: pointer;
+    display: block;
+}
+
+#signupForm button:hover {
+    background: var(--bg);
+    outline: 1px solid var(--blue);
+}
+
+h4 {
+    font-size: 0.75em;
+    color: var(--grey);
+    margin-top: 20px;
+    text-align: center;
+    margin: 10% auto auto auto;
+    width: 70%;
+}
+
+#signupForm p {
+    color: var(--grey);
+    margin-top: 20px;
     text-align: center;
 }
 
-.text-signup {
-    font-size: 1.2rem;
-    text-align: center;
+#signupForm p a {
+    color: var(--blue);
+    text-decoration: underline;
 }
 
-
-
-/* Styles pour les téléphones */
-@media screen and (max-width: 767px) {
-    body {
-        margin: 0;
-    }
-
-    .GT-logo-signup {
-        width: 100px;
-        height: 100px;
-    }
-
-    #signup-wrapper {
-        width: 60%;
-    }
-
-    #signup-wrapper h1 {
-        font-size: 2rem;
-    }
-
-    .input-box-login {
-        margin: 10px 0;
-    }
-
-    .input-box-login input {
-        height: 40px;
-    }
-
-    .btn-login {
-        height: 40px;
-        font-size: 1rem;
-    }
-}
-
-/* Styles pour les tablettes */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-    .GT-logo-signup {
-        width: 120px;
-        height: 120px;
-    }
-
-    #signup-wrapper {
-        width: 70%;
-    }
-
-    #signup-wrapper h1 {
-        font-size: 2.5rem;
-    }
-
-    .input-box-login input {
-        height: 50px;
-    }
-
-    .btn-login {
-        height: 50px;
-        font-size: 1.2rem;
-    }
+.input-box-login {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
 }
