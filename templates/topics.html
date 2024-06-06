@@ -55,11 +55,27 @@
                 <a href="/myPosts">My posts</a>
             </div>
             <div class="categories">
+                {{$Posts := .Posts}}
+                {{$Topics := .Topics}}
                 {{range .Topics}}
-                <div class="{{.Title}}">
-                    <h1>{{.Title}}</h1>
-                    <p>{{.NbPost}} post of this topic</p>
-                </div>   
+                {{$currentTopicTitle := .Title}}
+                    <div class="{{.Title}}">
+                        <h1>{{.Title}}</h1>
+                        <p>{{.NbPost}} post of this topic</p>
+                        <button id="{{.Title}}" onclick="displayTopicPosts(this)">View the posts</button>
+                    </div>
+                    <div class="postTopic" id="post_{{.Title}}">
+                    {{range $Posts}}
+                        {{if eq $currentTopicTitle .Topics}}
+                            <div class="post" id="{{.Id}}">
+                                <h2>{{.Title}}</h2>
+                                <p>{{.Content}}</p>
+                                <p>By {{.Author}} the {{.Date}}</p>
+                            </div>
+                        {{end}}
+                    {{end}}
+                    </div>
+                    
                 {{end}}
             </div>
         </main> 

@@ -2,7 +2,12 @@
     display: grid; 
     align-items: center;
     grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto;
     grid-gap: 1rem;
     margin: 1rem 0;
     color: white;
+}
+
+.postTopic{
+    display: none;
 }

@@ -116,3 +116,14 @@ socket.onerror = function(event) {
 socket.onclose = function(event) {
     console.log("WebSocket is closed now.", event);
 };
+
+function displayTopicPosts(button){
+    topicId = button.getAttribute("id");
+    document.querySelector('#post_'+topicId).style.display = 'block';
+    button.onclick = function(){
+        document.querySelector('#post_'+topicId).style.display = 'none';
+        button.onclick = function(){
+            displayTopicPosts(button);
+        }
+    }
+}
