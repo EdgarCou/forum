@@ -49,15 +49,15 @@
         </header>
         <main>
             <div class="dropdown">
-                <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by:</button>
+                <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sort">
                     <label for="sort">
                             <div id="myDropdown" class="dropdown-content">
                                 <ul>
-                                <li> <button type="submit" name="sort" value="oldest">oldest post</button></li>
-                                <li><button type="submit" name="sort" value="newest">newest post</button></li>
-                                <li><button type="submit" name="sort" value="mostLiked">most liked</button></li>
-                                <li><button type="submit" name="sort" value="mostDisliked">most disliked</button></li>
+                                <li><button type="submit" name="sort" value="oldest">Oldest post</button></li>
+                                <li><button type="submit" name="sort" value="newest">Newest post</button></li>
+                                <li><button type="submit" name="sort" value="mostLiked">Most liked</button></li>
+                                <li><button type="submit" name="sort" value="mostDisliked">Most disliked</button></li>
                                 <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
                                 <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
                                 </ul>
@@ -186,7 +186,7 @@
                         <p class="post-content">{{.Content}}</p>
                         <div class="bot-post">
                             {{if $UserInfo.IsLoggedIn}}
-                                <button id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                     chat
                                 </i></button>
                             {{end}}

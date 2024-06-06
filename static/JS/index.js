@@ -4,7 +4,6 @@ function newPostPopUp(){
 }
 
 function newCommentPopUp(button){
-    button.style.display = 'none';
     postId = button.getAttribute("data-post-id");
     document.querySelector('.comments'+postId).style.display = 'block';
 }
