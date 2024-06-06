@@ -3,7 +3,9 @@ package forum
 import (
 	"context"
 	"html/template"
+	"log"
 	"net/http"
+	"strings"
 )
 
 
@@ -36,10 +38,24 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func AddTopicInDb(topic string) error {
-	_, err := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
-	if err != nil {
-		return err
+	db = OpenDb()
+
+	topicInDb := AlreadyInDb()
+	found := false
+
+	for _, t := range topicInDb {
+		if strings.EqualFold(t, topic) {
+			found = true
+		}
 	}
+
+	if !found {
+		_,err := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
+		if err != nil {
+			return err
+		}
+	}
+	
 	return nil
 }
 
@@ -63,4 +79,42 @@ func DisplayTopics(w http.ResponseWriter) []Topics {
 		topics = append(topics, topic)
 	}
 	return topics
+}
+
+func InitTopics() {
+	db = OpenDb()
+	topics := []string{"Sport", "Music", "Cinema", "Science", "Technology", "Politics", "Economy", "Art", "Literature", "History", "Travel", "Cooking"}
+
+	topicsInDb := AlreadyInDb()
+	
+	if topicsInDb == nil {
+		for _, topic := range topics {
+			_, err := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+	}
+}
+
+func AlreadyInDb() []string {
+	db = OpenDb()
+	rows, err := db.QueryContext(context.Background(), "SELECT title FROM topics")
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	var topicsInDb []string
+	for rows.Next() {
+		var topic string
+		err := rows.Scan(&topic)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+		topicsInDb = append(topicsInDb, topic)
+	}
+	return topicsInDb
 }

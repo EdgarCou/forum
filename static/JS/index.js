@@ -10,7 +10,7 @@ function newCommentPopUp(button){
 }
 
 function togglePopup(){
-    document.querySelector('#buttonPost').style.display = 'block';
+    document.querySelector('#buttonPost').style.display = 'flex';
     document.querySelector('.posts').style.display = 'none';
 }
 

@@ -5,14 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-
-	//"time"
-	//"io"
 	"log"
 	"net/http"
-
-	//"os"
-	//"path/filepath"
 	"sort"
 )
 
@@ -89,6 +83,10 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		title TEXT NOT NULL
 	)`)
 
+	InitTopics()
+
+
+	
 	if err4 != nil {
 		log.Fatal(err4)
 	}
