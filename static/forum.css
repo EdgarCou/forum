@@ -17,55 +17,87 @@ main {
     cursor: pointer;
 }
 
-.dropbtn {
-    background-color: #04AA6D;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
+#buttonTopic {
+    border-radius: 5px;
+    background-color: rgb(217, 217, 217, 0.05);
+    color: var(--light-grey);
     border: none;
+    outline: 0.5px solid var(--light-grey);
+    padding: 0.25% 1.25%;
+    cursor: pointer;
+}
+
+#buttonPost:hover, #buttonTopic:hover {
+    background-color: rgb(217, 217, 217, 0.2);
+}
+
+/* Button  Filter */
+
+.dropbtn {
+    border-radius: 5px;
+    background-color: rgb(217, 217, 217, 0.05);
+    color: var(--light-grey);
+    border: none;
+    outline: 0.5px solid var(--light-grey);
     cursor: pointer;
   }
   
-  .dropbtn:hover, .dropbtn:focus {
-    background-color: #3e8e41;
-  }
-  
-  .dropdown {
+
+.dropdown {
+    margin-left: 1%;
     position: relative;
     display: inline-block;
   }
   
-  .dropdown-content {
+.dropdown-content {
+    margin-top: 15%;
     display: none;
     position: absolute;
-    background-color: #f6f6f6;
-    min-width: 230px;
+    background-color: rgb(217, 217, 217, 0.05);
+    min-width: 200%;
     overflow: auto;
-    border: 1px solid #ddd;
+    outline: 0.5px solid var(--light-grey);
+    border-radius: 5px;
     z-index: 1;
   }
-  
-  .dropdown-content button {
-    color: black;
-    padding: 12px 16px;
+
+.dropdown-content button {
+    color: var(--light-grey);
+    background-color: transparent;
     border:none;
     display: block;
-  }
+    cursor: pointer;
+}
   
-  .dropdown button:hover {
-      background-color: #ddd;
-      border:none
-      
-  }
+.dropdown button:hover {
+      border:none;
+}
 
+.dropdown:hover .dropdown-content {
+    display: block;
+}
 
+.dropdown-content ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
 
+.dropdown-content ul li {
+    padding: 0.5em;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.dropdown-content ul li:hover {
+    background-color: rgb(217, 217, 217, 0.1);
+}
+
+/* End Button  Filter */
 
 .posts{
     display: none;
 }
-
-
 
 .actu{
     display: flex;
@@ -99,7 +131,6 @@ article {
 
 .like-com-zone{
     display: flex;
-    gap: 10px;
     justify-content: space-between;
     align-items: center;
     margin: 0 5%;
@@ -126,6 +157,15 @@ article {
     cursor: pointer;
 }
 
+.btnForComment {
+    border-radius: 50%;
+    padding: 0.6%;
+    align-items: center;
+}
+
+.btnForComment:hover {
+    background-color: rgb(217, 217, 217, 0.1);
+}
 
 .author{
     display: flex;
@@ -217,6 +257,9 @@ article .tags{
     display: none;
 }
 
+.commentButton{
+    cursor: auto;
+}
 
 .commentArea{
     display: none;
