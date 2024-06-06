@@ -53,6 +53,114 @@
                 <a href="/allPost">All post</a>
                 <a href="/myPosts">My posts</a>
             </div>
+            <div class="dropdown">
+                <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
+                <form action="/sortMyPost">
+                    <label for="sort">
+                            <div id="myDropdown" class="dropdown-content">
+                                <ul>
+                                <li><button type="submit" name="sort" value="oldest">Oldest post</button></li>
+                                <li><button type="submit" name="sort" value="newest">Newest post</button></li>
+                                <li><button type="submit" name="sort" value="mostLiked">Most liked</button></li>
+                                <li><button type="submit" name="sort" value="mostDisliked">Most disliked</button></li>
+                                <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
+                                <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
+                                </ul>
+                            </div>
+                    </label>
+                </form>
+            </div>  
+            <section class="actu">
+                {{$UserInfo := .UserInfo}}
+                {{$Comments := .Comments}}
+                {{range .Posts}}
+                {{ $currentPostId := .Id }}
+                {{if eq .Id -1}}
+                    <p>No post Yet</p>
+                {{else}}
+                {{if eq .Author $UserInfo.Username}}
+                    <article class="post{{.Id}}">
+                        <div class="top-post">
+                            <p class="author">{{.Author}}</p>
+                            <p class="date">{{.Date}}</p>
+                            <div class="like-com-zone">
+                                <div class="liked-zone">
+                                    {{if $UserInfo.IsLoggedIn}}
+                                    <button class="likeButton forum-btn" data-post-id="{{.Id}}" ><i class="like-thumb material-icons" >
+                                        thumb_up
+                                    </i></button>
+                                    {{else}}
+                                    <button class="likeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="like-thumb
+                                        material-icons">
+                                        thumb_up
+                                    </i></button>
+                                    {{end}}
+                                    <p id="likeCount{{.Id}}">{{.Likes}}</p>
+                                </div>
+                                <div class="disliked-zone">
+                                    {{if $UserInfo.IsLoggedIn}}
+                                    <button class="dislikeButton forum-btn" data-post-id="{{.Id}}"><i class="dislike-thumb material-icons">
+                                        thumb_down
+                                    </i></button>
+                                    {{else}}
+                                    <button class="dislikeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="dislike-thumb
+                                        material-icons">
+                                        thumb_down
+                                    </i></button>
+                                    {{end}}
+                                    <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
+                                    <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
+                                        chat
+                                    </i></button>
+                                    <p id="commentCount">{{.Comments}}</p>
+                                </div>
+                                <div class="comment-zone">
+                                    <section class="comments{{$currentPostId}}" style="display: none;">
+                                        <div id="wrapper">
+                                            <form action="/CreateCommentForMyPost" id="createcommentformypost" method="POST">
+                                                <h4>Create new comment</h4>
+                                                <textarea name="comment" id="textComment"></textarea>
+                                                <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                                <button type="submit">Add comment</button>
+                                            </form>
+                                            <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
+                                            <i class="material-icons">
+                                                close
+                                            </i>
+                                            </a>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="line"></div>
+                        <h2>{{.Title}}</h2>
+                        <p class="post-content">{{.Content}}</p>
+                        <div class="bot-post">
+                            {{if $UserInfo.IsLoggedIn}}
+                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                    chat
+                                </i></button>
+                            {{end}}
+                            <p class="topics">{{.Topics}}</p>
+                        </div>
+                        <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
+                        <section class="commentArea" id="comments{{$currentPostId}}">
+                            {{range $Comments}}
+                                {{if eq .Idpost $currentPostId}}
+                                    <div class="comment">
+                                        <p>{{.Author}}</p>
+                                        <p>{{.Content}}</p>
+                                    </div>
+                                {{end}}
+                            {{end}}
+                        </section> 
+                    </article>
+                    <br>
+                {{end}}
+                {{end}}
+                {{end}}
+            </section>
         </main> 
     <script src="/static/JS/index.js"></script>
 </body>

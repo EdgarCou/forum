@@ -61,7 +61,7 @@ func AddTopicInDb(topic string) error {
 
 func DisplayTopics(w http.ResponseWriter) []Topics {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT title FROM topics")
+	rows, err := db.QueryContext(context.Background(), "SELECT title, nbpost FROM topics")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des topics", http.StatusInternalServerError)
 		return nil
@@ -71,7 +71,7 @@ func DisplayTopics(w http.ResponseWriter) []Topics {
 	var topics []Topics
 	for rows.Next() {
 		var topic Topics
-		err := rows.Scan(&topic.Title)
+		err := rows.Scan(&topic.Title, &topic.NbPost)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des topics", http.StatusInternalServerError)
 			return nil

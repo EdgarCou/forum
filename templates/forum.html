@@ -86,8 +86,8 @@
                         <textarea id="content" name="content" required></textarea>
                         <br>
 
-                        <label for="tags">Categorie(s)</label>
-                        <select id="tags" name="tags" required>
+                        <label for="topics">Categorie(s)</label>
+                        <select id="topics" name="topics" required>
                             {{range .Topics}}
                                 <option value="{{.Title}}">{{.Title}}</option>
                             {{end}}
@@ -195,7 +195,7 @@
                                     chat
                                 </i></button>
                             {{end}}
-                            <p class="tags">{{.Tags}}</p>
+                            <p class="topics">{{.Topics}}</p>
                         </div>
                         <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
                         <section class="commentArea" id="comments{{$currentPostId}}">

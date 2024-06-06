@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/topics.css">
     <title>Forum</title>
 </head>
 <body>
@@ -52,6 +53,14 @@
                 <a href="/allTopics">Topics</a>
                 <a href="/allPost">All post</a>
                 <a href="/myPosts">My posts</a>
+            </div>
+            <div class="categories">
+                {{range .Topics}}
+                <div class="{{.Title}}">
+                    <h1>{{.Title}}</h1>
+                    <p>{{.NbPost}} post of this topic</p>
+                </div>   
+                {{end}}
             </div>
         </main> 
     <script src="/static/JS/index.js"></script>

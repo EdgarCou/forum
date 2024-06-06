@@ -44,7 +44,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
-		tags TEXT,
+		topics TEXT,
 		author TEXT NOT NULL,
 		likes INTEGER DEFAULT 0,
 		dislikes INTEGER DEFAULT 0,
@@ -53,7 +53,9 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		FOREIGN KEY (author) REFERENCES utilisateurs(username)
 		ON DELETE CASCADE
     	ON UPDATE CASCADE
-		
+		FOREIGN KEY (topics) REFERENCES topics(title)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE		
 		)`)
 	if err2 != nil {
 		log.Fatal(err2)
@@ -80,7 +82,8 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	var err4 error
 	_, err4 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS topics (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL
+		title TEXT NOT NULL,
+		nbpost INTEGER DEFAULT 0
 	)`)
 
 	InitTopics()
@@ -320,6 +323,64 @@ func CheckUserInfo(w http.ResponseWriter, r *http.Request) UserInfo {
 func SortHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 	tmpl, err := template.ParseFiles("templates/forum.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
+		return
+	}
+
+	sortType := r.FormValue("sort")
+
+	var rows *sql.Rows
+	var posts []Post
+
+	if sortType == "mostLiked" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Likes > posts[j].Likes
+		})
+	} else if sortType == "mostDisliked" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Dislikes > posts[j].Dislikes
+		})
+	} else if sortType == "newest" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Date > posts[j].Date
+		})
+	} else if sortType == "oldest" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Date < posts[j].Date
+		})
+	}else if sortType == "A-Z" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Title < posts[j].Title
+		})
+	}else if sortType == "Z-A" {
+		posts = DisplayPost(w)
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Title > posts[j].Title
+		}) 
+	} else {
+		http.Error(w, "Tri invalide", http.StatusBadRequest)
+		return
+	}
+
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	newData := FinalData{CheckUserInfo(w, r), posts, DisplayCommments(w), DisplayTopics(w)}
+
+	tmpl.Execute(w, newData)
+}
+
+
+func SortHandlerMyPost(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	tmpl, err := template.ParseFiles("templates/myPost.html")
 	if err != nil {
 		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
 		return

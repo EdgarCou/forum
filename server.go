@@ -28,7 +28,7 @@ type Post struct {
 	Id       int
 	Title    string
 	Content  string
-	Tags     string
+	Topics     string
 	Author   string
 	Likes    int
 	Dislikes int
@@ -60,7 +60,9 @@ func main() {
 	http.HandleFunc("/about", forum.AboutHandler)
 	http.HandleFunc("/ws", forum.WsHandler)
 	http.HandleFunc("/CreateComment", forum.CommentHandler)
+	http.HandleFunc("/CreateCommentForMyPost", forum.CommentHandlerForMyPost)
 	http.HandleFunc("/sort", forum.SortHandler)
+	http.HandleFunc("/sortMyPost", forum.SortHandlerMyPost)
 	http.HandleFunc("/RGPD", forum.RGPDHandler)
 	http.HandleFunc("/addTopic", forum.AddTopicHandler)
 	http.HandleFunc("/allTopics", forum.AllTopicsHandler)

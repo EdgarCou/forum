@@ -32,7 +32,7 @@ type Post struct {
 	Id       int
 	Title    string
 	Content  string
-	Tags     string
+	Topics     string
 	Author   string
 	Likes    int
 	Dislikes int
@@ -48,6 +48,7 @@ type Comment struct {
 
 type Topics struct {
 	Title string
+	NbPost int
 }
 
 type FinalData struct {
@@ -66,11 +67,11 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "POST" {
 		title := r.FormValue("title")
 		content := r.FormValue("content")
-		tags := r.FormValue("tags")
+		topics := r.FormValue("topics")
 		session, _ := store.Get(r, "session")
 		author := session.Values["username"].(string)
 		println((author))
-		err := AddPostInDb(title, content, tags, author)
+		err := AddPostInDb(title, content, topics, author)
 		if err != nil {
 			println(err.Error())
 		} else {
@@ -113,20 +114,25 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AddPostInDb(title string, content string, tags string, author string) error {
+func AddPostInDb(title string, content string, topics string, author string) error {
 	db = OpenDb()
 	date := time.Now()
-	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,tags,author,date) VALUES (?, ?, ?, ?, ?)`,
-		title, content, tags, author, date)
+	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,topics,author,date) VALUES (?, ?, ?, ?, ?)`,
+		title, content, topics, author, date)
 	if err != nil {
 		return err
+	}
+
+	_,err2 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost + 1 WHERE title = ?`, topics)
+	if err2 != nil {
+		return err2
 	}
 	return nil
 }
 
 func DisplayPost(w http.ResponseWriter) []Post {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, tags, author, likes, dislikes, date, comments FROM posts")
+	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, topics, author, likes, dislikes, date, comments FROM posts")
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
@@ -136,7 +142,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Tags, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
+		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
 		if err != nil {
 			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
 			return nil
@@ -147,7 +153,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	if posts == nil {
 		date := time.Now()
 		date_string := date.Format("01-02-2024 15:04")
-		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Tags: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0})
+		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Topics: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0})
 		
 		
 	}
