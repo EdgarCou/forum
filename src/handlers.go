@@ -382,3 +382,25 @@ func RGPDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, nil)
 }
+
+func AllTopicsHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	tmpl, err := template.ParseFiles("templates/topics.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
+	tmpl.Execute(w, newData)
+}
+
+func MyPostHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	tmpl, err := template.ParseFiles("templates/myPost.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
+	tmpl.Execute(w, newData)
+}

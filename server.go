@@ -47,7 +47,7 @@ func main() {
 		MaxAge:   3600, // La session expire lorsque le navigateur est fermé, ou au bout de une heure.
 		HttpOnly: true,
 	}
-
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", forum.HomeHandler)
 	http.HandleFunc("/forum", forum.ForumHandler)
 	http.HandleFunc("/signup", forum.RegisterHandler)
@@ -63,7 +63,9 @@ func main() {
 	http.HandleFunc("/sort", forum.SortHandler)
 	http.HandleFunc("/RGPD", forum.RGPDHandler)
 	http.HandleFunc("/addTopic", forum.AddTopicHandler)
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/allTopics", forum.AllTopicsHandler)
+	http.HandleFunc("/myPosts", forum.MyPostHandler)
+	
 
 	log.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
