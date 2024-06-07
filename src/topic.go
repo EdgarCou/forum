@@ -118,3 +118,15 @@ func AlreadyInDb() []string {
 	}
 	return topicsInDb
 }
+
+
+func AllTopicsHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	tmpl, err := template.ParseFiles("templates/topics.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
+	tmpl.Execute(w, newData)
+}

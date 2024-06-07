@@ -164,3 +164,15 @@ func DisplayPost(w http.ResponseWriter) []Post {
 
 	return posts
 }
+
+
+func MyPostHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	tmpl, err := template.ParseFiles("templates/myPost.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+		return
+	}
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
+	tmpl.Execute(w, newData)
+}
