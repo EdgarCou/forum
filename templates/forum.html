@@ -85,8 +85,8 @@
                             </div>
                             <br>
                             <div class="tag-zone-post">
-                                <label for="tags">Topic(s)</label>
-                                <select id="tags" name="tags" required>
+                                <label for="topics">Topic(s)</label>
+                                <select id="topics" name="topics" required>
                                     {{range .Topics}}
                                         <option value="{{.Title}}">{{.Title}}</option>
                                     {{end}}
@@ -206,7 +206,7 @@
                         <div class="line"></div>
                         <div class="title-zone-post">
                             <h2>{{.Title}}</h2>
-                            <p class="tags">Topic: {{.Tags}}</p>
+                            <p class="topics">Topic: {{.Topics}}</p>
                         </div>
                         <p class="post-content">{{.Content}}</p>
                         <p class="date">{{.Date}}</p>
@@ -221,7 +221,6 @@
                         {{if eq .Comments 0}}
                             <p>No comments yet</p>
                         {{else}}
-                            <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
                             <section class="commentArea" id="comments{{$currentPostId}}">
                                 {{range $Comments}}
                                     {{if eq .Idpost $currentPostId}}

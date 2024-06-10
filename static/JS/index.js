@@ -1,9 +1,11 @@
 function newPostPopUp(){
     document.querySelector('.posts').style.display = 'block';    
+    document.querySelector('#buttonTopic').disabled = true;
 }
 
 function togglePopup(){
     document.querySelector('.posts').style.display = 'none';
+    document.querySelector('#buttonTopic').disabled = false;
 }
 
 function newCommentPopUp(button){
@@ -20,10 +22,12 @@ function togglePopup2(button){
 
 function newTopicPopUp(){
     document.querySelector('#wrapperTopic').style.display = 'block';
+    document.querySelector('#buttonPost').disabled = true;
 }   
 
 function togglePopup3(){
     document.querySelector('#wrapperTopic').style.display = 'none';
+    document.querySelector('#buttonPost').disabled = false;
 }
 
 function toggleInfo() {
