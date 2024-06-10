@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/static/popup.css">
     <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
+    <link rel="stylesheet" type="text/css" href="/static/forumOnly.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
@@ -49,9 +50,9 @@
         </header>
         <main>
             <div class="typePage">
-                <a href="/allTopics">Topics</a>
-                <a href="/allPost">All post</a>
-                <a href="/myPosts">My posts</a>
+                <a href="/allTopics" class="typepage-Topic">Topics</a>
+                <a href="/forum" class="typePage-allPost">All posts</a>
+                <a href="/myPosts" class="typePage-MyPost">My posts</a>
             </div>
             <div class="dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>

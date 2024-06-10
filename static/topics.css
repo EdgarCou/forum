@@ -11,3 +11,14 @@
 .postTopic{
     display: none;
 }
+
+.categories a {
+    text-decoration: none;
+    color: white;
+}
+
+.typepage-Topic {
+    text-decoration: none;
+    color: #2E9CCA !important; 
+}
+
