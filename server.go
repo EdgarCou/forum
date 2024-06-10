@@ -28,7 +28,7 @@ type Post struct {
 	Id       int
 	Title    string
 	Content  string
-	Topics     string
+	Topics   string
 	Author   string
 	Likes    int
 	Dislikes int
@@ -68,10 +68,8 @@ func main() {
 	http.HandleFunc("/allTopics", forum.AllTopicsHandler)
 	http.HandleFunc("/myPosts", forum.MyPostHandler)
 	http.HandleFunc("/particular", forum.ParticularHandler)
-	
+	http.HandleFunc("/liked", forum.LikedHandler)
 
 	log.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
-
-

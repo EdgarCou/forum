@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"text/template"
 )
 
 var upgrader = websocket.Upgrader{
@@ -154,4 +155,45 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 			}
 		}
 	}
+}
+
+func LikedHandler(w http.ResponseWriter, r *http.Request) {
+    db = OpenDb()
+    tmpl, err := template.ParseFiles("templates/likedPost.html")
+    if err != nil {
+        http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+        return
+    }
+
+    // Obtenir l'ID de l'utilisateur connecté
+    user := CheckUserInfo(w, r)
+    userName := user.Username
+
+    // Interroger la base de données pour obtenir les posts aimés par l'utilisateur
+    rows, err := db.Query(`SELECT posts.* FROM posts JOIN likedBy ON posts.id = likedBy.idpost WHERE likedBy.username = ? AND likedBy.type = 1 AND likedBy.idpost = posts.id`, userName)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+
+
+    // Créer une slice pour stocker les posts
+    var likedPosts []Post
+    for rows.Next() {
+        var inter Post
+        err = rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments) // Ajustez ceci en fonction de la structure de votre table posts
+        if err != nil {
+            log.Println(err)
+            return
+        }
+        likedPosts = append(likedPosts, inter)
+    }
+
+	fmt.Println(likedPosts)
+
+    newData := FinalData{user, likedPosts, DisplayCommments(w), DisplayTopics(w)}
+
+
+    tmpl.Execute(w, newData)
 }
