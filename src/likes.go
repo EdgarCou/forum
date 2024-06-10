@@ -3,11 +3,12 @@ package forum
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"strings"
 	"text/template"
+
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -181,12 +182,13 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
     // Créer une slice pour stocker les posts
     var likedPosts []Post
     for rows.Next() {
-        var inter Post
-        err = rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments) // Ajustez ceci en fonction de la structure de votre table posts
+        var inter Post		
+        err = rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
         if err != nil {
             log.Println(err)
             return
         }
+		inter.Date = inter.Date[:16]
         likedPosts = append(likedPosts, inter)
     }
 

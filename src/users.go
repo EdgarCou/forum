@@ -2,11 +2,12 @@ package forum
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"net/http"
-	"database/sql"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func AjouterUtilisateur(username, email, password, profilePicture, lastname, firstname, birthdate string) error {
