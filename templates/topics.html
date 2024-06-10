@@ -54,10 +54,10 @@
         </header>
         <main>
             <div class="typePage">
-                <a href="/allTopics">Topics</a>
-                <a href="/allPost">All post</a>
+                <a href="/allTopics" class="typepage-Topic">Topics</a>
+                <a href="/forum" class="typePage-allPost">All posts</a>
                 {{if .UserInfo.IsLoggedIn}}
-                    <a href="/myPosts">My posts</a>
+                    <a href="/myPosts" class="typePage-MyPost">My posts</a>
                     <a href="/liked">Liked post</a>
                 {{else}}
                     <a href="/login">My posts</a>
