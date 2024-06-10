@@ -78,7 +78,9 @@ func DisplayCommments(w http.ResponseWriter) []Comment {
 		http.Error(w, "Erreur lors de la récupération des commentaires", http.StatusInternalServerError)
 		return nil
 	}
-	defer rows.Close()
+	if rows != nil {
+		defer rows.Close()
+	} 
 
 	var comments []Comment
 	for rows.Next() {

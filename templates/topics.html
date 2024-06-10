@@ -62,7 +62,7 @@
                     <div class="{{.Title}}">
                         <h1>{{.Title}}</h1>
                         <p>{{.NbPost}} post of this topic</p>
-                        <button id="{{.Title}}" onclick="displayTopicPosts(this)">View the posts</button>
+                        <a id="{{.Title}}" href="/particular?topic={{.Title}}">{{.Title}}</a>
                     </div>
                     <div class="postTopic" id="post_{{.Title}}">
                     {{range $Posts}}

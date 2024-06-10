@@ -169,11 +169,17 @@ func SortHandler(w http.ResponseWriter, r *http.Request) {
 	if sortType == "mostLiked" {
 		posts = DisplayPost(w)
 		sort.Slice(posts, func(i, j int) bool {
+			if (posts[i].Likes == posts[j].Likes) {
+				return posts[i].Dislikes < posts[j].Dislikes
+			}
 			return posts[i].Likes > posts[j].Likes
 		})
 	} else if sortType == "mostDisliked" {
 		posts = DisplayPost(w)
 		sort.Slice(posts, func(i, j int) bool {
+			if (posts[i].Dislikes == posts[j].Dislikes) {
+				return posts[i].Likes < posts[j].Likes
+			}
 			return posts[i].Dislikes > posts[j].Dislikes
 		})
 	} else if sortType == "newest" {
@@ -277,3 +283,24 @@ func RGPDHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+func ParticularHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+
+	topic := r.URL.Query().Get("topic")
+	tmpl, err := template.ParseFiles("templates/particularTopic.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+		return
+	}
+	newData := ParticularFinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), ParticularDisplayTopics(w,topic)}
+	finalPost := []Post{}
+	for _, post := range newData.Posts {
+		if(post.Topics != topic){
+			continue
+		} else {
+			finalPost = append(finalPost, post)
+		}
+	}
+	newData.Posts = finalPost
+	tmpl.Execute(w, newData)
+}

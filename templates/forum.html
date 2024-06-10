@@ -197,17 +197,21 @@
                             {{end}}
                             <p class="topics">{{.Topics}}</p>
                         </div>
-                        <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
-                        <section class="commentArea" id="comments{{$currentPostId}}">
-                            {{range $Comments}}
-                                {{if eq .Idpost $currentPostId}}
-                                    <div class="comment">
-                                        <p>{{.Author}}</p>
-                                        <p>{{.Content}}</p>
-                                    </div>
+                        {{if eq .Comments 0}}
+                            <p>No comments yet</p>
+                        {{else}}
+                            <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
+                            <section class="commentArea" id="comments{{$currentPostId}}">
+                                {{range $Comments}}
+                                    {{if eq .Idpost $currentPostId}}
+                                        <div class="comment">
+                                            <p>{{.Author}}</p>
+                                            <p>{{.Content}}</p>
+                                        </div>
+                                    {{end}}
                                 {{end}}
-                            {{end}}
-                        </section> 
+                            </section> 
+                        {{end}}
                     </article>
                     <br>
                 {{end}}

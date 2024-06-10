@@ -55,7 +55,7 @@
             </div>
             <div class="dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
-                <form action="/sortMyPost">
+                <form action="/sort">
                     <label for="sort">
                             <div id="myDropdown" class="dropdown-content">
                                 <ul>
@@ -78,11 +78,11 @@
                 {{if eq .Id -1}}
                     <p>No post Yet</p>
                 {{else}}
-                {{if eq .Author $UserInfo.Username}}
                     <article class="post{{.Id}}">
                         <div class="top-post">
                             <p class="author">{{.Author}}</p>
                             <p class="date">{{.Date}}</p>
+                            <p>{{.Topics}}</p>
                             <div class="like-com-zone">
                                 <div class="liked-zone">
                                     {{if $UserInfo.IsLoggedIn}}
@@ -117,7 +117,7 @@
                                 <div class="comment-zone">
                                     <section class="comments{{$currentPostId}}" style="display: none;">
                                         <div id="wrapper">
-                                            <form action="/CreateCommentForMyPost" id="createcommentformypost" method="POST">
+                                            <form action="/CreateComment" id="createcomment" method="POST">
                                                 <h4>Create new comment</h4>
                                                 <textarea name="comment" id="textComment"></textarea>
                                                 <input type="hidden" name="postId" value="{{ $currentPostId}}">
@@ -145,7 +145,7 @@
                             <p class="topics">{{.Topics}}</p>
                         </div>
                         {{if eq .Comments 0}}
-                            <p>No comment yet</p>
+                            <p>No comments yet</p>
                         {{else}}
                             <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
                             <section class="commentArea" id="comments{{$currentPostId}}">
@@ -163,9 +163,8 @@
                     <br>
                 {{end}}
                 {{end}}
-                {{end}}
             </section>
-        </main> 
+        </main>
     <script src="/static/JS/index.js"></script>
 </body>
 </html>

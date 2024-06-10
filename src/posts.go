@@ -58,6 +58,13 @@ type FinalData struct {
 	Topics   []Topics
 }
 
+type ParticularFinalData struct {
+	UserInfo UserInfo
+	Posts    []Post
+	Comments []Comment
+	Topics   Topics
+}
+
 
 func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
@@ -137,7 +144,9 @@ func DisplayPost(w http.ResponseWriter) []Post {
 		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
 		return nil
 	}
-	defer rows.Close()
+	if rows != nil {
+		defer rows.Close()
+	}
 
 	var posts []Post
 	for rows.Next() {

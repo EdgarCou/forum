@@ -66,7 +66,9 @@ func DisplayTopics(w http.ResponseWriter) []Topics {
 		http.Error(w, "Erreur lors de la récupération des topics", http.StatusInternalServerError)
 		return nil
 	}
-	defer rows.Close()
+	if rows != nil {
+		defer rows.Close()
+	}
 
 	var topics []Topics
 	for rows.Next() {
@@ -104,7 +106,9 @@ func AlreadyInDb() []string {
 		log.Println(err)
 		return nil
 	}
-	defer rows.Close()
+	if rows != nil {
+		defer rows.Close()
+	}
 
 	var topicsInDb []string
 	for rows.Next() {
@@ -129,4 +133,27 @@ func AllTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
+}
+
+func ParticularDisplayTopics(w http.ResponseWriter, particularTopic string) Topics{
+	db = OpenDb()
+	rows, err := db.QueryContext(context.Background(), "SELECT title, nbpost FROM topics WHERE title = ?", particularTopic)
+	if err != nil {
+		http.Error(w, "Erreur lors de la récupération des topics", http.StatusInternalServerError)
+		return Topics{}
+	}
+	if rows != nil {
+		defer rows.Close()
+	}
+
+	var topics Topics
+	for rows.Next() {
+		err := rows.Scan(&topics.Title, &topics.NbPost)
+		if err != nil {
+			http.Error(w, "Erreur lors de la lecture des topics", http.StatusInternalServerError)
+			return Topics{}
+		}
+	}
+
+	return topics
 }
