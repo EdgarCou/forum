@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/likedPosts.css">
     <title>Forum</title>
 </head>
 <body>
@@ -57,15 +58,15 @@
                 <a href="/allPost">All post</a>
                 {{if .UserInfo.IsLoggedIn}}
                     <a href="/myPosts">My posts</a>
-                    <a href="/liked">Liked post</a>
+                    <a href="/liked" class="typePage-OnPage">Liked post</a>
                 {{else}}
                     <a href="/login">My posts</a>
                     <a href="/login">Liked post</a>
                 {{end}}
             </div>
-            <div class="dropdown">
+            <div class="dropdown forum-dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
-                <form action="/sort">
+                <form action="/sortMyPost">
                     <label for="sort">
                             <div id="myDropdown" class="dropdown-content">
                                 <ul>
@@ -80,70 +81,7 @@
                     </label>
                 </form>
             </div>  
-            {{if .UserInfo.IsLoggedIn}}
-                <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
-                <button id="buttonTopic" onclick="newTopicPopUp()">Add new topic</button>
-            {{end}}
-            <section class="posts">
-                <div id="wrapper">
-                    <form action="/createPost" id="createPost" method="POST">
-                        <h1>Add a new post</h1>
-                        <div class="part-one-post">
-                            <div class="title-post">
-                                <label for="title">Title</label>
-                                <input type="text" id="title" name="title" required>
-                            </div>
-                            <br>
-                            <div class="tag-zone-post">
-                                <label for="topics">Topic(s)</label>
-                                <select id="topics" name="topics" required>
-                                    {{range .Topics}}
-                                        <option value="{{.Title}}">{{.Title}}</option>
-                                    {{end}}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="second-part-post">
-                            <label for="content">Content</label>
-                            <textarea id="content" name="content" required></textarea>
-                        </div>
-                        <div class="third-part-post">          
-                            <div class="acceptCondtions">
-                                <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
-                            </div>
-                            <button type="submit" class="btn-login"> Post </button>
-                        </div>
 
-                        <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
-                            <i class="material-icons">
-                                close
-                            </i>
-                        </a>
-                    </form>
-                </div>
-            </section>
-            <section class="topics">
-                <div id="wrapperTopic">
-                    <form action="/addTopic" method="POST">
-                        <h1>Add a new topic</h1>
-                        <div class="part-one-topic">
-                            <label for="topic">Topic</label>
-                            <input type="text" id="topic" name="topic" required>
-                        </div>
-                        <div class="second-part-topic">
-                            <div class="acceptCondtions">
-                                <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
-                            </div>
-                            <button type="submit" class="btn-login">ADD</button>
-                        </div>
-                        <a href="javascript:void(0)" onclick="togglePopup3()" class="popup-exit">
-                            <i class="material-icons">
-                                close
-                            </i>
-                        </a>
-                    </form>
-                </div>
-            </section>
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
@@ -225,12 +163,18 @@
                                 <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                     chat
                                 </i></button>
+                            {{else}}
+                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
+                                    chat
+                                </i></button>
                             {{end}}
+
                             <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
-                        </div>
-                        {{if eq .Comments 0}}
-                            <p>No comments yet</p>
+                            {{if eq .Comments 0}}
+                            <p class="noCommentInfo">No comments yet</p>
                         {{else}}
+                        </div>
+                        
                             <section class="commentArea" id="comments{{$currentPostId}}">
                                 {{range $Comments}}
                                     {{if eq .Idpost $currentPostId}}

@@ -15,6 +15,7 @@ main {
     outline: 0.5px solid var(--light-grey);
     padding: 0.25% 1.25%;
     cursor: pointer;
+    font-size: 1.1em;
 }
 
 #buttonTopic {
@@ -25,6 +26,7 @@ main {
     outline: 0.5px solid var(--light-grey);
     padding: 0.25% 1.25%;
     cursor: pointer;
+    font-size: 1.1em;
 }
 
 #buttonPost:hover, #buttonTopic:hover {
@@ -40,25 +42,26 @@ main {
     border: none;
     outline: 0.5px solid var(--light-grey);
     cursor: pointer;
+    font-size: 1.25em;
+    font-weight:lighter ;
+    color: var(--white);
+    padding: 0.25% 1.25%;
   }
   
 
-.dropdown {
-    margin-left: 1%;
-    position: relative;
-    display: inline-block;
-  }
-  
 .dropdown-content {
-    margin-top: 15%;
+    margin-top: 1%;
     display: none;
     position: absolute;
     background-color: rgb(217, 217, 217, 0.05);
-    min-width: 200%;
+    backdrop-filter: blur(20px);
+    --webkit-backdrop-filter: blur(20px);
+    min-width: 10%;
     overflow: auto;
     outline: 0.5px solid var(--light-grey);
     border-radius: 5px;
     z-index: 1;
+    margin-bottom: 5%;
   }
 
 .dropdown-content button {
@@ -87,10 +90,21 @@ main {
     padding: 0.5em;
     cursor: pointer;
     background-color: transparent;
+    outline: 0.05px solid rgb(234, 234, 234, 0.3);
+
+}
+
+.dropdown-content button {
+    font-size: 1.25em;
+
 }
 
 .dropdown-content ul li:hover {
     background-color: rgb(217, 217, 217, 0.1);
+}
+
+.forum-dropdown{
+    margin-left: 2.5%;
 }
 
 /* End Button  Filter */
@@ -197,7 +211,6 @@ article .post-content{
 article .topics{
     margin: 0 80% 2%;
     width: 20%;
-    font-size: 0.8em;
 }
 
 .line{
@@ -244,12 +257,20 @@ article .topics{
     border-top: 0.5px solid var(--light-grey);
 }
 
+.main-part-Topic-zone {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: right;
+    margin: 0 auto 2%;
+}
+
 .typePage {
-    width: 12.5%;
+    width: 20%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left: 5%;
+    margin-left: 2.5%;
     margin-top: 5%;
     margin-bottom: 1%;
     outline: 0.5px solid var(--light-grey);
@@ -258,12 +279,26 @@ article .topics{
     background-color: rgb(217, 217, 217, 0.05);
 }
 
-
-
 .typePage a {
     text-decoration: none;
     color: white;
 }
 
+.typePage-OnPage{
+    text-decoration: none;
+    color: #2E9CCA !important; 
+}
 
+.noCommentInfo {
+    font-size: 0.8em;
+    margin-left: 1%;
+}
 
+.btn-post-zone {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    gap: 5%;
+    margin-right: 5%;
+    margin-bottom: 2%;
+}

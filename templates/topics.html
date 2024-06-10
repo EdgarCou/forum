@@ -54,25 +54,36 @@
         </header>
         <main>
             <div class="typePage">
-                <a href="/allTopics" class="typepage-Topic">Topics</a>
-                <a href="/forum" class="typePage-allPost">All posts</a>
+                <a href="/allTopics" class="typePage-OnPage">Topics</a>
+                <a href="/forum" >All posts</a>
                 {{if .UserInfo.IsLoggedIn}}
-                    <a href="/myPosts" class="typePage-MyPost">My posts</a>
+                    <a href="/myPosts">My posts</a>
                     <a href="/liked">Liked post</a>
                 {{else}}
                     <a href="/login">My posts</a>
                     <a href="/login">Liked post</a>
                 {{end}}
             </div>
+            <div class="main-part-Topic-zone">
+                <div class="Home-topics">
+                    <h1>DISCUSSIONS AND POSTS</h1>
+                    <p>Explore the forum below and find answers to all your questions.</p>
+                </div>
+            </div>
             <div class="categories">
                 {{$Posts := .Posts}}
                 {{$Topics := .Topics}}
                 {{range .Topics}}
                 {{$currentTopicTitle := .Title}}
-                    <div class="{{.Title}}">
-                        <h1>{{.Title}}</h1>
-                        <p>{{.NbPost}} post of this topic</p>
-                        <a id="{{.Title}}" href="/particular?topic={{.Title}}">{{.Title}}</a>
+                    <div class="topic-unit">
+                        <h1><a id="{{.Title}}" href="/particular?topic={{.Title}}">{{.Title}}</a></h1>
+                        <div class="line"></div>
+                        <br>
+                        <br>
+                        <div class="topic-bottom">
+                            <a href="/particular?topic={{.Title}}">Go on</a>
+                            <p>{{.NbPost}} post on this topic</p>
+                        </div>
                     </div>
                     <div class="postTopic" id="post_{{.Title}}">
                     {{range $Posts}}

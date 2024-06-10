@@ -54,12 +54,12 @@
         </header>
         <main>
             <div class="typePage">
-                <a href="/allTopics" class="typepage-Topic">Topics</a>
-                <a href="/forum" class="typePage-allPost">All posts</a>
-                <a href="/myPosts" class="typePage-MyPost">My posts</a>
+                <a href="/allTopics" >Topics</a>
+                <a href="/forum" >All posts</a>
+                <a href="/myPosts" class="typePage-OnPage">My posts</a>
                 <a href="/liked">Liked post</a>
             </div>
-            <div class="dropdown">
+            <div class="dropdown forum-dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sortMyPost">
                     <label for="sort">
@@ -76,6 +76,11 @@
                     </label>
                 </form>
             </div>  
+            <div class="btn-post-zone">
+                {{if .UserInfo.IsLoggedIn}}
+                    <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
+                {{end}}
+            </div>
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
@@ -84,11 +89,9 @@
                 {{if eq .Id -1}}
                     <p>No post Yet</p>
                 {{else}}
-                {{if eq .Author $UserInfo.Username}}
                     <article class="post{{.Id}}">
                         <div class="top-post">
                             <p class="author">{{.Author}}</p>
-                            <p class="date">{{.Date}}</p>
                             <div class="like-com-zone">
                                 <div class="liked-zone">
                                     {{if $UserInfo.IsLoggedIn}}
@@ -122,12 +125,20 @@
                                 </div>
                                 <div class="comment-zone">
                                     <section class="comments{{$currentPostId}}" style="display: none;">
-                                        <div id="wrapper">
-                                            <form action="/CreateCommentForMyPost" id="createcommentformypost" method="POST">
+                                        <div id="wrapperComments">
+                                            <form action="/CreateComment" id="createcomment" method="POST">
                                                 <h4>Create new comment</h4>
-                                                <textarea name="comment" id="textComment"></textarea>
-                                                <input type="hidden" name="postId" value="{{ $currentPostId}}">
-                                                <button type="submit">Add comment</button>
+                                                <div class="part-one-comment">
+                                                    <label for="comment">Comment</label>
+                                                    <textarea name="comment" id="textComment"></textarea>
+                                                    <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                                </div>
+                                                <div class="second-part-comment">
+                                                    <div class="acceptCondtions">
+                                                        <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
+                                                    </div>
+                                                    <button type="submit">Add comment</button>
+                                                </div>
                                             </form>
                                             <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
                                             <i class="material-icons">
@@ -140,20 +151,29 @@
                             </div>
                         </div>
                         <div class="line"></div>
-                        <h2>{{.Title}}</h2>
+                        <div class="title-zone-post">
+                            <h2>{{.Title}}</h2>
+                            <p class="topics">Topic: {{.Topics}}</p>
+                        </div>
                         <p class="post-content">{{.Content}}</p>
+                        <p class="date">{{.Date}}</p>
                         <div class="bot-post">
                             {{if $UserInfo.IsLoggedIn}}
                                 <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                     chat
                                 </i></button>
+                            {{else}}
+                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
+                                    chat
+                                </i></button>
                             {{end}}
-                            <p class="topics">{{.Topics}}</p>
-                        </div>
-                        {{if eq .Comments 0}}
-                            <p>No comment yet</p>
+
+                            <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
+                            {{if eq .Comments 0}}
+                            <p class="noCommentInfo">No comments yet</p>
                         {{else}}
-                            <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
+                        </div>
+                        
                             <section class="commentArea" id="comments{{$currentPostId}}">
                                 {{range $Comments}}
                                     {{if eq .Idpost $currentPostId}}
@@ -167,7 +187,6 @@
                         {{end}}
                     </article>
                     <br>
-                {{end}}
                 {{end}}
                 {{end}}
             </section>
