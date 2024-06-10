@@ -186,3 +186,11 @@
     color: white;
 }
 
+.deletePopUp {
+    display: none;
+}
+
+.postsEditor {
+    display: none;
+}
+

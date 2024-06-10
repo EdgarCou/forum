@@ -135,3 +135,21 @@ function displayTopicPosts(button){
         }
     }
 }
+
+function deletePopUp(button){
+    postId = button.getAttribute("data-post-id");
+    console.log(postId);
+    document.querySelector('#delete'+postId).style.display = 'block';
+}
+
+function editPopUp(button){
+    postId = button.getAttribute("data-post-id");
+    console.log(postId);
+    document.querySelector('#edit'+postId).style.display = 'block';
+}
+
+function togglePopup4(button){
+    postId = button.getAttribute("data-post-id");
+    console.log(postId);
+    document.querySelector('#edit'+postId).style.display = 'none';
+}

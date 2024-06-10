@@ -185,3 +185,37 @@ func MyPostHandler(w http.ResponseWriter, r *http.Request) {
 	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
+
+func DeleteHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	id := r.URL.Query().Get("postid")
+	topics := r.URL.Query().Get("topics")
+	_, err := db.ExecContext(context.Background(), "DELETE FROM posts WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, "Erreur lors de la suppression du post", http.StatusInternalServerError)
+		return
+	}
+
+	_,err2 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost - 1 WHERE title = ?`, topics)
+	if err2 != nil {
+		http.Error(w, "Erreur lors de la mise à jour du nombre de post", http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/myPosts", http.StatusSeeOther)
+}
+
+func EditPostHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	id := r.URL.Query().Get("postid")
+
+	title := r.FormValue("title")
+	content := r.FormValue("content")
+	topics := r.FormValue("topics")
+	_, err := db.ExecContext(context.Background(), "UPDATE posts SET title = ?, content = ?, topics = ? WHERE id = ?", title, content, topics, id)
+	if err != nil {
+		http.Error(w, "Erreur lors de la modification du post", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/myPosts", http.StatusSeeOther)
+}

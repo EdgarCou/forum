@@ -69,7 +69,8 @@ func main() {
 	http.HandleFunc("/myPosts", forum.MyPostHandler)
 	http.HandleFunc("/particular", forum.ParticularHandler)
 	http.HandleFunc("/liked", forum.LikedHandler)
-
+	http.HandleFunc("/delete", forum.DeleteHandler)
+	http.HandleFunc("/editPost", forum.EditPostHandler)
 	log.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
