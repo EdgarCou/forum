@@ -72,33 +72,37 @@
             </div>  
             {{if .UserInfo.IsLoggedIn}}
                 <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
-                <button id="buttonTopic" onclick="newTopicPopup()">Add new topic</button>
+                <button id="buttonTopic" onclick="newTopicPopUp()">Add new topic</button>
             {{end}}
             <section class="posts">
                 <div id="wrapper">
-                    <form action="/createPost" id ="createPost" method="POST">
-                        <h1>Create new post</h1>
-                        <label for="title">Title</label>
-                        <input type="text" id="title" name="title" required>
-                        <br>
-
-                        <label for="content">Content</label>
-                        <textarea id="content" name="content" required></textarea>
-                        <br>
-
-                        <label for="topics">Categorie(s)</label>
-                        <select id="topics" name="topics" required>
-                            {{range .Topics}}
-                                <option value="{{.Title}}">{{.Title}}</option>
-                            {{end}}
-                        </select>
-                        <br>
-                    
-                        <div class="acceptCondtions">
-                            <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/"> using condtions</a></label>
+                    <form action="/createPost" id="createPost" method="POST">
+                        <h1>Add a new post</h1>
+                        <div class="part-one-post">
+                            <div class="title-post">
+                                <label for="title">Title</label>
+                                <input type="text" id="title" name="title" required>
+                            </div>
+                            <br>
+                            <div class="tag-zone-post">
+                                <label for="tags">Topic(s)</label>
+                                <select id="tags" name="tags" required>
+                                    {{range .Topics}}
+                                        <option value="{{.Title}}">{{.Title}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
                         </div>
-        
-                        <button type="submit" class="btn-login"> Post </button>
+                        <div class="second-part-post">
+                            <label for="content">Content</label>
+                            <textarea id="content" name="content" required></textarea>
+                        </div>
+                        <div class="third-part-post">          
+                            <div class="acceptCondtions">
+                                <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
+                            </div>
+                            <button type="submit" class="btn-login"> Post </button>
+                        </div>
 
                         <a href="javascript:void(0)" onclick="togglePopup()" class="popup-exit">
                             <i class="material-icons">
@@ -111,11 +115,17 @@
             <section class="topics">
                 <div id="wrapperTopic">
                     <form action="/addTopic" method="POST">
-                        <h1>Create new topic</h1>
-                        <label for="topic">Topic</label>
-                        <input type="text" id="topic" name="topic" required>
-                        <br>
-                        <button type="submit" class="btn-login">Add topic </button>
+                        <h1>Add a new topic</h1>
+                        <div class="part-one-topic">
+                            <label for="topic">Topic</label>
+                            <input type="text" id="topic" name="topic" required>
+                        </div>
+                        <div class="second-part-topic">
+                            <div class="acceptCondtions">
+                                <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
+                            </div>
+                            <button type="submit" class="btn-login">ADD</button>
+                        </div>
                         <a href="javascript:void(0)" onclick="togglePopup3()" class="popup-exit">
                             <i class="material-icons">
                                 close
@@ -135,7 +145,6 @@
                     <article class="post{{.Id}}">
                         <div class="top-post">
                             <p class="author">{{.Author}}</p>
-                            <p class="date">{{.Date}}</p>
                             <div class="like-com-zone">
                                 <div class="liked-zone">
                                     {{if $UserInfo.IsLoggedIn}}
@@ -169,12 +178,20 @@
                                 </div>
                                 <div class="comment-zone">
                                     <section class="comments{{$currentPostId}}" style="display: none;">
-                                        <div id="wrapper">
+                                        <div id="wrapperComments">
                                             <form action="/CreateComment" id="createcomment" method="POST">
                                                 <h4>Create new comment</h4>
-                                                <textarea name="comment" id="textComment"></textarea>
-                                                <input type="hidden" name="postId" value="{{ $currentPostId}}">
-                                                <button type="submit">Add comment</button>
+                                                <div class="part-one-comment">
+                                                    <label for="comment">Comment</label>
+                                                    <textarea name="comment" id="textComment"></textarea>
+                                                    <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                                </div>
+                                                <div class="second-part-comment">
+                                                    <div class="acceptCondtions">
+                                                        <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
+                                                    </div>
+                                                    <button type="submit">Add comment</button>
+                                                </div>
                                             </form>
                                             <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
                                             <i class="material-icons">
@@ -187,17 +204,20 @@
                             </div>
                         </div>
                         <div class="line"></div>
-                        <h2>{{.Title}}</h2>
+                        <div class="title-zone-post">
+                            <h2>{{.Title}}</h2>
+                            <p class="tags">Topic: {{.Tags}}</p>
+                        </div>
                         <p class="post-content">{{.Content}}</p>
+                        <p class="date">{{.Date}}</p>
                         <div class="bot-post">
                             {{if $UserInfo.IsLoggedIn}}
                                 <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                     chat
                                 </i></button>
                             {{end}}
-                            <p class="topics">{{.Topics}}</p>
+                            <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
                         </div>
-                        <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
                         <section class="commentArea" id="comments{{$currentPostId}}">
                             {{range $Comments}}
                                 {{if eq .Idpost $currentPostId}}
