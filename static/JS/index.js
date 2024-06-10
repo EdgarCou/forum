@@ -1,16 +1,14 @@
 function newPostPopUp(){
-    document.querySelector('#buttonPost').style.display = 'none';
     document.querySelector('.posts').style.display = 'block';    
+}
+
+function togglePopup(){
+    document.querySelector('.posts').style.display = 'none';
 }
 
 function newCommentPopUp(button){
     postId = button.getAttribute("data-post-id");
     document.querySelector('.comments'+postId).style.display = 'block';
-}
-
-function togglePopup(){
-    document.querySelector('#buttonPost').style.display = 'flex';
-    document.querySelector('.posts').style.display = 'none';
 }
 
 function togglePopup2(button){
@@ -20,14 +18,19 @@ function togglePopup2(button){
     document.querySelector('#commentButton'+postId).style.display = 'block';
 }
 
+function newTopicPopUp(){
+    document.querySelector('#wrapperTopic').style.display = 'block';
+}   
+
 function togglePopup3(){
-    document.querySelector(".topics").style.display = 'none';
+    document.querySelector('#wrapperTopic').style.display = 'none';
 }
 
-function newTopicPopup(){
-    document.querySelector("#buttonTopic").style.display = 'none';
-    document.querySelector(".topics").style.display = 'block';
-}   
+function toggleInfo() {
+    let popup = document.getElementById("info");
+       popup.classList.toggle("open");
+}
+
 
 function displayComments(button){
     postId = button.getAttribute("data-post-id");
@@ -39,6 +42,7 @@ function displayComments(button){
         }
     }
 }
+
 function myDropdownFunc(button) {
     document.getElementById("myDropdown").style.display = "block";
     button.onclick = function() {
