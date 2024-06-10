@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/static/popup.css">
     <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
+    <link rel="stylesheet" type="text/css" href="/static/forumOnly.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <title>Forum</title>
 </head>
@@ -53,17 +54,17 @@
         </header>
         <main>
             <div class="typePage">
-                <a href="/allTopics">Topics</a>
-                <a href="/allPost">All post</a>
+                <a href="/allTopics" >Topics</a>
+                <a href="/forum" class="typePage-OnPage">All posts</a>
                 {{if .UserInfo.IsLoggedIn}}
                     <a href="/myPosts">My posts</a>
-                    <a href="/liked">Liked post</a>
+                    <a href="/liked" >Liked posts</a>
                 {{else}}
                     <a href="/login">My posts</a>
-                    <a href="/login">Liked post</a>
+                    <a href="/login">Liked posts</a>
                 {{end}}
             </div>
-            <div class="dropdown">
+            <div class="dropdown forum-dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sort">
                     <label for="sort">
@@ -80,10 +81,12 @@
                     </label>
                 </form>
             </div>  
-            {{if .UserInfo.IsLoggedIn}}
-                <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
-                <button id="buttonTopic" onclick="newTopicPopUp()">Add new topic</button>
-            {{end}}
+            <div class="btn-post-zone">
+                {{if .UserInfo.IsLoggedIn}}
+                    <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
+                    <button id="buttonTopic" onclick="newTopicPopUp()">Add new topic</button>
+                {{end}}
+            </div>
             <section class="posts">
                 <div id="wrapper">
                     <form action="/createPost" id="createPost" method="POST">
@@ -225,12 +228,18 @@
                                 <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                     chat
                                 </i></button>
+                            {{else}}
+                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
+                                    chat
+                                </i></button>
                             {{end}}
+
                             <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
-                        </div>
-                        {{if eq .Comments 0}}
-                            <p>No comments yet</p>
+                            {{if eq .Comments 0}}
+                            <p class="noCommentInfo">No comments yet</p>
                         {{else}}
+                        </div>
+                        
                             <section class="commentArea" id="comments{{$currentPostId}}">
                                 {{range $Comments}}
                                     {{if eq .Idpost $currentPostId}}

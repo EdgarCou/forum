@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/static/header.css">
     <link rel="stylesheet" type="text/css" href="/static/forum.css">
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/myPost.css">
     <title>Forum</title>
 </head>
 <body>
@@ -53,12 +54,12 @@
         </header>
         <main>
             <div class="typePage">
-                <a href="/allTopics">Topics</a>
-                <a href="/allPost">All post</a>
-                <a href="/myPosts">My posts</a>
+                <a href="/allTopics" >Topics</a>
+                <a href="/forum" >All posts</a>
+                <a href="/myPosts" class="typePage-OnPage">My posts</a>
                 <a href="/liked">Liked post</a>
             </div>
-            <div class="dropdown">
+            <div class="dropdown forum-dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sortMyPost">
                     <label for="sort">
@@ -75,6 +76,11 @@
                     </label>
                 </form>
             </div>  
+            <div class="btn-post-zone">
+                {{if .UserInfo.IsLoggedIn}}
+                    <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
+                {{end}}
+            </div>
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}

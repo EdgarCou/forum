@@ -1,0 +1,9 @@
+.typePage {
+    width: 3% !important;
+    justify-content: center;
+}
+
+.typePage:hover {
+    background-color: rgb(217, 217, 217, 0.2);
+}
+
