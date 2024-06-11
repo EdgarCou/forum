@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"text/template"
-
+	"sort"
 	"github.com/gorilla/websocket"
 )
 
@@ -192,10 +192,43 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
         likedPosts = append(likedPosts, inter)
     }
 
-	fmt.Println(likedPosts)
+	likedPosts = SortLikedPost(likedPosts, w, r)
 
     newData := FinalData{user, likedPosts, DisplayCommments(w), DisplayTopics(w)}
 
 
     tmpl.Execute(w, newData)
+}
+
+func SortLikedPost(likedPosts []Post, w http.ResponseWriter, r *http.Request) []Post {
+	sortType := r.FormValue("sort")
+	if sortType == "mostLiked" {
+		sort.Slice(likedPosts, func(i, j int) bool {
+			return likedPosts[i].Likes > likedPosts[j].Likes
+		})
+	} else if sortType == "mostDisliked" {
+		sort.Slice(likedPosts, func(i, j int) bool {
+			return likedPosts[i].Dislikes > likedPosts[j].Dislikes
+		})
+	} else if sortType == "newest" {
+		sort.Slice(likedPosts, func(i, j int) bool {
+			return likedPosts[i].Date > likedPosts[j].Date
+		})
+	} else if sortType == "oldest" {
+		sort.Slice(likedPosts, func(i, j int) bool {
+			return likedPosts[i].Date < likedPosts[j].Date
+		})
+	}else if sortType == "A-Z" {
+		sort.Slice(likedPosts, func(i, j int) bool {
+			return likedPosts[i].Title < likedPosts[j].Title
+		})
+	}else if sortType == "Z-A" {
+		sort.Slice(likedPosts, func(i, j int) bool {
+			return likedPosts[i].Title > likedPosts[j].Title
+		}) 
+	} else {
+		return likedPosts
+	}
+
+	return likedPosts
 }
