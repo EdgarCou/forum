@@ -189,9 +189,10 @@
                                     </i></button>
                                     <p id="commentCount">{{.Comments}}</p>
                                 </div>
+                                
                                 <div class="comment-zone">
                                     <section class="comments{{$currentPostId}}" style="display: none;">
-                                        <div id="wrapperComments">
+                                        <div id="wrapper">
                                             <form action="/CreateComment" id="createcomment" method="POST">
                                                 <h4>Create new comment</h4>
                                                 <div class="part-one-comment">

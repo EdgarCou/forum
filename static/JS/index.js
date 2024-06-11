@@ -153,3 +153,8 @@ function togglePopup4(button){
     console.log(postId);
     document.querySelector('#edit'+postId).style.display = 'none';
 }
+
+function removeDelete(button){
+    postId = button.getAttribute("data-post-id");
+    document.querySelector('#delete'+postId).style.display = 'none';
+}
