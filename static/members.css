@@ -2,3 +2,37 @@
     text-decoration: underline;
     text-underline-offset: 0.3em;
 }
+
+.allMembers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top: 5%;
+}
+
+.member {
+    width: 60%;
+    align-items: center;
+    border: 1px solid var(--grey);
+    border-radius: 15px;
+    padding: 2%;
+    margin: 8% ;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    
+    h3 {
+        font-size: 2em;
+        color: white;
+        text-align: center;
+    }
+
+    i{
+        font-size: 6em;
+        color: white;
+    }
+
+
+}
+
+
+ 

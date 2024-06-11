@@ -47,6 +47,20 @@
                 </section>
             </div>
         </header>
+        <main>
+            <section class="allMembers">
+                {{if .UserInfo.IsLoggedIn}}
+                    {{range .Members}}
+                    <div class="member">
+                        <h3>{{.Username}}</h3>
+                        <i class="material-icons">account_circle</i>
+                    </div>  
+                    {{end}}
+                {{else}}
+                    <p>No members found</p>
+                {{end}}
+            </section>       
+        </main>
     </div>
     <script src="/static/JS/index.js"></script>
 </body>

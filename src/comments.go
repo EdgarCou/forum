@@ -142,3 +142,54 @@ func CommentHandlerForMyPost(w http.ResponseWriter, r *http.Request) {
 	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w),DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
+
+func CommentHandlerParticularTopic(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+	session, _ := store.Get(r, "session")
+	username, ok := session.Values["username"]
+
+	if !ok {
+		http.Error(w, "Vous devez être connecté pour commenter", http.StatusUnauthorized)
+		return
+	}
+
+
+	id := r.FormValue("postId")
+	content := r.FormValue("comment")
+	topic := r.FormValue("topic")
+
+	println(topic)
+
+	if id == "" || content == "" {
+		http.Error(w, "Les champs ne peuvent pas être vides", http.StatusBadRequest)
+		return
+	}
+
+	err := AddCommentInDb(content, username.(string), id)
+	if err != nil {
+		http.Error(w, "Erreur lors de l'ajout du commentaire", http.StatusInternalServerError)
+		return
+	}
+
+	date := time.Now()
+	date_string := date.Format("2006-01-02 15:04:05")
+	_, err = db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
+	if err != nil {
+		http.Error(w, "Erreur lors de la mise à jour de la date", http.StatusInternalServerError)
+		return
+	}
+
+	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w),DisplayCommments(w), DisplayTopics(w)}
+
+
+	http.Redirect(w, r, "/particular?topic="+topic, http.StatusSeeOther)
+
+	tmpl, err := template.ParseFiles("templates/particularTopic.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+		return
+	}
+	
+	tmpl.Execute(w, newData)
+
+}

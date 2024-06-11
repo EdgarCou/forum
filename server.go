@@ -71,6 +71,7 @@ func main() {
 	http.HandleFunc("/liked", forum.LikedHandler)
 	http.HandleFunc("/delete", forum.DeleteHandler)
 	http.HandleFunc("/editPost", forum.EditPostHandler)
+	http.HandleFunc("/createCommentParticularTopic", forum.CommentHandlerParticularTopic)
 	log.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }

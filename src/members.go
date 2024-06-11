@@ -3,15 +3,46 @@ package forum
 import (
 	"html/template"
 	"net/http"
+	"context"
 )
+
+type Members struct {
+	Username string
+	Photo string
+}
+
+type MembersData struct {
+	UserInfo UserInfo
+	Members []Members
+}
 
 func MembersHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
+	defer db.Close()
+
 	tmpl, err := template.ParseFiles("templates/members.html")
 	if err != nil {
 		http.Error(w, "Erreur de lecture du fichier HTML 7", http.StatusInternalServerError)
 		return
 	}
-	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
+
+	rows, err := db.QueryContext(context.Background(), "SELECT username, profile_picture FROM utilisateurs")
+	if err != nil {
+		http.Error(w, "Erreur lors de la récupération des membres", http.StatusInternalServerError)
+		return
+	}
+
+	var members []Members
+	for rows.Next() {
+		var member Members
+		err := rows.Scan(&member.Username, &member.Photo)
+		if err != nil {
+			http.Error(w, "Erreur lors de la lecture des membres", http.StatusInternalServerError)
+			return
+		}
+		members = append(members, member)
+	}
+
+	newData := MembersData{CheckUserInfo(w, r), members}
 	tmpl.Execute(w, newData)
 }

@@ -90,6 +90,7 @@
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
                 {{range .Posts}}
+                {{$CurrentTopic := .Topics}}
                 {{ $currentPostId := .Id }}
                 {{if eq .Id -1}}
                     <p>No post Yet</p>
@@ -131,12 +132,13 @@
                                 <div class="comment-zone">
                                     <section class="comments{{$currentPostId}}" style="display: none;">
                                         <div id="wrapperComments">
-                                            <form action="/CreateComment" id="createcomment" method="POST">
+                                            <form action="/createCommentParticularTopic" id="createcomment" method="POST">
                                                 <h4>Create new comment</h4>
                                                 <div class="part-one-comment">
                                                     <label for="comment">Comment</label>
                                                     <textarea name="comment" id="textComment"></textarea>
                                                     <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                                    <input type="hidden" name="topic" value="{{$CurrentTopic}}">
                                                 </div>
                                                 <div class="second-part-comment">
                                                     <div class="acceptCondtions">
