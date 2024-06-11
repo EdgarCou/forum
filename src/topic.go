@@ -179,3 +179,16 @@ func ParticularHandler(w http.ResponseWriter, r *http.Request) {
 	newData.Posts = finalPost
 	tmpl.Execute(w, newData)
 }
+
+func UpdateTopics(w http.ResponseWriter, currentTopic string, topics string) {
+	_,err2 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost - 1 WHERE title = ?`, currentTopic)
+		if err2 != nil {
+			http.Error(w, "Erreur lors de la mise à jour du nombre de post", http.StatusInternalServerError)
+			return
+		}
+	_,err3 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost + 1 WHERE title = ?`, topics)
+	if err3 != nil {
+		http.Error(w, "Erreur lors de la mise à jour du nombre de post", http.StatusInternalServerError)
+		return
+	}
+}

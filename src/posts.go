@@ -203,11 +203,32 @@ func EditPostHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 	id := r.URL.Query().Get("postid")
 
+	rows, err := db.QueryContext(context.Background(), "SELECT topics FROM posts WHERE id = ?", id)
+	if err != nil {
+		http.Error(w, "Erreur lors de la récupération du post", http.StatusInternalServerError)
+		return
+	}
+
+	var currentTopic string
+
+	for rows.Next() {
+		err := rows.Scan(&currentTopic)
+		if err != nil {
+			http.Error(w, "Erreur lors de la lecture du post1616", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	topics := r.FormValue("topics")
-	_, err := db.ExecContext(context.Background(), "UPDATE posts SET title = ?, content = ?, topics = ? WHERE id = ?", title, content, topics, id)
-	if err != nil {
+
+	if (topics != currentTopic) {
+		UpdateTopics(w, currentTopic, topics)
+	}
+
+	_, err2 := db.ExecContext(context.Background(), "UPDATE posts SET title = ?, content = ?, topics = ? WHERE id = ?", title, content, topics, id)
+	if err2 != nil {
 		http.Error(w, "Erreur lors de la modification du post", http.StatusInternalServerError)
 		return
 	}
