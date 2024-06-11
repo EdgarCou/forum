@@ -76,11 +76,7 @@
                     </label>
                 </form>
             </div>  
-            <div class="btn-post-zone">
-                {{if .UserInfo.IsLoggedIn}}
-                    <button id="buttonPost" onclick="newPostPopUp()"> Post</button>
-                {{end}}
-            </div>
+
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
@@ -96,7 +92,6 @@
                         <article class="post{{.Id}}">
                             <div class="top-post">
                                 <p class="author">{{.Author}}</p>
-                                <p class="date">{{.Date}}</p>
                                 <div class="like-com-zone">
                                     <div class="liked-zone">
                                         {{if $UserInfo.IsLoggedIn}}
@@ -127,12 +122,14 @@
                                             chat
                                         </i></button>
                                         <p id="commentCount">{{.Comments}}</p>
+
                                         <button class="deletButton forum-btn" data-post-id="{{.Id}}" onclick="deletePopUp(this)">DEL</button>
                                         <button class="editButton forum-btn" data-post-id="{{.Id}}" onclick="editPopUp(this)">EDIT</button>
                                     </div>
                                     <div class="deletePopUp" id="delete{{.Id}}">
                                         <p>Are you sure you want to delete this post?</p>
                                         <button><a href="/delete?postid={{.Id}}&topics={{.Topics}}">Yes</a></button>
+                                        <button onclick="removeDelete(this)" data-post-id="{{.Id}}"><a href="/myPosts">No</a></button>
                                     </div>
 
 
@@ -200,20 +197,28 @@
                                 </div>
                             </div>
                             <div class="line"></div>
-                            <h2>{{.Title}}</h2>
+                            <div class="title-zone-post">
+                                <h2>{{.Title}}</h2>
+                                <p class="topics">Topic: {{.Topics}}</p>
+                            </div>
                             <p class="post-content">{{.Content}}</p>
+                            <p class="date">{{.Date}}</p>
                             <div class="bot-post">
                                 {{if $UserInfo.IsLoggedIn}}
                                     <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
                                         chat
                                     </i></button>
+                                {{else}}
+                                    <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
+                                        chat
+                                    </i></button>
                                 {{end}}
-                                <p class="topics">{{.Topics}}</p>
+
+                                <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
+                                {{if eq .Comments 0}}
+                                <p class="noCommentInfo">No comments yet</p>
+                                {{else}}
                             </div>
-                            {{if eq .Comments 0}}
-                                <p>No comment yet</p>
-                            {{else}}
-                                <button id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">↓</button>
                                 <section class="commentArea" id="comments{{$currentPostId}}">
                                     {{range $Comments}}
                                         {{if eq .Idpost $currentPostId}}
