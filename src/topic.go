@@ -157,3 +157,25 @@ func ParticularDisplayTopics(w http.ResponseWriter, particularTopic string) Topi
 
 	return topics
 }
+
+func ParticularHandler(w http.ResponseWriter, r *http.Request) {
+	db = OpenDb()
+
+	topic := r.URL.Query().Get("topic")
+	tmpl, err := template.ParseFiles("templates/particularTopic.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+		return
+	}
+	newData := ParticularFinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), ParticularDisplayTopics(w,topic)}
+	finalPost := []Post{}
+	for _, post := range newData.Posts {
+		if(post.Topics != topic){
+			continue
+		} else {
+			finalPost = append(finalPost, post)
+		}
+	}
+	newData.Posts = finalPost
+	tmpl.Execute(w, newData)
+}

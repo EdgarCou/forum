@@ -2,12 +2,9 @@ package forum
 
 import (
 	"context"
-	//"slices"
-	//"fmt"
 	"html/template"
 	"net/http"
 	"time"
-	//"fmt"
 )
 
 

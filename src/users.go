@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -135,26 +134,6 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		firstname := r.FormValue("Firstname")
 		lastname := r.FormValue("Lastname")
 		birthdate := r.FormValue("birthdate")
-
-		println(firstname, lastname, birthdate)
-		/*file, handler, err := r.FormFile("profile_picture")
-		  if err != nil {
-		      http.Error(w, "Erreur lors du téléchargement du fichier"+err.Error(), http.StatusInternalServerError)
-		      return
-		  }
-		  defer file.Close()
-
-		  os.MkdirAll("static/uploads", os.ModePerm)
-
-		  filePath := filepath.Join("static/uploads", handler.Filename)
-		  f, err := os.Create(filePath)
-		  if err != nil {
-		      http.Error(w, "Erreur lors de la sauvegarde du fichier", http.StatusInternalServerError)
-		      return
-		  }
-		  defer f.Close()
-		  io.Copy(f, file)
-		*/
 		var err error
 		updateSQL := `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
 		result, err := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username)
@@ -205,4 +184,13 @@ func CheckUserInfo(w http.ResponseWriter, r *http.Request) UserInfo {
     }
 
     return data
+}
+
+func RGPDHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/RGPD.html")
+	if err != nil {
+		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, nil)
 }

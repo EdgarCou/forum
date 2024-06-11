@@ -3,17 +3,12 @@ package forum
 import (
 	"context"
 	"database/sql"
-
-	//"fmt"
 	"html/template"
 	"log"
 	"net/http"
-
 	"sort"
 	"time"
-
 	"github.com/gorilla/sessions"
-	//"golang.org/x/text/date"
 )
 
 var store = sessions.NewCookieStore([]byte("something-very-secret"))
