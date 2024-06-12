@@ -189,11 +189,20 @@ header {
     0 15px 15px rgba(0,0,0,.1);
 }
 
+.social-media-phone {
+    display: none;
+}
+
 /* Pour les écrans de moins de 768px de largeur (téléphones) */
 @media screen and (max-width: 767px) {
     .name ul {
         flex-direction: column;
-        align-items: center;
+        align-items: right;
+    }
+
+    .content {
+        display: flex;
+        gap : 4rem;
     }
 
     .name ul li {
@@ -211,30 +220,51 @@ header {
     .right-info h3 {
         font-size: 60px;
     }
-}
 
-/* Pour les écrans de 768px à 1023px de largeur (tablettes) */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-    .name ul {
-        flex-direction: column;
+    .social-media {
+        display: none;
+    }
+
+    .social-media-phone {
+        margin: 0;
+        display: flex;
+    }
+    
+    .social-media-phone a {
+        display: inline-flex;
+        justify-content: center;
         align-items: center;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: 2px solid #ffffff;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-right: 10px;
+        transition: .5s;
+    }
+    
+    .social-media-phone a:hover {
+        background: #ffffff;
+    }
+    
+    .social-media-phone a i {
+        font-size: 20px;
+        color: #ffffff;
+    }
+    
+    .social-media-phone a:hover i {
+        color: #181818;
     }
 
-    .name ul li {
-        margin-bottom: 10px;
-    }
-
-    .banner .slider .slide .left-info .content {
-        width: 100%;
+    .penetrate-blur h1 {
+        font-size: 170px;
     }
 
     .right-info h1 {
-        font-size: 150px;
+        font-size: 170px;
     }
 
-    .right-info h3 {
-        font-size: 60px;
-    }
 }
 
 
@@ -289,20 +319,4 @@ header {
     color: white;
 }
 
-/* Pour les téléphones */
-@media screen and (max-width: 767px) {
-    #info {
-        width: 90%;
-        height: auto;
-        padding: 20px;
-    }
-}
 
-/* Pour les tablettes */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-    #info {
-        width: 90%;
-        height: auto;
-        padding: 20px;
-    }
-}

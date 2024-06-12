@@ -138,3 +138,57 @@ h4 {
     flex-direction: column;
     margin: 20px 0;
 }
+
+.social-media-phone{
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 3%;
+        gap: 5rem;
+    }
+    .welcome-side{
+        display: none;
+    }
+
+    .connexion-side {
+        width: 97%;
+    }
+
+    .social-media-phone{
+        margin-top: 10%;
+        display: flex;
+    }
+    
+    .social-media-phone a {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: 2px solid #ffffff;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-right: 10px;
+        transition: .5s;
+    }
+    
+    .social-media-phone a:hover {
+        background: #ffffff;
+    }
+    
+    .social-media-phone a i {
+        font-size: 20px;
+        color: #ffffff;
+    }
+    
+    .social-media-phone a:hover i {
+        color: var(--black);
+    }
+
+}

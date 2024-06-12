@@ -182,3 +182,71 @@ body {
     color: var(--light-grey);
     margin-top: 20%;
 }
+
+@media screen and (max-width: 768px){
+    .home-part{
+        margin-top: 8rem;
+        margin-left: 2rem;
+        justify-content: center;
+    }
+
+    .home-part h1{
+        font-size: 3em;
+        margin-bottom: 3%;
+    }
+
+    .home-part h2{
+        font-size: 1.5em;
+        margin-bottom: 15%;
+    }
+
+    .beside-part p{
+        font-size: 1.5em;
+    }
+
+    .buble-info{
+        padding: 2%;
+    }
+
+    .forum1 {
+        margin-left: 36%;
+        margin-bottom: 5%;
+        width: 50%;
+    }
+    
+    .forum2 {
+        margin-right: 40%;
+        width: 35%;
+    }
+    
+    .forum3 {
+        margin-left: 40%;
+        width: 25%;
+    }
+
+    .members1 {
+        margin-left: 40%;
+        margin-bottom: 5%;
+        width: 35%;
+    }
+    
+    .members2 {
+        margin-right: 40%;
+        width: 45%;
+    }
+    
+    .members3 {
+        margin-left: 30%;
+        margin-bottom: 5%;
+        width: 45%;
+    }
+    
+    .members4 {
+        margin-right: 30%;
+        width: 25%;
+    }
+
+    .footer{
+        margin-bottom: 0;
+    }      
+}
