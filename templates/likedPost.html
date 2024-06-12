@@ -124,31 +124,6 @@
                                     </i></button>
                                     <p id="commentCount">{{.Comments}}</p>
                                 </div>
-                                <div class="comment-zone">
-                                    <section class="comments{{$currentPostId}}" style="display: none;">
-                                        <div id="wrapperComments">
-                                            <form action="/CreateComment" id="createcomment" method="POST">
-                                                <h4>Create new comment</h4>
-                                                <div class="part-one-comment">
-                                                    <label for="comment">Comment</label>
-                                                    <textarea name="comment" id="textComment"></textarea>
-                                                    <input type="hidden" name="postId" value="{{ $currentPostId}}">
-                                                </div>
-                                                <div class="second-part-comment">
-                                                    <div class="acceptCondtions">
-                                                        <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
-                                                    </div>
-                                                    <button type="submit">Add comment</button>
-                                                </div>
-                                            </form>
-                                            <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
-                                            <i class="material-icons">
-                                                close
-                                            </i>
-                                            </a>
-                                        </div>
-                                    </section>
-                                </div>
                             </div>
                         </div>
                         <div class="line"></div>
@@ -159,22 +134,14 @@
                         <p class="post-content">{{.Content}}</p>
                         <p class="date">{{.Date}}</p>
                         <div class="bot-post">
-                            {{if $UserInfo.IsLoggedIn}}
-                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
-                                    chat
-                                </i></button>
-                            {{else}}
-                                <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
-                                    chat
-                                </i></button>
-                            {{end}}
-
+                            <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}"><i class="material-icons">
+                                chat
+                            </i></button>
                             <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
                             {{if eq .Comments 0}}
-                            <p class="noCommentInfo">No comments yet</p>
-                        {{else}}
+                                <p class="noCommentInfo">No comments yet</p>
+                            {{else}}
                         </div>
-                        
                             <section class="commentArea" id="comments{{$currentPostId}}">
                                 {{range $Comments}}
                                     {{if eq .Idpost $currentPostId}}

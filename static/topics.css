@@ -88,3 +88,34 @@
 .Home-topics h1 {
     font-weight: 100;
 }
+
+@media screen and (max-width: 768px) {
+    .Home-topics {
+        margin: 2rem auto;
+        padding: 0.5rem;
+        font-size: 1.2em;
+    }
+
+    .Home-topics h1 {
+        font-size: 1.5em;
+    }
+
+    .categories {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10%;
+    }
+
+    .main-part-Topic-zone {
+        width: 90%;
+        margin-top: 45%;
+    }
+
+    .typePage{
+        position: absolute;
+        margin-left: 5rem;
+        display: flex;
+        width: auto;
+        gap: 1rem;
+    }
+}

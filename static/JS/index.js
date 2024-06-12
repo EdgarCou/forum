@@ -1,6 +1,7 @@
 function newPostPopUp(){
     document.querySelector('.posts').style.display = 'block';    
     document.querySelector('#buttonTopic').disabled = true;
+    
 }
 
 function togglePopup(){
