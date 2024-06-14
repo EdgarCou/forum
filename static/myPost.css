@@ -1,0 +1,63 @@
+.dropbtn-edit {
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    background-color: transparent;
+  }
+  
+
+  .dropdown-content-edit {
+    display: none;
+    position: fixed;
+    background-color: rgb(217, 217, 217, 0.05);
+    backdrop-filter: blur(20px);
+    --webkit-backdrop-filter: blur(20px);
+    min-width: 10%;
+    overflow: auto;
+    outline: 0.5px solid var(--light-grey);
+    border-radius: 5px;
+    z-index: 10;
+    right: 1%;
+}
+
+.dropdown-content-edit button {
+    color: var(--light-grey);
+    background-color: transparent;
+    border:none;
+    display: block;
+    cursor: pointer;
+}
+  
+.dropdown-edit button:hover {
+      border:none;
+}
+
+.dropdown-edit:hover .dropdown-content-edit {
+    display: block;
+}
+
+.dropdown-content-edit ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-content-edit ul li {
+    cursor: pointer;
+    background-color: transparent;
+    outline: 0.05px solid rgb(234, 234, 234, 0.3);
+    padding: 0.15em;
+}
+
+.dropdown-content-edit button {
+    font-size: 1em;
+
+}
+
+.dropdown-content-edit ul li:hover {
+    background-color: rgb(217, 217, 217, 0.1);
+}
+
+.deletePopUp {
+    display: block;
+}
