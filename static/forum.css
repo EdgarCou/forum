@@ -121,6 +121,7 @@ main {
     align-items: center;
     flex-direction: column;
     margin-bottom: 5%;
+    margin-top: 10%;
     gap: 15px;
 }
 
