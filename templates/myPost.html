@@ -46,8 +46,8 @@
                     {{if .UserInfo.IsLoggedIn}}
                         <a href="/logout" class="log-button">Logout</a>
                     {{else}}
-                    <a href="/login" class="log-button">Login</a>
-                    <a href="/signup" class="log-button">Sign Up</a>
+                        <a href="/login" class="log-button">Login</a>
+                        <a href="/signup" class="log-button">Sign Up</a>
                     {{end}}
                 </section>
             </div>
@@ -63,30 +63,29 @@
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sortMyPost">
                     <label for="sort">
-                            <div id="myDropdown" class="dropdown-content">
-                                <ul>
+                        <div id="myDropdown" class="dropdown-content">
+                            <ul>
                                 <li><button type="submit" name="sort" value="oldest">Oldest post</button></li>
                                 <li><button type="submit" name="sort" value="newest">Newest post</button></li>
                                 <li><button type="submit" name="sort" value="mostLiked">Most liked</button></li>
                                 <li><button type="submit" name="sort" value="mostDisliked">Most disliked</button></li>
                                 <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
                                 <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
-                                </ul>
-                            </div>
+                            </ul>
+                        </div>
                     </label>
                 </form>
             </div>  
-
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
                 {{$Topics := .Topics}}
                 {{$Posts := .Posts}}
                 {{range .Posts}}
-                {{ $CurrentPost := . }}
+                    {{ $CurrentPost := . }}
                     {{ $currentPostId := .Id }}
                     {{if eq .Id -1}}
-                        <p>No post Yet</p>
+                         <p>No post Yet</p>
                     {{else}}
                     {{if eq .Author $UserInfo.Username}}
                         <article class="post{{.Id}}">
@@ -267,5 +266,6 @@
             </section>
         </main> 
     <script src="/static/JS/index.js"></script>
+    </div>
 </body>
 </html>

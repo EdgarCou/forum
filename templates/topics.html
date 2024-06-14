@@ -46,8 +46,8 @@
                     {{if .UserInfo.IsLoggedIn}}
                         <a href="/logout" class="log-button">Logout</a>
                     {{else}}
-                    <a href="/login" class="log-button">Login</a>
-                    <a href="/signup" class="log-button">Sign Up</a>
+                        <a href="/login" class="log-button">Login</a>
+                        <a href="/signup" class="log-button">Sign Up</a>
                     {{end}}
                 </section>
             </div>
@@ -74,7 +74,7 @@
                 {{$Posts := .Posts}}
                 {{$Topics := .Topics}}
                 {{range .Topics}}
-                {{$currentTopicTitle := .Title}}
+                    {{$currentTopicTitle := .Title}}
                     <div class="topic-unit">
                         <h1><a id="{{.Title}}" href="/particular?topic={{.Title}}">{{.Title}}</a></h1>
                         <div class="line"></div>
@@ -86,20 +86,20 @@
                         </div>
                     </div>
                     <div class="postTopic" id="post_{{.Title}}">
-                    {{range $Posts}}
-                        {{if eq $currentTopicTitle .Topics}}
-                            <div class="post" id="{{.Id}}">
-                                <h2>{{.Title}}</h2>
-                                <p>{{.Content}}</p>
-                                <p>By {{.Author}} the {{.Date}}</p>
-                            </div>
+                        {{range $Posts}}
+                            {{if eq $currentTopicTitle .Topics}}
+                                <div class="post" id="{{.Id}}">
+                                    <h2>{{.Title}}</h2>
+                                    <p>{{.Content}}</p>
+                                    <p>By {{.Author}} the {{.Date}}</p>
+                                </div>
+                            {{end}}
                         {{end}}
-                    {{end}}
                     </div>
-                    
                 {{end}}
             </div>
         </main> 
+    </div>
     <script src="/static/JS/index.js"></script>
 </body>
 </html>
