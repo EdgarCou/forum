@@ -41,8 +41,8 @@
                     {{if .UserInfo.IsLoggedIn}}
                         <a href="/logout" class="log-button">Logout</a>
                     {{else}}
-                    <a href="/login" class="log-button">Login</a>
-                    <a href="/signup" class="log-button">Sign Up</a>
+                        <a href="/login" class="log-button">Login</a>
+                        <a href="/signup" class="log-button">Sign Up</a>
                     {{end}}
                 </section>
             </div>
@@ -51,10 +51,10 @@
             <section class="allMembers">
                 {{if .UserInfo.IsLoggedIn}}
                     {{range .Members}}
-                    <div class="member">
-                        <h3>{{.Username}}</h3>
-                        <i class="material-icons">account_circle</i>
-                    </div>  
+                        <div class="member">
+                            <h3>{{.Username}}</h3>
+                            <i class="material-icons">account_circle</i>
+                        </div>  
                     {{end}}
                 {{else}}
                     <p>No members found</p>

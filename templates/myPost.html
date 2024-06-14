@@ -46,8 +46,8 @@
                     {{if .UserInfo.IsLoggedIn}}
                         <a href="/logout" class="log-button">Logout</a>
                     {{else}}
-                    <a href="/login" class="log-button">Login</a>
-                    <a href="/signup" class="log-button">Sign Up</a>
+                        <a href="/login" class="log-button">Login</a>
+                        <a href="/signup" class="log-button">Sign Up</a>
                     {{end}}
                 </section>
             </div>
@@ -63,162 +63,154 @@
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sortMyPost">
                     <label for="sort">
-                            <div id="myDropdown" class="dropdown-content">
-                                <ul>
+                        <div id="myDropdown" class="dropdown-content">
+                            <ul>
                                 <li><button type="submit" name="sort" value="oldest">Oldest post</button></li>
                                 <li><button type="submit" name="sort" value="newest">Newest post</button></li>
                                 <li><button type="submit" name="sort" value="mostLiked">Most liked</button></li>
                                 <li><button type="submit" name="sort" value="mostDisliked">Most disliked</button></li>
                                 <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
                                 <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
-                                </ul>
-                            </div>
+                            </ul>
+                        </div>
                     </label>
                 </form>
             </div>  
-
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
                 {{$Topics := .Topics}}
                 {{$Posts := .Posts}}
                 {{range .Posts}}
-                {{ $CurrentPost := . }}
+                    {{ $CurrentPost := . }}
                     {{ $currentPostId := .Id }}
                     {{if eq .Id -1}}
-                        <p>No post Yet</p>
+                         <p>No post Yet</p>
                     {{else}}
-                    {{if eq .Author $UserInfo.Username}}
-                        <article class="post{{.Id}}">
-                            <div class="top-post">
-                                <p class="author">{{.Author}}</p>
-                                <div class="like-com-zone">
-                                    <div class="liked-zone">
-                                        {{if $UserInfo.IsLoggedIn}}
-                                        <button class="likeButton forum-btn" data-post-id="{{.Id}}" ><i class="like-thumb material-icons" >
-                                            thumb_up
-                                        </i></button>
-                                        {{else}}
-                                        <button class="likeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="like-thumb
-                                            material-icons">
-                                            thumb_up
-                                        </i></button>
-                                        {{end}}
-                                        <p id="likeCount{{.Id}}">{{.Likes}}</p>
-                                    </div>
-                                    <div class="disliked-zone">
-                                        {{if $UserInfo.IsLoggedIn}}
-                                        <button class="dislikeButton forum-btn" data-post-id="{{.Id}}"><i class="dislike-thumb material-icons">
-                                            thumb_down
-                                        </i></button>
-                                        {{else}}
-                                        <button class="dislikeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="dislike-thumb
-                                            material-icons">
-                                            thumb_down
-                                        </i></button>
-                                        {{end}}
-                                        <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
-                                        <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
-                                            chat
-                                        </i></button>
-                                        <p id="commentCount">{{.Comments}}</p>
-
-                                        <button class="deletButton forum-btn" data-post-id="{{.Id}}" onclick="deletePopUp(this)">DEL</button>
-                                        <button class="editButton forum-btn" data-post-id="{{.Id}}" onclick="editPopUp(this)">EDIT</button>
-                                    </div>
-                                    <div class="deletePopUp" id="delete{{.Id}}">
-                                        <p>Are you sure you want to delete this post?</p>
-                                        <button><a href="/delete?postid={{.Id}}&topics={{.Topics}}">Yes</a></button>
-                                        <button onclick="removeDelete(this)" data-post-id="{{.Id}}"><a href="/myPosts">No</a></button>
-                                    </div>
-
-
-                                    <section class="posts" id="edit{{.Id}}">
-                                        <div id="wrapper">
-                                            <form action="/editPost?postid={{.Id}}" id="editPost" method="POST">
-                                                <h1>Edit your post</h1>
-                                                <div class="part-one-post">
-                                                    <div class="title-post">
-                                                        <label for="title">Title</label>
-                                                        <input type="text" id="title" name="title" value="{{.Title}}" required >
-                                                    </div>
-                                                    <br>
-                                                    <div class="tag-zone-post">
-                                                        <label for="topics">Topic(s)</label>
-                                                        <select id="topics" name="topics" required>
-                                                            {{range $Topics}}
-                                                                {{if eq .Title $CurrentPost.Topics}}
-                                                                    <option value="{{.Title}}" selected>{{.Title}}</option>
-                                                                {{else}}
-                                                                    <option value="{{.Title}}">{{.Title}}</option>
-                                                                {{end}}
-                                                            {{end}}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="second-part-post">
-                                                    <label for="content">Content</label>
-                                                    <textarea id="content" name="content" required>{{.Content}}</textarea>
-                                                </div>
-                                                <div class="third-part-post">          
-                                                    <div class="acceptCondtions">
-                                                        <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
-                                                    </div>
-                                                    <button type="submit" class="btn-login"> Edit </button>
-                                                </div>
-                        
-                                                <a href="javascript:void(0)" data-post-id="{{.Id}}" onclick="togglePopup4(this)" class="popup-exit">
-                                                    <i class="material-icons">
-                                                        close
-                                                    </i>
-                                                </a>
-                                            </form>
+                        {{if eq .Author $UserInfo.Username}}
+                            <article class="post{{.Id}}">
+                                <div class="top-post">
+                                    <p class="author">{{.Author}}</p>
+                                    <div class="like-com-zone">
+                                        <div class="liked-zone">
+                                            {{if $UserInfo.IsLoggedIn}}
+                                                <button class="likeButton forum-btn" data-post-id="{{.Id}}" ><i class="like-thumb material-icons" >
+                                                    thumb_up
+                                                </i></button>
+                                            {{else}}
+                                                <button class="likeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="like-thumb
+                                                    material-icons">
+                                                    thumb_up
+                                                </i></button>
+                                            {{end}}
+                                            <p id="likeCount{{.Id}}">{{.Likes}}</p>
                                         </div>
-                                    </section>
-
-
-                                    <div class="comment-zone">
-                                        <section class="comments{{$currentPostId}}" style="display: none;">
+                                        <div class="disliked-zone">
+                                            {{if $UserInfo.IsLoggedIn}}
+                                                <button class="dislikeButton forum-btn" data-post-id="{{.Id}}"><i class="dislike-thumb material-icons">
+                                                    thumb_down
+                                                </i></button>
+                                            {{else}}
+                                                <button class="dislikeButton forum-btn" data-post-id="{{.Id}}" disabled><i class="dislike-thumb
+                                                    material-icons">
+                                                    thumb_down
+                                                </i></button>
+                                            {{end}}
+                                            <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
+                                            <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
+                                                chat
+                                            </i></button>
+                                            <p id="commentCount">{{.Comments}}</p>
+                                            <button class="deletButton forum-btn" data-post-id="{{.Id}}" onclick="deletePopUp(this)">DEL</button>
+                                            <button class="editButton forum-btn" data-post-id="{{.Id}}" onclick="editPopUp(this)">EDIT</button>
+                                        </div>
+                                        <div class="deletePopUp" id="delete{{.Id}}">
+                                            <p>Are you sure you want to delete this post?</p>
+                                            <button><a href="/delete?postid={{.Id}}&topics={{.Topics}}">Yes</a></button>
+                                            <button onclick="removeDelete(this)" data-post-id="{{.Id}}"><a href="/myPosts">No</a></button>
+                                        </div>
+                                        <section class="posts" id="edit{{.Id}}">
                                             <div id="wrapper">
-                                                <form action="/CreateCommentForMyPost" id="createcommentformypost" method="POST">
-                                                    <h4>Create new comment</h4>
-                                                    <textarea name="comment" id="textComment"></textarea>
-                                                    <input type="hidden" name="postId" value="{{ $currentPostId}}">
-                                                    <button type="submit">Add comment</button>
+                                                <form action="/editPost?postid={{.Id}}" id="editPost" method="POST">
+                                                    <h1>Edit your post</h1>
+                                                    <div class="part-one-post">
+                                                        <div class="title-post">
+                                                            <label for="title">Title</label>
+                                                            <input type="text" id="title" name="title" value="{{.Title}}" required >
+                                                        </div>
+                                                        <br>
+                                                        <div class="tag-zone-post">
+                                                            <label for="topics">Topic(s)</label>
+                                                            <select id="topics" name="topics" required>
+                                                                {{range $Topics}}
+                                                                    {{if eq .Title $CurrentPost.Topics}}
+                                                                        <option value="{{.Title}}" selected>{{.Title}}</option>
+                                                                    {{else}}
+                                                                        <option value="{{.Title}}">{{.Title}}</option>
+                                                                    {{end}}
+                                                                {{end}}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="second-part-post">
+                                                        <label for="content">Content</label>
+                                                        <textarea id="content" name="content" required>{{.Content}}</textarea>
+                                                    </div>
+                                                    <div class="third-part-post">          
+                                                        <div class="acceptCondtions">
+                                                            <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
+                                                        </div>
+                                                        <button type="submit" class="btn-login"> Edit </button>
+                                                    </div>
+                                                    <a href="javascript:void(0)" data-post-id="{{.Id}}" onclick="togglePopup4(this)" class="popup-exit">
+                                                        <i class="material-icons">
+                                                            close
+                                                        </i>
+                                                    </a>
                                                 </form>
-                                                <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
-                                                <i class="material-icons">
-                                                    close
-                                                </i>
-                                                </a>
                                             </div>
                                         </section>
+                                        <div class="comment-zone">
+                                            <section class="comments{{$currentPostId}}" style="display: none;">
+                                                <div id="wrapper">
+                                                    <form action="/CreateCommentForMyPost" id="createcommentformypost" method="POST">
+                                                        <h4>Create new comment</h4>
+                                                        <textarea name="comment" id="textComment"></textarea>
+                                                        <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                                        <button type="submit">Add comment</button>
+                                                    </form>
+                                                    <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
+                                                        <i class="material-icons">
+                                                            close
+                                                        </i>
+                                                    </a>
+                                                </div>
+                                            </section>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="line"></div>
-                            <div class="title-zone-post">
-                                <h2>{{.Title}}</h2>
-                                <p class="topics">Topic: {{.Topics}}</p>
-                            </div>
-                            <p class="post-content">{{.Content}}</p>
-                            <p class="date">{{.Date}}</p>
-                            <div class="bot-post">
-                                {{if $UserInfo.IsLoggedIn}}
-                                    <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
-                                        chat
-                                    </i></button>
-                                {{else}}
-                                    <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
-                                        chat
-                                    </i></button>
-                                {{end}}
-
-                                <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
-                                {{if eq .Comments 0}}
-                                <p class="noCommentInfo">No comments yet</p>
-                                {{else}}
-                            </div>
+                                <div class="line"></div>
+                                <div class="title-zone-post">
+                                    <h2>{{.Title}}</h2>
+                                    <p class="topics">Topic: {{.Topics}}</p>
+                                </div>
+                                <p class="post-content">{{.Content}}</p>
+                                <p class="date">{{.Date}}</p>
+                                <div class="bot-post">
+                                    {{if $UserInfo.IsLoggedIn}}
+                                        <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                            chat
+                                        </i></button>
+                                    {{else}}
+                                        <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
+                                            chat
+                                        </i></button>
+                                    {{end}}
+                                    <button class="show-comment-btn" id="displayComments{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="displayComments(this)">▼</button>
+                                    {{if eq .Comments 0}}
+                                        <p class="noCommentInfo">No comments yet</p>
+                                    {{end}}
+                                </div>
                                 <section class="commentArea" id="comments{{$currentPostId}}">
                                     {{range $Comments}}
                                         {{if eq .Idpost $currentPostId}}
@@ -229,14 +221,14 @@
                                         {{end}}
                                     {{end}}
                                 </section> 
-                            {{end}}
-                        </article>
-                        <br>
-                    {{end}}
+                            </article>
+                            <br>
+                        {{end}}
                     {{end}}
                 {{end}}
             </section>
         </main> 
     <script src="/static/JS/index.js"></script>
+    </div>
 </body>
 </html>
