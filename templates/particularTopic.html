@@ -61,31 +61,24 @@
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
                 <form action="/sort">
                     <label for="sort">
-                            <div id="myDropdown" class="dropdown-content">
-                                <ul>
+                        <div id="myDropdown" class="dropdown-content">
+                            <ul>
                                 <li><button type="submit" name="sort" value="oldest">Oldest post</button></li>
                                 <li><button type="submit" name="sort" value="newest">Newest post</button></li>
                                 <li><button type="submit" name="sort" value="mostLiked">Most liked</button></li>
                                 <li><button type="submit" name="sort" value="mostDisliked">Most disliked</button></li>
                                 <li><button type="submit" name="sort" value="A-Z">A-Z</button></li>
                                 <li><button type="submit" name="sort" value="Z-A">Z-A</button></li>
-                                </ul>
-                            </div>
+                            </ul>
+                        </div>
                     </label>
                 </form>
             </div>  
-
-
-
-            
-            
-            
             <div class="main-part-Topic-zone">
                 <div class="Home-topics">
                     <h1>{{.Topics.Title}}</h1>
                 </div>
             </div>
-            
             <section class="actu">
                 {{$UserInfo := .UserInfo}}
                 {{$Comments := .Comments}}
@@ -148,9 +141,9 @@
                                                     </div>
                                                 </form>
                                                 <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
-                                                <i class="material-icons">
-                                                    close
-                                                </i>
+                                                    <i class="material-icons">
+                                                        close
+                                                    </i>
                                                 </a>
                                             </div>
                                         </section>
