@@ -52,7 +52,6 @@ main {
   
 
 .dropdown-content {
-    margin-top: 5%;
     display: none;
     position: fixed;
     background-color: rgb(217, 217, 217, 0.05);
@@ -64,6 +63,7 @@ main {
     border-radius: 5px;
     z-index: 1;
     margin-bottom: 5%;
+    top: 25%;
   }
 
 .dropdown-content button {
@@ -138,6 +138,7 @@ article {
     outline: 0.5px solid var(--light-grey);
     color: var(--light-grey);
 }
+
 
 .top-post{
     display: flex;
@@ -266,7 +267,6 @@ article .topics{
 }
 
 .typePage {
-    width: 15%;
     display: flex;
     position: fixed;
     justify-content: space-between;
@@ -274,6 +274,7 @@ article .topics{
     margin-left: 2.5%;
     top: 15%;
     font-size: 1em;
+    gap: 10px;
     outline: 0.5px solid var(--light-grey);
     border-radius: 5px;
     padding: 0.25% 1.25%;

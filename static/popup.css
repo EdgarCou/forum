@@ -5,10 +5,10 @@
     left: 50%;
     transform: translate(-50%,-50%);
     width: 50%;
-    margin-top: 10%;
+    margin-top: 15%;
     border: 1px solid rgb(255, 255, 255, 0.3);
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(50px);
+    backdrop-filter: blur(50px);
     color:var(--white);
     border-radius: 10px;
     padding: 5% 2.5%;

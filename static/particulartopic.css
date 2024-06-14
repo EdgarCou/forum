@@ -7,3 +7,11 @@
     background-color: rgb(217, 217, 217, 0.2);
 }
 
+.dropbtn  {
+    margin-left: 2%;
+}
+
+
+.dropdown-content {
+    margin-left: 2%;
+}

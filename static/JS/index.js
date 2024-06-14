@@ -1,5 +1,5 @@
 function newPostPopUp(){
-    document.querySelector('.posts').style.display = 'block';    
+    document.querySelector('.posts').style.display = 'block';   
     document.querySelector('#buttonTopic').disabled = true;
     
 }
@@ -56,7 +56,17 @@ function myDropdownFunc(button) {
             myDropdownFunc(button);
         }
     }
-  }
+}
+
+function myDropdownFuncEdit(button) {
+    document.getElementById("myDropdown-edit").style.display = "block";
+    button.onclick = function() {
+        document.getElementById("myDropdown-edit").style.display = "none";
+        button.onclick = function() {
+            myDropdownFuncEdit(button);
+        }
+    }
+}
 
 
 var socket = new WebSocket("ws://localhost:8080/ws");
@@ -147,12 +157,21 @@ function editPopUp(button){
     postId = button.getAttribute("data-post-id");
     console.log(postId);
     document.querySelector('#edit'+postId).style.display = 'block';
+    document.querySelector('#post'+postId).style.marginLeft = '60%';
+
 }
 
 function togglePopup4(button){
     postId = button.getAttribute("data-post-id");
     console.log(postId);
+    document.querySelector('#delete'+postId).style.display = 'none';
+}
+
+function togglePopup5(button){
+    postId = button.getAttribute("data-post-id");
+    console.log(postId);
     document.querySelector('#edit'+postId).style.display = 'none';
+    document.querySelector('.article-post').style.display = 'block';
 }
 
 function removeDelete(button){
