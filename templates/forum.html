@@ -188,32 +188,9 @@
                                             chat
                                         </i></button>
                                         <p id="commentCount">{{.Comments}}</p>
+                                        
                                     </div>
-                                    <div class="comment-zone">
-                                        <section class="comments{{$currentPostId}}" style="display: none;">
-                                            <div id="wrapper">
-                                                <form action="/CreateComment" id="createcomment" method="POST">
-                                                    <h4>Create new comment</h4>
-                                                    <div class="part-one-comment">
-                                                        <label for="comment">Comment</label>
-                                                        <textarea name="comment" id="textComment"></textarea>
-                                                        <input type="hidden" name="postId" value="{{ $currentPostId}}">
-                                                    </div>
-                                                    <div class="second-part-comment">
-                                                        <div class="acceptCondtions">
-                                                            <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
-                                                        </div>
-                                                        <button type="submit">Add comment</button>
-                                                    </div>
-                                                </form>
-                                                <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
-                                                <i class="material-icons">
-                                                    close
-                                                </i>
-                                                </a>
-                                            </div>
-                                        </section>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="line"></div>
@@ -242,12 +219,35 @@
                                 {{range $Comments}}
                                     {{if eq .Idpost $currentPostId}}
                                         <div class="comment">
-                                            <p>{{.Author}}</p>
+                                            <h3>{{.Author}}</h3>
                                             <p>{{.Content}}</p>
                                         </div>
                                     {{end}}
                                 {{end}}
                             </section> 
+                                <section class="comment-selection comments{{$currentPostId}}">
+                                    <div id="comment-creation">
+                                        <form action="/CreateComment" id="createcomment" method="POST">
+                                            <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit-comment">
+                                                <i class="material-icons">
+                                                    close
+                                                </i>
+                                            </a>
+                                            <h4>Create new comment</h4>
+                                            <div class="part-one-comment">
+                                                <label for="comment">Comment</label>
+                                                <textarea name="comment" id="textComment"></textarea>
+                                                <input type="hidden" name="postId" value="{{ $currentPostId}}">
+                                            </div>
+                                            <div class="second-part-comment">
+                                                <div class="acceptCondtions">
+                                                    <label class="checkbox-popup"><input type="checkbox" required>I agree with <a href="/RGPD"> using condtions</a></label>
+                                                </div>
+                                                <button type="submit">Add comment</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </section>
                         </article>
                         <br>
                     {{end}}

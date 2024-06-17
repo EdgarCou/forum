@@ -1,13 +1,13 @@
 .categories {
     display: grid;
-    width: 100%;
+    width: 90%;
     align-items: center;
     grid-gap: 1.5rem;
     color: white;
     grid-template-columns: 30% 30%;
     justify-content: space-between;
     justify-content: center;
-    margin-bottom: 5rem;
+    margin: auto;
 }
 
 .postTopic{

@@ -163,28 +163,34 @@
                                     {{range $Comments}}
                                         {{if eq .Idpost $currentPostId}}
                                             <div class="comment">
-                                                <p>{{.Author}}</p>
+                                                <h3>{{.Author}}</h3>
                                                 <p>{{.Content}}</p>
                                             </div>
                                         {{end}}
                                     {{end}}
                                 </section> 
-                                <section class="posts" id="delete{{.Id}}">
+                                <section class="edit-delete-selection" id="delete{{.Id}}">
                                     <div id="delete-section">
                                         <div class="deletePopUp" id="delete{{.Id}}">
+                                            <a href="javascript:void(0)" data-post-id="{{.Id}}" onclick="togglePopup4(this)" class="popup-exit-edit">
+                                                <i class="material-icons">
+                                                    close
+                                                </i>
+                                            </a>
                                             <p>Are you sure you want to delete this post?</p>
                                             <button><a href="/delete?postid={{.Id}}&topics={{.Topics}}">Yes</a></button>
                                             <button onclick="removeDelete(this)" data-post-id="{{.Id}}"><a href="/myPosts">No</a></button>
                                         </div>
-                                        <a href="javascript:void(0)" data-post-id="{{.Id}}" onclick="togglePopup4(this)" class="popup-exit">
+                                        
+                                    </div>
+                                </section>
+                                <section class="edit-delete-selection" id="edit{{.Id}}">
+                                    <div id="edit-section">
+                                        <a href="javascript:void(0)" data-post-id="{{.Id}}" onclick="togglePopup5(this)" class="popup-exit-delete">
                                             <i class="material-icons">
                                                 close
                                             </i>
                                         </a>
-                                    </div>
-                                </section>
-                                <section class="posts" id="edit{{.Id}}">
-                                    <div id="edit-section">
                                         <form action="/editPost?postid={{.Id}}" id="editPost" method="POST">
                                             <h1>Edit your post</h1>
                                             <div class="part-one-post">
@@ -216,11 +222,7 @@
                                                 </div>
                                                 <button type="submit" class="btn-login"> Edit </button>
                                             </div>
-                                            <a href="javascript:void(0)" data-post-id="{{.Id}}" onclick="togglePopup5(this)" class="popup-exit">
-                                                <i class="material-icons">
-                                                    close
-                                                </i>
-                                            </a>
+                                      
                                         </form>
                                     </div>
                                 </section>
