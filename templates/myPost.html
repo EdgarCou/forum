@@ -57,7 +57,7 @@
                 <a href="/allTopics" >Topics</a>
                 <a href="/forum" >All posts</a>
                 <a href="/myPosts" class="typePage-OnPage">My posts</a>
-                <a href="/liked">Liked post</a>
+                <a href="/liked">Liked posts</a>
             </div>
             <div class="dropdown forum-dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
@@ -118,7 +118,7 @@
                                                     </i></button>
                                                 {{end}}
                                                 <p id="dislikeCount{{.Id}}">{{.Dislikes}}</p>
-                                                <button class="commentButton forum-btn" data-post-id="/"><i class="material-icons">
+                                                <button class="commentButton forum-btn" data-post-id="/" disabled><i class="material-icons">
                                                     chat
                                                 </i></button>
                                                 <p id="commentCount">{{.Comments}}</p>
@@ -137,25 +137,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="article-post">
-                                    <div class="comment-zone">
-                                        <section class="comments{{$currentPostId}}" style="display: none;">
-                                            <div id="wrapper">
-                                                <form action="/CreateCommentForMyPost" id="createcommentformypost" method="POST">
-                                                    <h4>Create new comment</h4>
-                                                    <textarea name="comment" id="textComment"></textarea>
-                                                    <input type="hidden" name="postId" value="{{ $currentPostId}}">
-                                                    <button type="submit">Add comment</button>
-                                                </form>
-                                                <a href="javascript:void(0)" data-post-id="{{$currentPostId}}" onclick="togglePopup2(this)" class="popup-exit">
-                                                    <i class="material-icons">
-                                                        close
-                                                    </i>
-                                                </a>
-                                            </div>
-                                        </section>
-                                    </div>
-                                </div>
                                 <div class="line"></div>
                                 <div class="title-zone-post">
                                     <h2>{{.Title}}</h2>
@@ -165,7 +146,7 @@
                                 <p class="date">{{.Date}}</p>
                                 <div class="bot-post">
                                     {{if $UserInfo.IsLoggedIn}}
-                                        <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" onclick="newCommentPopUp(this)"><i class="material-icons">
+                                        <button class="forum-btn btnForComment" id="commentButton{{$currentPostId}}" data-post-id="{{$currentPostId}}" disabled><i class="material-icons">
                                             chat
                                         </i></button>
                                     {{else}}
