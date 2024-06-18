@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-
+	"os"
+	"path/filepath"
 	//"time"
-	//"io"
+	"io"
 	"log"
 	"net/http"
 
@@ -216,26 +217,35 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		birthdate := r.FormValue("birthdate")
 
 		println(firstname, lastname, birthdate)
-		/*file, handler, err := r.FormFile("profile_picture")
-		  if err != nil {
-		      http.Error(w, "Erreur lors du téléchargement du fichier"+err.Error(), http.StatusInternalServerError)
-		      return
-		  }
-		  defer file.Close()
 
-		  os.MkdirAll("static/uploads", os.ModePerm)
+		file, handler, err := r.FormFile("profilepicture")
+        if err != nil {
+            http.Error(w, "Error during file upload", http.StatusInternalServerError)
+            return
+        }
+        defer file.Close()
 
-		  filePath := filepath.Join("static/uploads", handler.Filename)
-		  f, err := os.Create(filePath)
-		  if err != nil {
-		      http.Error(w, "Erreur lors de la sauvegarde du fichier", http.StatusInternalServerError)
-		      return
-		  }
-		  defer f.Close()
-		  io.Copy(f, file)
-		*/
-		var err error
-		updateSQL := `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
+        os.MkdirAll("static/uploads", os.ModePerm)
+
+        filePath := filepath.Join("static/uploads", handler.Filename)
+        f, err := os.Create(filePath)
+        if err != nil {
+            http.Error(w, "Error saving the file", http.StatusInternalServerError)
+            return
+        }
+        defer f.Close()
+        io.Copy(f, file)
+
+        updateSQL := `UPDATE utilisateurs SET profile_picture = ?  WHERE username = ?`
+        _, err = db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
+        if err != nil {
+            http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
+            return
+        }
+
+        http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
+	
+		updateSQL = `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
 		result, err := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username)
 		if err != nil {
 			http.Error(w, "Erreur lors de la mise à jour de la photo de profil", http.StatusInternalServerError)
