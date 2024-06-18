@@ -254,6 +254,19 @@
                 {{end}}
             </section>
         </main>
+        <footer>
+            <div class="typePage-phone">
+                <a href="/allTopics" >Topics</a>
+                <a href="/forum" class="typePage-OnPage">All posts</a>
+                {{if .UserInfo.IsLoggedIn}}
+                    <a href="/myPosts">My posts</a>
+                    <a href="/liked" >Liked posts</a>
+                {{else}}
+                    <a href="/login">My posts</a>
+                    <a href="/login">Liked posts</a>
+                {{end}}
+            </div>
+        </footer>
     </div>
     <script src="/static/JS/index.js"></script>
 </body>

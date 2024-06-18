@@ -400,3 +400,38 @@ article .topics{
     color: var(--white);
 }
 
+.typePage-phone {
+    display: none;
+}
+
+/* Responsive */
+
+@media screen and (max-width: 1024px) {
+    .typePage-phone {
+        border-top: 0.5px solid var(--light-grey);
+        width: 100%;
+        margin: auto;
+        display: flex;
+        position: absolute;
+        bottom: 0;
+        justify-content: center;
+        align-items: center;
+        font-size: 1em;
+        gap: 20px;
+        padding: 1% ;
+    }
+
+    .typePage-phone a {
+        text-decoration: none;
+        color: white;
+    }
+    
+    .typePage {
+        display: none;
+    }
+
+    .actu {
+        margin-top: 20%;
+    }
+}
+
