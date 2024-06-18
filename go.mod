@@ -1,7 +1,7 @@
 module forum
 
-go 1.22.2
-	
+go 1.22
+
 require (
 	github.com/gorilla/sessions v1.2.2
 	github.com/gorilla/websocket v1.5.1
