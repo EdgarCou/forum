@@ -90,4 +90,118 @@ header img {
     font-size: 2rem;
 }
 
+nav {
+display: none;
+}
+
+
+
+
+@media screen and (max-width: 768px) {
+    a, button{
+        cursor: pointer;
+    }
+    
+    html, body {
+        height: 100%;
+    }
+    
+    nav{
+        position: absolute;
+        top: 100px;
+        left: 50px;
+        width: 250px;
+        height: 100%;
+    }
+    
+    .nav h1{
+        font-size: 1.5em;
+        color: #fbfbfb;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+    
+    .nav{
+        position: fixed;
+        left: -500px;
+        width: 350px;
+        height: 100%;
+        background-color: #302a36;
+        transition: .5s;
+        outline: 2px solid #000;
+        z-index: 1000;
+    
+    }
+    
+    .nav ul li{
+        color: #fff;
+        text-align: center;
+        text-transform: uppercase;
+        list-style-type: none;
+        font-size: 1.5em;
+        padding: 30px 30px;
+        border-bottom: 1pt solid #000;
+    }
+    
+    .nav ul li a{
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    .nav p {
+        margin-top: 20px;
+        font-size: 0.5em;
+    
+    }
+    
+    .burger, .bar{
+        position: fixed;
+    }
+    
+    .burger{
+        display: block;
+        top: 40px;
+        right: 95%;
+        width: 30px;
+        height: 30px;
+        transform: translateY(-50%);
+        border: 0;
+        background: 0 0;
+    }
+    
+    .bar{
+        top: 3px;
+        background: #fff;
+        width: 100%;
+        height: 4px;
+        transition: all .3s ease-in;
+    }
+    
+    #bar2{
+        top: 11px;
+    }
+    
+    #bar3{
+        top: 19px;
+    }
+    
+    .nav.active{
+        left: 0;
+    }
+    
+    .burger.open #bar1{
+        background-color: #fff;
+        transform: rotate(45deg) translate(6px, 5px);
+    }
+    
+    .burger.open #bar2{
+        background-color: transparent;
+    }
+    
+    .burger.open #bar3{
+        background-color: #fff;
+        transform: rotate(-45deg) translate(6px, -5px);
+    }
+    
+}
 
