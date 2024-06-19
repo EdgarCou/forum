@@ -32,9 +32,13 @@
                 <section class="user-bar">
                     {{if .UserInfo.Username}}
                         <span class="pseudo">{{.UserInfo.Username}}</span>
-                        <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
-                            account_circle
-                        </i></a>
+                        <div class="ProfilePicture">
+                            {{if .UserInfo.ProfilePicture}}
+                                <img src="{{.UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;">
+                            {{else}}
+                                <i class="material-icons" style="font-size:150px;">account_circle</i>
+                            {{end}}
+                        </div>
                     {{end}} 
                 </section>
                 <section class="button-connection">
@@ -53,7 +57,13 @@
                     {{range .Members}}
                         <div class="member">
                             <h3>{{.Username}}</h3>
-                            <i class="material-icons">account_circle</i>
+                            <div class="ProfilePicture">
+                                {{if .Photo}}
+                                    <img src="{{.Photo}}" alt="alternative texte" style="height: 180px;width: 180px;">
+                                {{else}}
+                                    <i class="material-icons" style="font-size:150px;">account_circle</i>
+                                {{end}}
+                            </div>
                         </div>  
                     {{end}}
                 {{else}}

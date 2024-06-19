@@ -1,9 +1,10 @@
 package forum
 
 import (
+	"context"
+	"fmt"
 	"html/template"
 	"net/http"
-	"context"
 )
 
 type Members struct {
@@ -42,6 +43,9 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		members = append(members, member)
 	}
+
+	infos := CheckUserInfo(w, r)
+	fmt.Println(infos)
 
 	newData := MembersData{CheckUserInfo(w, r), members}
 	tmpl.Execute(w, newData)

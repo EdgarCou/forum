@@ -9,6 +9,10 @@
     margin-top: 5%;
 }
 
+.ProfilePicture img {
+    border-radius: 50%;
+}
+
 .member {
     width: 60%;
     align-items: center;

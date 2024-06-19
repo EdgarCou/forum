@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"io"
+	"os"
+	"path/filepath"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -134,8 +137,37 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		firstname := r.FormValue("Firstname")
 		lastname := r.FormValue("Lastname")
 		birthdate := r.FormValue("birthdate")
-		var err error
-		updateSQL := `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
+
+		println(firstname, lastname, birthdate)
+
+		file, handler, err := r.FormFile("profilepicture")
+        if err != nil {
+            http.Error(w, "Error during file upload", http.StatusInternalServerError)
+            return
+        }
+        defer file.Close()
+
+        os.MkdirAll("static/uploads", os.ModePerm)
+
+        filePath := filepath.Join("static/uploads", handler.Filename)
+        f, err := os.Create(filePath)
+        if err != nil {
+            http.Error(w, "Error saving the file", http.StatusInternalServerError)
+            return
+        }
+        defer f.Close()
+        io.Copy(f, file)
+
+        updateSQL := `UPDATE utilisateurs SET profile_picture = ?  WHERE username = ?`
+        _, err = db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
+        if err != nil {
+            http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
+            return
+        }
+
+        http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
+	
+		updateSQL = `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
 		result, err := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username)
 		if err != nil {
 			http.Error(w, "Erreur lors de la mise à jour de la photo de profil", http.StatusInternalServerError)

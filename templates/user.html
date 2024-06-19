@@ -33,9 +33,13 @@
                 <section class="user-bar">
                     {{if .Username}}
                     <span class="pseudo">{{.Username}}</span>
-                    <a href="/user?username={{.Username}}" class="account-link"><i class="material-icons">
-                            account_circle
-                        </i></a>
+                    <div class="ProfilePicture">
+                        {{if .ProfilePicture}}
+                            <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;">
+                        {{else}}
+                            <i class="material-icons" style="font-size:150px;">account_circle</i>
+                        {{end}}
+                    </div>
                     {{end}}
                 </section>
                 <section class="button-connection">
@@ -51,11 +55,13 @@
         <main>
             <section class="left-part">
                 <div class="user-info">
+                <div class="ProfilePicture">
                 {{if .ProfilePicture}}
-                <img src="{{.ProfilePicture}}" alt="alternative texte" style="width:150px;height:150px;">
+                <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 180px;width: 180px;">
                 {{else}}
                 <i class="material-icons" style="font-size:150px;">account_circle</i>
                 {{end}}
+                </div>
                     <form action="/user?username={{.Username}}" method="POST" enctype="multipart/form-data">
                         <label for="profilepicture">Changer la photo de profil :</label>
                         <input type="file" id="profilepicture" name="profilepicture" accept="image/*">
@@ -63,12 +69,6 @@
                         <input type="submit" value="Télécharger">
                     </form>
                     <h3>{{.Username}}</h3>
-                </div>
-                <div class="profil-choice">
-                    <a href="/user?username={{.Username}}" class="profil-link">User infos</a>
-                    <a href="/user?username={{.Username}}&tab=posts" class="profil-link">User Posts</a>
-                    <a href="/user?username={{.Username}}&tab=comments" class="profil-link">User Comments</a>
-                    <a href="/user?username={{.Username}}&tab=likes" class="profil-link">User Likes</a>
                 </div>
             </section>
             <div class="separator"></div>

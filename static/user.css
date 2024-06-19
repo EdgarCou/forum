@@ -49,6 +49,10 @@ main {
 }
 
 
+.ProfilePicture img {
+    border-radius: 50%;
+}
+
 .profil-choice a {
     font-size: 1.5em;
     color: var(--light-grey);
