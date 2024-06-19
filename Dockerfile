@@ -8,6 +8,8 @@ RUN go mod download
 
 COPY . .
 
+COPY utilisateurs.db /app/utilisateurs.db
+
 RUN go build -o main .
 
 EXPOSE 8080
