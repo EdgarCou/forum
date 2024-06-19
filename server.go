@@ -75,6 +75,3 @@ func main() {
 	log.Println("Server is listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
-
-
-// clé du docker : 66f6cc260c09f05096a4407d50b3013a68d636ce8bc4ed0d2b05ba68be10237a
