@@ -37,9 +37,13 @@
                 <section class="user-bar">
                     {{if .UserInfo.Username}}
                         <span class="pseudo">{{.UserInfo.Username}}</span>
-                        <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
-                            account_circle
-                        </i></a>
+                        <div class="ProfilePicture">
+                            {{if .UserInfo.ProfilePicture}}
+                                <img src="{{.UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                            {{else}}
+                                <i class="material-icons" style="font-size:2rem;">account_circle</i>
+                            {{end}}
+                        </div>
                     {{end}} 
                 </section>
                 <section class="button-connection">
@@ -91,7 +95,14 @@
                     {{else}}
                         <article class="post{{.Id}}">
                             <div class="top-post">
+                                <div class="profile-picture">
+                                {{if $UserInfo.ProfilePicture}}
+                                    <img src="{{$UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                {{else}}
+                                    <i class="material-icons" style="font-size:50px;">account_circle</i>
+                                {{end}}
                                 <p class="author">{{.Author}}</p>
+                                </div>
                                 <div class="like-com-zone">
                                     <div class="liked-zone">
                                         {{if $UserInfo.IsLoggedIn}}
