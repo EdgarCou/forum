@@ -8,7 +8,7 @@ import (
 
 type Members struct {
 	Username string
-	Photo string
+	ProfilePicture string
 }
 
 type MembersData struct {
@@ -35,7 +35,7 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 	var members []Members
 	for rows.Next() {
 		var member Members
-		errScan5 := rows.Scan(&member.Username, &member.Photo)
+		errScan5 := rows.Scan(&member.Username, &member.ProfilePicture)
 		if errScan5 != nil {
 			http.Error(w, "Error while reading the members", http.StatusInternalServerError)
 			return
