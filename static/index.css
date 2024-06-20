@@ -183,7 +183,7 @@ body {
     margin-top: 20%;
 }
 
-@media screen and (max-width: 768px){
+@media screen and (max-width: 900px){
     .home-part{
         margin-top: 8rem;
         margin-left: 2rem;
@@ -195,6 +195,7 @@ body {
         font-size: 3em;
         margin-bottom: 3%;
         margin-left: 2rem;
+        text-align: center;
     }
 
     .home-part h2{

@@ -45,7 +45,6 @@
     .allMembers {
         margin-top: 5rem;
         margin-left: 4.5rem;
-        grid-template-columns: 1fr;
     }
 }
 

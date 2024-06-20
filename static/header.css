@@ -90,23 +90,20 @@ header img {
     font-size: 2rem;
 }
 
-nav {
-display: none;
-}
 
 
 
 
-@media screen and (max-width: 768px) {
+
+@media screen and (max-width: 900px) {
+
+    
     a, button{
         cursor: pointer;
     }
     
-    html, body {
-        height: 100%;
-    }
     
-    nav{
+    .nav{
         position: absolute;
         top: 100px;
         left: 50px;
@@ -126,21 +123,27 @@ display: none;
         left: -500px;
         width: 350px;
         height: 100%;
-        background-color: #302a36;
+        background-color: rgb(37, 39, 77);
         transition: .5s;
-        outline: 2px solid #000;
+        outline: 1px solid var(--light-grey);
         z-index: 1000;
+        top: 10%;
     
     }
-    
-    .nav ul li{
+
+    .nav-burger ul{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-burger ul li{
         color: #fff;
         text-align: center;
         text-transform: uppercase;
         list-style-type: none;
         font-size: 1.5em;
         padding: 30px 30px;
-        border-bottom: 1pt solid #000;
+        border-bottom: 0.5px solid var(--light-grey);
     }
     
     .nav ul li a{
@@ -202,6 +205,20 @@ display: none;
         background-color: #fff;
         transform: rotate(-45deg) translate(6px, -5px);
     }
-    
+
+    nav ul {
+        display: none;
+    }
+
+    .logo {
+        margin-left: 30%;
+        margin-top: 5%;
+    }
+}
+
+@media screen and (min-width: 901px) {
+    .nav {
+        display: none;
+        }
 }
 
