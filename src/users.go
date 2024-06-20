@@ -12,17 +12,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func AjouterUtilisateur(username, email, password, profilePicture, lastname, firstname, birthdate string) error {
+func AddUser(username, email, password, profilePicture, lastname, firstname, birthdate string) error {
 	db = OpenDb()
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
+	hashedPassword, errCrypting := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if errCrypting != nil {
+		return errCrypting
 	}
 
-	_, err = db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture, lastname, firstname, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+	_, errQuery26 := db.ExecContext(context.Background(), `INSERT INTO utilisateurs (username, email, password, profile_picture, lastname, firstname, birthdate) VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		username, email, hashedPassword, profilePicture, lastname, firstname, birthdate)
-	if err != nil {
-		return err
+	if errQuery26 != nil {
+		return errQuery26
 	}
 	return nil
 }
@@ -30,14 +30,14 @@ func AjouterUtilisateur(username, email, password, profilePicture, lastname, fir
 func VerifierUtilisateur(username, password string) error {
 	db = OpenDb()
 	var passwordDB string
-	err := db.QueryRowContext(context.Background(), "SELECT password FROM utilisateurs WHERE username = ?", username).Scan(&passwordDB)
-	if err != nil {
-		return err
+	errQuery27 := db.QueryRowContext(context.Background(), "SELECT password FROM utilisateurs WHERE username = ?", username).Scan(&passwordDB)
+	if errQuery27 != nil {
+		return errQuery27
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(passwordDB), []byte(password))
-	if err != nil {
-		return fmt.Errorf("mot de passe incorrect")
+	errCrypting2 := bcrypt.CompareHashAndPassword([]byte(passwordDB), []byte(password))
+	if errCrypting2 != nil {
+		return fmt.Errorf("incorrect password")
 	}
 	return nil
 }
@@ -50,8 +50,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		println(username, email, password)
-		err := AjouterUtilisateur(username, email, password, "", "", "", "")
-		if err != nil {
+		errUser := AddUser(username, email, password, "", "", "", "")
+		if errUser != nil {
 			w.Header().Set("Content-Type", "text/html")
 			fmt.Fprint(w, `<html><body><script>alert("Email already use, please find another one."); window.location="/signup";</script></body></html>`)
 			return
@@ -61,9 +61,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/signup.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 3", http.StatusInternalServerError)
+	tmpl, errReading16 := template.ParseFiles("templates/signup.html")
+	if errReading16 != nil {
+		http.Error(w, "Error reading the HTML file : signup.html", http.StatusInternalServerError)
 		return
 	}
 	data := UserInfo{}
@@ -78,8 +78,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		err := VerifierUtilisateur(username, password)
-		if err != nil {
+		errUser2 := VerifierUtilisateur(username, password)
+		if errUser2 != nil {
 			w.Header().Set("Content-Type", "text/html")
 			fmt.Fprint(w, `<html><body><script>alert("Username or password incorrect"); window.location="/login";</script></body></html>`)
 			return
@@ -103,16 +103,16 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if username == "" {
-		http.Error(w, "Utilisateur non spécifié", http.StatusBadRequest)
+		http.Error(w, "User not specified", http.StatusBadRequest)
 		return
 	}
 
 	if r.Method == "GET" {
 		var email, profilePicture, firstname, lastname, birthdate string
 		query := `SELECT email, profile_picture, firstname, lastname, birthdate FROM utilisateurs WHERE username = ?`
-		err := db.QueryRowContext(context.Background(), query, username).Scan(&email, &profilePicture, &firstname, &lastname, &birthdate)
-		if err != nil {
-			http.Error(w, "Utilisateur non trouvé", http.StatusNotFound)
+		errQuery28 := db.QueryRowContext(context.Background(), query, username).Scan(&email, &profilePicture, &firstname, &lastname, &birthdate)
+		if errQuery28 != nil {
+			http.Error(w, "User not found", http.StatusNotFound)
 			return
 		}
 
@@ -125,9 +125,9 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		newData.Birthdate = birthdate
 		newData.IsLoggedIn = username != ""
 
-		tmpl, err := template.ParseFiles("templates/user.html")
-		if err != nil {
-			http.Error(w, "Erreur de lecture du fichier HTML 4", http.StatusInternalServerError)
+		tmpl, errReading17 := template.ParseFiles("templates/user.html")
+		if errReading17 != nil {
+			http.Error(w, "Error reading the HTML file : user.html", http.StatusInternalServerError)
 			return
 		}
 		tmpl.Execute(w, newData)
@@ -140,8 +140,8 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 
 		println(firstname, lastname, birthdate)
 
-		file, handler, err := r.FormFile("profilepicture")
-        if err != nil {
+		file, handler, errUpload := r.FormFile("profilepicture")
+        if errUpload != nil {
             http.Error(w, "Error during file upload", http.StatusInternalServerError)
             return
         }
@@ -150,8 +150,8 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
         os.MkdirAll("static/uploads", os.ModePerm)
 
         filePath := filepath.Join("static/uploads", handler.Filename)
-        f, err := os.Create(filePath)
-        if err != nil {
+        f, errSave := os.Create(filePath)
+        if errSave != nil {
             http.Error(w, "Error saving the file", http.StatusInternalServerError)
             return
         }
@@ -159,8 +159,8 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
         io.Copy(f, file)
 
         updateSQL := `UPDATE utilisateurs SET profile_picture = ?  WHERE username = ?`
-        _, err = db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
-        if err != nil {
+        _, errQuery29 := db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
+        if errQuery29 != nil {
             http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
             return
         }
@@ -168,23 +168,18 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
         http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
 	
 		updateSQL = `UPDATE utilisateurs SET firstname = ?, lastname = ?, birthdate = ?  WHERE username = ?`
-		result, err := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username)
-		if err != nil {
-			http.Error(w, "Erreur lors de la mise à jour de la photo de profil", http.StatusInternalServerError)
+		result, errQuery30 := db.ExecContext(context.Background(), updateSQL, firstname, lastname, birthdate, username)
+		if errQuery30 != nil {
+			http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
 			return
 		}
 
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			fmt.Println("Erreur lors de la récupération du nombre de lignes affectées :", err)
+		_, errScan10 := result.RowsAffected()
+		if errScan10 != nil {
+			fmt.Println("Error while retrieving the number of affected rows:", errScan10)
 			return
 		}
 
-		if rowsAffected == 0 {
-			fmt.Println("Aucune ligne n'a été mise à jour")
-		} else {
-			fmt.Println("Nombre de lignes mises à jour :", rowsAffected)
-		}
 
 		http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
 	}
@@ -205,9 +200,9 @@ func CheckUserInfo(w http.ResponseWriter, r *http.Request) UserInfo {
     data.IsLoggedIn = ok
     if ok {
         var profilePicture string
-        err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-        if err != nil && err != sql.ErrNoRows {
-            http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+        errQuery31 := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+        if errQuery31 != nil && errQuery31 != sql.ErrNoRows {
+            http.Error(w, "Error while retrieving the profile picture", http.StatusInternalServerError)
             return data
         }
 
@@ -219,9 +214,9 @@ func CheckUserInfo(w http.ResponseWriter, r *http.Request) UserInfo {
 }
 
 func RGPDHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/RGPD.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+	tmpl, errReading18 := template.ParseFiles("templates/RGPD.html")
+	if errReading18 != nil {
+		http.Error(w, "Error reading the HTML file : RGPD.html", http.StatusInternalServerError)
 		return
 	}
 	tmpl.Execute(w, nil)

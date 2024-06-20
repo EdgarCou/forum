@@ -11,11 +11,12 @@ import (
 var db *sql.DB
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
+	conn, errWs := upgrader.Upgrade(w, r, nil)
+	if errWs != nil {
+		log.Println(errWs)
 		return
 	}
+
 	defer conn.Close()
 	LikeHandlerWs(conn, r)
 }
@@ -23,7 +24,7 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 
-	_, err := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS utilisateurs (
+	_, errBdd := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS utilisateurs (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL UNIQUE CHECK(length(username) >= 3 AND length(username) <= 20),
 		email TEXT NOT NULL UNIQUE CHECK(length(email) >= 3 AND length(email) <= 30),
@@ -33,12 +34,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		lastname TEXT,
 		birthdate TEXT
 		)`)
-	if err != nil {
-		log.Fatal(err)
+	if errBdd != nil {
+		log.Fatal(errBdd)
 	}
 
-	var err2 error
-	_, err2 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS posts (
+	_, errBdd2 := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS posts (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
@@ -55,12 +55,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		ON DELETE CASCADE
 		ON UPDATE CASCADE		
 		)`)
-	if err2 != nil {
-		log.Fatal(err2)
+	if errBdd2 != nil {
+		log.Fatal(errBdd2)
 	}
 
-	var err3 error
-	_, err3 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS likedBy (
+	_, errBdd3 := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS likedBy (
 		username TEXT,
 		idpost INTEGER,
 		type BOOLEAN,
@@ -73,12 +72,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		ON UPDATE CASCADE
 		)`)
 
-	if err3 != nil {
-		log.Fatal(err3)
+	if errBdd3 != nil {
+		log.Fatal(errBdd3)
 	}
 
-	var err4 error
-	_, err4 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS topics (
+	_, errBdd4 := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS topics (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		nbpost INTEGER DEFAULT 0
@@ -86,14 +84,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	InitTopics()
 
-
-	
-	if err4 != nil {
-		log.Fatal(err4)
+	if errBdd4 != nil {
+		log.Fatal(errBdd4)
 	}
 
-	var err5 error
-	_, err5 = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS comments (
+	_, errBdd5 := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS comments (
 		content TEXT NOT NULL,
 		author TEXT NOT NULL,
 		idpost INTEGER,
@@ -104,17 +99,18 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 	)`)
-	if err5 != nil {
-		log.Fatal(err5)
+	if errBdd5 != nil {
+		log.Fatal(errBdd5)
 	}
 
 	data := CheckUserInfo(w, r)
 
-	tmpl, err := template.ParseFiles("templates/index.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 2 ", http.StatusInternalServerError)
+	tmpl, errReading5 := template.ParseFiles("templates/index.html")
+	if errReading5 != nil {
+		http.Error(w, "Error reading the HTML file : index.html", http.StatusInternalServerError)
 		return
 	}
+
 	totalData := FinalData{data, DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, totalData)
 }

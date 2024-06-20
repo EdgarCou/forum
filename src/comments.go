@@ -16,37 +16,36 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 	username, ok := session.Values["username"]
 
 	if !ok {
-		http.Error(w, "Vous devez être connecté pour commenter", http.StatusUnauthorized)
+		http.Error(w, "You must be connected to comment", http.StatusUnauthorized)
 		return
 	}
 
-
 	id := r.FormValue("postId")
-	println(id)
 	content := r.FormValue("comment")
 
 	if id == "" || content == "" {
-		http.Error(w, "Les champs ne peuvent pas être vides", http.StatusBadRequest)
+		http.Error(w, "Fields cannot be empty", http.StatusBadRequest)
 		return
 	}
 
-	err := AddCommentInDb(content, username.(string), id)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'ajout du commentaire", http.StatusInternalServerError)
+	errComment := AddCommentInDb(content, username.(string), id)
+	if errComment != nil {
+		http.Error(w, "Error while adding the comment", http.StatusInternalServerError)
 		return
 	}
 
 	date := time.Now()
 	date_string := date.Format("2006-01-02 15:04:05")
-	_, err = db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
-	if err != nil {
-		http.Error(w, "Erreur lors de la mise à jour de la date", http.StatusInternalServerError)
+
+	_, errUpdate := db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
+	if errUpdate != nil {
+		http.Error(w, "Error while updating the data", http.StatusInternalServerError)
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/forum.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+	tmpl, errReading2 := template.ParseFiles("templates/forum.html")
+	if errReading2 != nil {
+		http.Error(w, "Error reading the HTML file : forum.html", http.StatusInternalServerError)
 		return
 	}
 
@@ -56,13 +55,13 @@ func CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func AddCommentInDb(content, author, id string) error{
-	_, err := db.ExecContext(context.Background(), "INSERT INTO comments (content, author, idpost) VALUES (?, ?, ?)", content, author, id)
-	_,err2 := db.ExecContext(context.Background(), "UPDATE posts SET comments = comments + 1 WHERE id = ?", id)
-	if err != nil {
-		return err
+	_, errInsert := db.ExecContext(context.Background(), "INSERT INTO comments (content, author, idpost) VALUES (?, ?, ?)", content, author, id)
+	_,errUpdate2 := db.ExecContext(context.Background(), "UPDATE posts SET comments = comments + 1 WHERE id = ?", id)
+	if errInsert != nil {
+		return errInsert
 	}
-	if err2 != nil {
-		return err2
+	if errUpdate2 != nil {
+		return errUpdate2
 	}
 
 	return nil
@@ -70,11 +69,12 @@ func AddCommentInDb(content, author, id string) error{
 
 func DisplayCommments(w http.ResponseWriter) []Comment {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT content, author, idpost FROM comments")
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des commentaires", http.StatusInternalServerError)
+	rows, errQuery := db.QueryContext(context.Background(), "SELECT content, author, idpost FROM comments")
+	if errQuery != nil {
+		http.Error(w, "Error while retrieving the comments", http.StatusInternalServerError)
 		return nil
 	}
+
 	if rows != nil {
 		defer rows.Close()
 	} 
@@ -82,9 +82,9 @@ func DisplayCommments(w http.ResponseWriter) []Comment {
 	var comments []Comment
 	for rows.Next() {
 		var comment Comment
-		err := rows.Scan(&comment.Content, &comment.Author, &comment.Idpost)
-		if err != nil {
-			http.Error(w, "Erreur lors de la lecture des commentaires", http.StatusInternalServerError)
+		errScan := rows.Scan(&comment.Content, &comment.Author, &comment.Idpost)
+		if errScan != nil {
+			http.Error(w, "Error while reading the comments", http.StatusInternalServerError)
 			return nil
 		}
 		comments = append(comments, comment)
@@ -96,7 +96,6 @@ func DisplayCommments(w http.ResponseWriter) []Comment {
     }
 
 	return comments
-
 }
 
 func CommentHandlerForMyPost(w http.ResponseWriter, r *http.Request) {
@@ -105,37 +104,36 @@ func CommentHandlerForMyPost(w http.ResponseWriter, r *http.Request) {
 	username, ok := session.Values["username"]
 
 	if !ok {
-		http.Error(w, "Vous devez être connecté pour commenter", http.StatusUnauthorized)
+		http.Error(w, "You must be logged in to comment", http.StatusUnauthorized)
 		return
 	}
 
-
 	id := r.FormValue("postId")
-	println(id)
 	content := r.FormValue("comment")
 
 	if id == "" || content == "" {
-		http.Error(w, "Les champs ne peuvent pas être vides", http.StatusBadRequest)
+		http.Error(w, "The fields cannot be empty", http.StatusBadRequest)
 		return
 	}
 
-	err := AddCommentInDb(content, username.(string), id)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'ajout du commentaire", http.StatusInternalServerError)
+	errComment2 := AddCommentInDb(content, username.(string), id)
+	if errComment2 != nil {
+		http.Error(w, "Error while adding the comment", http.StatusInternalServerError)
 		return
 	}
 
 	date := time.Now()
 	date_string := date.Format("2006-01-02 15:04:05")
-	_, err = db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
-	if err != nil {
-		http.Error(w, "Erreur lors de la mise à jour de la date", http.StatusInternalServerError)
+
+	_, errUpdate3 := db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
+	if errUpdate3 != nil {
+		http.Error(w, "Error while updating the date", http.StatusInternalServerError)
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/myPost.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+	tmpl, errReading3 := template.ParseFiles("templates/myPost.html")
+	if errReading3 != nil {
+		http.Error(w, "Error reading the HTML file : myPost.html", http.StatusInternalServerError)
 		return
 	}
 
@@ -149,33 +147,31 @@ func CommentHandlerParticularTopic(w http.ResponseWriter, r *http.Request) {
 	username, ok := session.Values["username"]
 
 	if !ok {
-		http.Error(w, "Vous devez être connecté pour commenter", http.StatusUnauthorized)
+		http.Error(w, "You must be logged in to comment", http.StatusUnauthorized)
 		return
 	}
-
 
 	id := r.FormValue("postId")
 	content := r.FormValue("comment")
 	topic := r.FormValue("topic")
 
-	println(topic)
-
 	if id == "" || content == "" {
-		http.Error(w, "Les champs ne peuvent pas être vides", http.StatusBadRequest)
+		http.Error(w, "The fields cannot be empty", http.StatusBadRequest)
 		return
 	}
 
-	err := AddCommentInDb(content, username.(string), id)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'ajout du commentaire", http.StatusInternalServerError)
+	errComment3 := AddCommentInDb(content, username.(string), id)
+	if errComment3 != nil {
+		http.Error(w, "Error while adding the comment", http.StatusInternalServerError)
 		return
 	}
 
 	date := time.Now()
 	date_string := date.Format("2006-01-02 15:04:05")
-	_, err = db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
-	if err != nil {
-		http.Error(w, "Erreur lors de la mise à jour de la date", http.StatusInternalServerError)
+
+	_, errUpdate4 := db.ExecContext(context.Background(), `UPDATE posts SET date = ? WHERE id = ?`, date_string, id)
+	if errUpdate4 != nil {
+		http.Error(w, "Error while updating the date", http.StatusInternalServerError)
 		return
 	}
 
@@ -186,10 +182,9 @@ func CommentHandlerParticularTopic(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles("templates/particularTopic.html")
 	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+		http.Error(w, "Error reading the HTML file : particularTopic.html", http.StatusInternalServerError)
 		return
 	}
 	
 	tmpl.Execute(w, newData)
-
 }

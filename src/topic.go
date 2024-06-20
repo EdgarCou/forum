@@ -16,19 +16,19 @@ func AddTopicHandler(w http.ResponseWriter, r *http.Request) {
 	topic := r.FormValue("topic")
 
 	if topic == "" {
-		http.Error(w, "Les champs ne peuvent pas être vides", http.StatusBadRequest)
+		http.Error(w, "The fields cannot be empty", http.StatusBadRequest)
 		return
 	}
 
-	err := AddTopicInDb(topic)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'ajout du topic", http.StatusInternalServerError)
+	errTopic := AddTopicInDb(topic)
+	if errTopic != nil {
+		http.Error(w, "Error while adding the topic", http.StatusInternalServerError)
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/forum.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 9", http.StatusInternalServerError)
+	tmpl, errReading13 := template.ParseFiles("templates/forum.html")
+	if errReading13 != nil {
+		http.Error(w, "Error reading the HTML file : forum.html", http.StatusInternalServerError)
 		return
 	}
 
@@ -50,9 +50,9 @@ func AddTopicInDb(topic string) error {
 	}
 
 	if !found {
-		_,err := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
-		if err != nil {
-			return err
+		_,errQuery19 := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
+		if errQuery19 != nil {
+			return errQuery19
 		}
 	}
 	
@@ -61,9 +61,9 @@ func AddTopicInDb(topic string) error {
 
 func DisplayTopics(w http.ResponseWriter) []Topics {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT title, nbpost FROM topics")
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des topics", http.StatusInternalServerError)
+	rows, errQuery20 := db.QueryContext(context.Background(), "SELECT title, nbpost FROM topics")
+	if errQuery20 != nil {
+		http.Error(w, "Error while retrieving the topics", http.StatusInternalServerError)
 		return nil
 	}
 	if rows != nil {
@@ -73,9 +73,9 @@ func DisplayTopics(w http.ResponseWriter) []Topics {
 	var topics []Topics
 	for rows.Next() {
 		var topic Topics
-		err := rows.Scan(&topic.Title, &topic.NbPost)
-		if err != nil {
-			http.Error(w, "Erreur lors de la lecture des topics", http.StatusInternalServerError)
+		errScan7:= rows.Scan(&topic.Title, &topic.NbPost)
+		if errScan7 != nil {
+			http.Error(w, "Error while reading the topics", http.StatusInternalServerError)
 			return nil
 		}
 		topics = append(topics, topic)
@@ -91,9 +91,9 @@ func InitTopics() {
 	
 	if topicsInDb == nil {
 		for _, topic := range topics {
-			_, err := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
-			if err != nil {
-				log.Println(err)
+			_, errQuery21 := db.ExecContext(context.Background(), `INSERT INTO topics (title) VALUES (?)`, topic)
+			if errQuery21 != nil {
+				log.Println(errQuery21)
 			}
 		}
 	}
@@ -101,9 +101,9 @@ func InitTopics() {
 
 func AlreadyInDb() []string {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT title FROM topics")
-	if err != nil {
-		log.Println(err)
+	rows, errQuery22 := db.QueryContext(context.Background(), "SELECT title FROM topics")
+	if errQuery22!= nil {
+		log.Println(errQuery22)
 		return nil
 	}
 	if rows != nil {
@@ -113,9 +113,9 @@ func AlreadyInDb() []string {
 	var topicsInDb []string
 	for rows.Next() {
 		var topic string
-		err := rows.Scan(&topic)
-		if err != nil {
-			log.Println(err)
+		errScan8 := rows.Scan(&topic)
+		if errScan8 != nil {
+			log.Println(errScan8)
 			return nil
 		}
 		topicsInDb = append(topicsInDb, topic)
@@ -126,9 +126,9 @@ func AlreadyInDb() []string {
 
 func AllTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
-	tmpl, err := template.ParseFiles("templates/topics.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 10", http.StatusInternalServerError)
+	tmpl, errReading14 := template.ParseFiles("templates/topics.html")
+	if errReading14 != nil {
+		http.Error(w, "Error reading the HTML file : topic.html", http.StatusInternalServerError)
 		return
 	}
 	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
@@ -137,9 +137,9 @@ func AllTopicsHandler(w http.ResponseWriter, r *http.Request) {
 
 func ParticularDisplayTopics(w http.ResponseWriter, particularTopic string) Topics{
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT title, nbpost FROM topics WHERE title = ?", particularTopic)
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des topics", http.StatusInternalServerError)
+	rows, errQuery23 := db.QueryContext(context.Background(), "SELECT title, nbpost FROM topics WHERE title = ?", particularTopic)
+	if errQuery23 != nil {
+		http.Error(w, "Error while retrieving the topics", http.StatusInternalServerError)
 		return Topics{}
 	}
 	if rows != nil {
@@ -148,9 +148,9 @@ func ParticularDisplayTopics(w http.ResponseWriter, particularTopic string) Topi
 
 	var topics Topics
 	for rows.Next() {
-		err := rows.Scan(&topics.Title, &topics.NbPost)
-		if err != nil {
-			http.Error(w, "Erreur lors de la lecture des topics", http.StatusInternalServerError)
+		errScan9 := rows.Scan(&topics.Title, &topics.NbPost)
+		if errScan9 != nil {
+			http.Error(w, "Error while reading the topics", http.StatusInternalServerError)
 			return Topics{}
 		}
 	}
@@ -162,9 +162,9 @@ func ParticularHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 
 	topic := r.URL.Query().Get("topic")
-	tmpl, err := template.ParseFiles("templates/particularTopic.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+	tmpl, errReading15 := template.ParseFiles("templates/particularTopic.html")
+	if errReading15 != nil {
+		http.Error(w, "Error reading the HTML file : particularTopic.html", http.StatusInternalServerError)
 		return
 	}
 	newData := ParticularFinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), ParticularDisplayTopics(w,topic)}
@@ -181,14 +181,14 @@ func ParticularHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateTopics(w http.ResponseWriter, currentTopic string, topics string) {
-	_,err2 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost - 1 WHERE title = ?`, currentTopic)
-		if err2 != nil {
-			http.Error(w, "Erreur lors de la mise à jour du nombre de post", http.StatusInternalServerError)
+	_,errQuery24 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost - 1 WHERE title = ?`, currentTopic)
+		if errQuery24 != nil {
+			http.Error(w, "Error while updating the post number", http.StatusInternalServerError)
 			return
 		}
-	_,err3 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost + 1 WHERE title = ?`, topics)
-	if err3 != nil {
-		http.Error(w, "Erreur lors de la mise à jour du nombre de post", http.StatusInternalServerError)
+	_,errQuery25 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost + 1 WHERE title = ?`, topics)
+	if errQuery25 != nil {
+		http.Error(w, "Error while updating the post number", http.StatusInternalServerError)
 		return
 	}
 }

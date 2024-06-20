@@ -7,12 +7,10 @@ import (
 )
 
 func OpenDb() *sql.DB {
-	dbPath := "utilisateurs.db"
-	var err error
-	db, err = sql.Open("sqlite3", dbPath)
-	if err != nil {
-		log.Fatal(err)
+	dbPath := "forum.db"
+	db, errOpenBDD := sql.Open("sqlite3", dbPath)
+	if errOpenBDD != nil {
+		log.Fatal(errOpenBDD)
 	}
-
 	return db
 }
