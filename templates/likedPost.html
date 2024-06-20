@@ -95,13 +95,13 @@
                     {{else}}
                         <article class="post{{.Id}}">
                             <div class="top-post">
-                                <div class="profile-picture">
-                                {{if $UserInfo.ProfilePicture}}
-                                    <img src="{{$UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
-                                {{else}}
-                                    <i class="material-icons" style="font-size:50px;">account_circle</i>
-                                {{end}}
-                                <p class="author">{{.Author}}</p>
+                                <div class="profile-picture" style="display: flex;">
+                                    {{if $UserInfo.ProfilePicture}}
+                                        <img src="{{$UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                    {{else}}
+                                        <i class="material-icons" style="font-size:50px;">account_circle</i>
+                                    {{end}}
+                                    <p class="author">{{.Author}}</p>
                                 </div>
                                 <div class="like-com-zone">
                                     <div class="liked-zone">
