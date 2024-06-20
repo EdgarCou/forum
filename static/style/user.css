@@ -49,6 +49,10 @@ main {
 }
 
 
+.ProfilePicture img {
+    border-radius: 50%;
+}
+
 .profil-choice a {
     font-size: 1.5em;
     color: var(--light-grey);
@@ -142,3 +146,27 @@ main {
     margin: 20px 0;
 }
 
+@media screen and (max-width: 768px) {
+    main {
+        flex-direction: column;
+    }
+
+    .left-part {
+        width: 50%;
+        align-items: center;
+        justify-self: center;
+        text-align: center;
+        margin: 10% auto;
+    }
+
+    .user-info {
+        width: 80%;
+    }
+
+   
+    .right-part {
+        width: 100%;
+        justify-content: center;
+    }
+    
+}

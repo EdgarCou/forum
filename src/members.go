@@ -1,14 +1,14 @@
 package forum
 
 import (
+	"context"
 	"html/template"
 	"net/http"
-	"context"
 )
 
 type Members struct {
 	Username string
-	Photo string
+	ProfilePicture string
 }
 
 type MembersData struct {
@@ -20,24 +20,24 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 	defer db.Close()
 
-	tmpl, err := template.ParseFiles("templates/members.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 7", http.StatusInternalServerError)
+	tmpl, errReading7 := template.ParseFiles("templates/members.html")
+	if errReading7 != nil {
+		http.Error(w, "Error reading the HTML file : members.html", http.StatusInternalServerError)
 		return
 	}
 
-	rows, err := db.QueryContext(context.Background(), "SELECT username, profile_picture FROM utilisateurs")
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des membres", http.StatusInternalServerError)
+	rows, errQuery9 := db.QueryContext(context.Background(), "SELECT username, profile_picture FROM utilisateurs")
+	if errQuery9 != nil {
+		http.Error(w, "Error while retrieving the members", http.StatusInternalServerError)
 		return
 	}
 
 	var members []Members
 	for rows.Next() {
 		var member Members
-		err := rows.Scan(&member.Username, &member.Photo)
-		if err != nil {
-			http.Error(w, "Erreur lors de la lecture des membres", http.StatusInternalServerError)
+		errScan5 := rows.Scan(&member.Username, &member.ProfilePicture)
+		if errScan5 != nil {
+			http.Error(w, "Error while reading the members", http.StatusInternalServerError)
 			return
 		}
 		members = append(members, member)

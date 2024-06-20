@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/popup.css">
-    <link rel="stylesheet" type="text/css" href="/static/header.css">
-    <link rel="stylesheet" type="text/css" href="/static/forum.css">
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
-    <link rel="stylesheet" type="text/css" href="/static/myPost.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/popup.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/forum.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/myPost.css">
     <title>Forum</title>
 </head>
 <body>
@@ -56,9 +56,13 @@
                 <section class="user-bar">
                     {{if .UserInfo.Username}}
                         <span class="pseudo">{{.UserInfo.Username}}</span>
-                        <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
-                            account_circle
-                        </i></a>
+                        <div class="ProfilePicture">
+                            {{if .UserInfo.ProfilePicture}}
+                                <img src="{{.UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                            {{else}}
+                                <i class="material-icons" style="font-size:2rem;">account_circle</i>
+                            {{end}}
+                        </div>
                     {{end}} 
                 </section>
                 <section class="button-connection">
@@ -114,7 +118,14 @@
                             <article class="post{{.Id}}">
                                 <div class="article-post,">
                                     <div class="top-post">
+                                        <div class="profile-picture">
+                                        {{if $UserInfo.ProfilePicture}}
+                                            <img src="{{$UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                        {{else}}
+                                            <i class="material-icons" style="font-size:50px;">account_circle</i>
+                                        {{end}}
                                         <p class="author">{{.Author}}</p>
+                                        </div>
                                         <div class="like-com-zone">
                                             <div class="liked-zone">
                                                 {{if $UserInfo.IsLoggedIn}}

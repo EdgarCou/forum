@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"html/template"
-	"log"
 	"net/http"
 	"sort"
 	"time"
@@ -63,7 +62,7 @@ type ParticularFinalData struct {
 
 func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
-	//println("addNewPost")
+
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "templates/index.html")
 	} else if r.Method == "POST" {
@@ -72,16 +71,15 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 		topics := r.FormValue("topics")
 		session, _ := store.Get(r, "session")
 		author := session.Values["username"].(string)
-		println((author))
-		err := AddPostInDb(title, content, topics, author)
-		if err != nil {
-			println(err.Error())
+
+		errPost := AddPostInDb(title, content, topics, author)
+		if errPost != nil {
+			http.Error(w, "Error while adding the post", http.StatusInternalServerError)
 		} else {
-			println("Post added successfully")
 			posts := DisplayPost(w)
-			tmpl, err := template.ParseFiles("templates/forum.html")
-			if err != nil {
-				http.Error(w, "Erreur de lecture du fichier HTML 5", http.StatusInternalServerError)
+			tmpl, errReading8 := template.ParseFiles("templates/forum.html")
+			if errReading8 != nil {
+				http.Error(w, "Error reading the HTML file : forum.html", http.StatusInternalServerError)
 				return
 			}
 			username, ok := session.Values["username"]
@@ -89,10 +87,9 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 			var data UserInfo
 			data.IsLoggedIn = ok
 			if !ok {
-				tmpl, err := template.ParseFiles("templates/index.html")
-				log.Println(err)
-				if err != nil {
-					http.Error(w, "Erreur de lecture du fichier HTML 1", http.StatusInternalServerError)
+				tmpl, errReading9 := template.ParseFiles("templates/index.html")
+				if errReading9 != nil {
+					http.Error(w, "Error reading the HTML file : index.html", http.StatusInternalServerError)
 					return
 				}
 				newdata := FinalData{data, DisplayPost(w),DisplayCommments(w), DisplayTopics(w)}
@@ -100,12 +97,11 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 				return
 			} else if ok {
 				var profilePicture string
-				err := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
-				if err != nil && err != sql.ErrNoRows {
-					http.Error(w, "Erreur lors de la récupération de la photo de profil", http.StatusInternalServerError)
+				errQuery10 := db.QueryRowContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", username).Scan(&profilePicture)
+				if errQuery10 != nil && errQuery10 != sql.ErrNoRows {
+					http.Error(w, "Error while retrieving the profile picture", http.StatusInternalServerError)
 					return
 				}
-
 				data.Username = username.(string)
 				data.ProfilePicture = profilePicture
 			}
@@ -119,24 +115,24 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 func AddPostInDb(title string, content string, topics string, author string) error {
 	db = OpenDb()
 	date := time.Now()
-	_, err := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,topics,author,date) VALUES (?, ?, ?, ?, ?)`,
+	_, errQuery11 := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,topics,author,date) VALUES (?, ?, ?, ?, ?)`,
 		title, content, topics, author, date)
-	if err != nil {
-		return err
+	if errQuery11 != nil {
+		return errQuery11
 	}
 
-	_,err2 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost + 1 WHERE title = ?`, topics)
-	if err2 != nil {
-		return err2
+	_,errQuery12 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost + 1 WHERE title = ?`, topics)
+	if errQuery12 != nil {
+		return errQuery12
 	}
 	return nil
 }
 
 func DisplayPost(w http.ResponseWriter) []Post {
 	db = OpenDb()
-	rows, err := db.QueryContext(context.Background(), "SELECT id,title, content, topics, author, likes, dislikes, date, comments FROM posts")
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération des posts", http.StatusInternalServerError)
+	rows, errQuery13 := db.QueryContext(context.Background(), "SELECT id,title, content, topics, author, likes, dislikes, date, comments FROM posts")
+	if errQuery13 != nil {
+		http.Error(w, "Error while retrieving the posts", http.StatusInternalServerError)
 		return nil
 	}
 	if rows != nil {
@@ -146,9 +142,9 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		err := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
-		if err != nil {
-			http.Error(w, "Erreur lors de la lecture des posts", http.StatusInternalServerError)
+		errScan6 := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
+		if errScan6 != nil {
+			http.Error(w, "Error while reading the", http.StatusInternalServerError)
 			return nil
 		}
 		inter.Date = inter.Date[:16]
@@ -157,9 +153,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	if posts == nil {
 		date := time.Now()
 		date_string := date.Format("01-02-2024 15:04")
-		posts = append(posts, Post{Id: -1, Title: "Aucun post", Content: "Aucun post", Topics: "Aucun post", Author: "Aucun post", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0})
-		
-		
+		posts = append(posts, Post{Id: -1, Title: "No title", Content: "No content", Topics: "No topic", Author: "No author", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0})
 	}
 
 	sort.Slice(posts, func(i, j int) bool {
@@ -172,28 +166,30 @@ func DisplayPost(w http.ResponseWriter) []Post {
 
 func MyPostHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
-	tmpl, err := template.ParseFiles("templates/myPost.html")
-	if err != nil {
-		http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+	tmpl, errReading10 := template.ParseFiles("templates/myPost.html")
+	if errReading10 != nil {
+		http.Error(w, "Error reading the HTML file : myPost.html", http.StatusInternalServerError)
 		return
 	}
 	newData := FinalData{CheckUserInfo(w, r), DisplayPost(w), DisplayCommments(w), DisplayTopics(w)}
 	tmpl.Execute(w, newData)
 }
 
+
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 	id := r.URL.Query().Get("postid")
 	topics := r.URL.Query().Get("topics")
-	_, err := db.ExecContext(context.Background(), "DELETE FROM posts WHERE id = ?", id)
-	if err != nil {
-		http.Error(w, "Erreur lors de la suppression du post", http.StatusInternalServerError)
+
+	_, errQuery14 := db.ExecContext(context.Background(), "DELETE FROM posts WHERE id = ?", id)
+	if errQuery14 != nil {
+		http.Error(w, "Error while deleting the post", http.StatusInternalServerError)
 		return
 	}
 
-	_,err2 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost - 1 WHERE title = ?`, topics)
-	if err2 != nil {
-		http.Error(w, "Erreur lors de la mise à jour du nombre de post", http.StatusInternalServerError)
+	_,errQuery15 := db.ExecContext(context.Background(), `UPDATE topics SET nbpost = nbpost - 1 WHERE title = ?`, topics)
+	if errQuery15 != nil {
+		http.Error(w, "Error while updating the number of posts", http.StatusInternalServerError)
 		return
 	}
 	http.Redirect(w, r, "/myPosts", http.StatusSeeOther)
@@ -203,18 +199,18 @@ func EditPostHandler(w http.ResponseWriter, r *http.Request) {
 	db = OpenDb()
 	id := r.URL.Query().Get("postid")
 
-	rows, err := db.QueryContext(context.Background(), "SELECT topics FROM posts WHERE id = ?", id)
-	if err != nil {
-		http.Error(w, "Erreur lors de la récupération du post", http.StatusInternalServerError)
+	rows, errQuery16 := db.QueryContext(context.Background(), "SELECT topics FROM posts WHERE id = ?", id)
+	if errQuery16 != nil {
+		http.Error(w, "Error while retrieving the post", http.StatusInternalServerError)
 		return
 	}
 
 	var currentTopic string
 
 	for rows.Next() {
-		err := rows.Scan(&currentTopic)
-		if err != nil {
-			http.Error(w, "Erreur lors de la lecture du post1616", http.StatusInternalServerError)
+		errQuery17 := rows.Scan(&currentTopic)
+		if errQuery17 != nil {
+			http.Error(w, "Error while reading the post", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -227,9 +223,9 @@ func EditPostHandler(w http.ResponseWriter, r *http.Request) {
 		UpdateTopics(w, currentTopic, topics)
 	}
 
-	_, err2 := db.ExecContext(context.Background(), "UPDATE posts SET title = ?, content = ?, topics = ? WHERE id = ?", title, content, topics, id)
-	if err2 != nil {
-		http.Error(w, "Erreur lors de la modification du post", http.StatusInternalServerError)
+	_, errQuery18 := db.ExecContext(context.Background(), "UPDATE posts SET title = ?, content = ?, topics = ? WHERE id = ?", title, content, topics, id)
+	if errQuery18 != nil {
+		http.Error(w, "Error while updating the post", http.StatusInternalServerError)
 		return
 	}
 

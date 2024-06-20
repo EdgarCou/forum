@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/header.css">
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
-    <link rel="stylesheet" type="text/css" href="/static/user.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/style/user.css">
     <title>Forum</title>
 </head>
 
@@ -33,9 +33,13 @@
                 <section class="user-bar">
                     {{if .Username}}
                     <span class="pseudo">{{.Username}}</span>
-                    <a href="/user?username={{.Username}}" class="account-link"><i class="material-icons">
-                            account_circle
-                        </i></a>
+                    <div class="ProfilePicture">
+                        {{if .ProfilePicture}}
+                            <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;">
+                        {{else}}
+                            <i class="material-icons" style="font-size:50px;">account_circle</i>
+                        {{end}}
+                    </div>
                     {{end}}
                 </section>
                 <section class="button-connection">
@@ -51,11 +55,13 @@
         <main>
             <section class="left-part">
                 <div class="user-info">
+                <div class="ProfilePicture">
                 {{if .ProfilePicture}}
-                <img src="{{.ProfilePicture}}" alt="alternative texte" style="width:150px;height:150px;">
+                <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 180px;width: 180px;">
                 {{else}}
                 <i class="material-icons" style="font-size:150px;">account_circle</i>
                 {{end}}
+                </div>
                     <form action="/user?username={{.Username}}" method="POST" enctype="multipart/form-data">
                         <label for="profilepicture">Changer la photo de profil :</label>
                         <input type="file" id="profilepicture" name="profilepicture" accept="image/*">
@@ -64,14 +70,7 @@
                     </form>
                     <h3>{{.Username}}</h3>
                 </div>
-                <div class="profil-choice">
-                    <a href="/user?username={{.Username}}" class="profil-link">User infos</a>
-                    <a href="/user?username={{.Username}}&tab=posts" class="profil-link">User Posts</a>
-                    <a href="/user?username={{.Username}}&tab=comments" class="profil-link">User Comments</a>
-                    <a href="/user?username={{.Username}}&tab=likes" class="profil-link">User Likes</a>
-                </div>
             </section>
-            <div class="separator"></div>
             <section class="right-part">
                 <h2 class="profil-title">User infos</h2>
                 <div class="profil-info">

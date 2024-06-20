@@ -20,6 +20,10 @@
     right: 1%;
 }
 
+.profile-picture{
+    display: flex;
+}
+
 .dropdown-content-edit button {
     color: var(--light-grey);
     background-color: transparent;

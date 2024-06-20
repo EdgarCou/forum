@@ -22,9 +22,9 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 	db = OpenDb()
 
 	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Printf("Error reading message: %v. Message type: %v. Message: %v", err, messageType, string(p))
+		messageType, p, errReadMessage := conn.ReadMessage()
+		if errReadMessage != nil {
+			log.Printf("Error reading message: %v. Message type: %v. Message: %v", errReadMessage, messageType, string(p))
 			return
 		}
 
@@ -45,19 +45,19 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 			checkQuery := "SELECT COUNT(*) FROM likedBy WHERE username = ? AND idpost = ? AND type = ?"
 			row := db.QueryRow(checkQuery, username, id, likeType)
 			var count int
-			err := row.Scan(&count)
-			if err != nil {
-				log.Printf("Error checking if user has already liked/disliked post: %v", err)
+			errScan2 := row.Scan(&count)
+			if errScan2 != nil {
+				log.Printf("Error checking if user has already liked/disliked post: %v", errScan2)
 				return
 			}
 			var countInverse int
-			// Si l'utilisateur n'a pas déjà aimé ou n'a pas aimé ce post avec le même type, insérez une nouvelle ligne
+
 			if count == 0 {
 				checkInverseQuery := "SELECT COUNT(*) FROM likedBy WHERE username = ? AND idpost = ? AND type = ?"
 				row := db.QueryRow(checkInverseQuery, username, id, 1-likeType)
-				err9 := row.Scan(&countInverse)
-				if err9 != nil {
-					log.Printf("Error checking if user has already liked/disliked post: %v", err9)
+				errScan3 := row.Scan(&countInverse)
+				if errScan3 != nil {
+					log.Printf("Error checking if user has already liked/disliked post: %v", errScan3)
 					return
 				}
 				if countInverse > 0 {
@@ -84,24 +84,24 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 					id = strings.TrimPrefix(message, "dislike:")
 					query = "UPDATE posts SET dislikes = dislikes + 1 WHERE id = ?"
 					likeType = 0
-					_, err7 := db.Exec(query, id)
-					if err7 != nil {
-						log.Printf("Error updating likes/dislikes count: %v", err)
+					_, errQuery2 := db.Exec(query, id)
+					if errQuery2 != nil {
+						log.Printf("Error updating likes/dislikes count: %v", errQuery2)
 					}
 				} else {
 					id = strings.TrimPrefix(message, "like:")
 					query = "UPDATE posts SET likes = likes + 1 WHERE id = ?"
 					likeType = 1
-					_, err8 := db.Exec(query, id)
-					if err8 != nil {
-						log.Printf("Error updating likes/dislikes count: %v", err)
+					_, errQuery3 := db.Exec(query, id)
+					if errQuery3 != nil {
+						log.Printf("Error updating likes/dislikes count: %v", errQuery3)
 					}
 				}
 
 				likeQuery := "INSERT INTO likedBy (username, idpost, type) VALUES (?, ?, ?)"
-				_, err := db.Exec(likeQuery, username, id, likeType)
-				if err != nil {
-					log.Printf("Error liking/disliking post: %v", err)
+				_, errQuery4 := db.Exec(likeQuery, username, id, likeType)
+				if errQuery4 != nil {
+					log.Printf("Error liking/disliking post: %v", errQuery4)
 				}
 
 			} else {
@@ -111,29 +111,27 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 					likeType = 1
 				}
 				deleteQuery := "DELETE FROM likedBy WHERE username = ? AND idpost = ? AND type = ?"
-				_, err := db.Exec(deleteQuery, username, id, likeType)
-				if err != nil {
-					log.Printf("Error unliking/undisliking post: %v", err)
+				_, errQuery5 := db.Exec(deleteQuery, username, id, likeType)
+				if errQuery5 != nil {
+					log.Printf("Error liking/disliking post: %v", errQuery5)
 				}
 
-				// Mettez à jour le nombre de likes ou de dislikes dans la table posts
 				var query string
-				if likeType == 0 { // Si le type est 0 (dislike), décrémentez le nombre de dislikes
+				if likeType == 0 { 
 					query = "UPDATE posts SET dislikes = dislikes - 1 WHERE id = ?"
-				} else { // Si le type est 1 (like), décrémentez le nombre de likes
+				} else { 
 					query = "UPDATE posts SET likes = likes - 1 WHERE id = ?"
 				}
-				_, err = db.Exec(query, id)
-				if err != nil {
-					log.Printf("Error updating likes/dislikes count: %v", err)
+				_, errQuery6 := db.Exec(query, id)
+				if errQuery6 != nil {
+					log.Printf("Error updating likes/dislikes count: %v", errQuery6)
 				}
 			}
 
-			// Get the new number of likes or dislikes
 			var likes, dislikes int
-			err = db.QueryRowContext(context.Background(), "SELECT likes, dislikes FROM posts WHERE id = ?", id).Scan(&likes, &dislikes)
-			if err != nil {
-				log.Println(err)
+			errQuery7 := db.QueryRowContext(context.Background(), "SELECT likes, dislikes FROM posts WHERE id = ?", id).Scan(&likes, &dislikes)
+			if errQuery7 != nil {
+				log.Println(errQuery7)
 				return
 			}
 
@@ -149,9 +147,9 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 					response = fmt.Sprintf("likes:%s:%d", id, likes)
 				}
 			}
-			err = conn.WriteMessage(websocket.TextMessage, []byte(response))
-			if err != nil {
-				log.Println(err)
+			errWs := conn.WriteMessage(websocket.TextMessage, []byte(response))
+			if errWs != nil {
+				log.Println(errWs)
 				return
 			}
 		}
@@ -160,32 +158,27 @@ func LikeHandlerWs(conn *websocket.Conn, r *http.Request) {
 
 func LikedHandler(w http.ResponseWriter, r *http.Request) {
     db = OpenDb()
-    tmpl, err := template.ParseFiles("templates/likedPost.html")
-    if err != nil {
-        http.Error(w, "Erreur de lecture du fichier HTML 11", http.StatusInternalServerError)
+    tmpl, errReading6 := template.ParseFiles("templates/likedPost.html")
+    if errReading6 != nil {
+        http.Error(w, "Error reading the HTML file : likedPost.html", http.StatusInternalServerError)
         return
     }
 
-    // Obtenir l'ID de l'utilisateur connecté
     user := CheckUserInfo(w, r)
     userName := user.Username
 
-    // Interroger la base de données pour obtenir les posts aimés par l'utilisateur
-    rows, err := db.Query(`SELECT posts.* FROM posts JOIN likedBy ON posts.id = likedBy.idpost WHERE likedBy.username = ? AND likedBy.type = 1 AND likedBy.idpost = posts.id`, userName)
-    if err != nil {
-        log.Println(err)
+    rows, errQuery8 := db.Query(`SELECT posts.* FROM posts JOIN likedBy ON posts.id = likedBy.idpost WHERE likedBy.username = ? AND likedBy.type = 1 AND likedBy.idpost = posts.id`, userName)
+    if errQuery8 != nil {
+        log.Println(errQuery8)
         return
     }
 
-
-
-    // Créer une slice pour stocker les posts
     var likedPosts []Post
     for rows.Next() {
         var inter Post		
-        err = rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
-        if err != nil {
-            log.Println(err)
+        errScan4 := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
+        if errScan4 != nil {
+            log.Println(errScan4)
             return
         }
 		inter.Date = inter.Date[:16]
@@ -193,15 +186,15 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
     }
 
 	likedPosts = SortLikedPost(likedPosts, w, r)
-
     newData := FinalData{user, likedPosts, DisplayCommments(w), DisplayTopics(w)}
-
 
     tmpl.Execute(w, newData)
 }
 
 func SortLikedPost(likedPosts []Post, w http.ResponseWriter, r *http.Request) []Post {
+
 	sortType := r.FormValue("sort")
+
 	if sortType == "mostLiked" {
 		sort.Slice(likedPosts, func(i, j int) bool {
 			return likedPosts[i].Likes > likedPosts[j].Likes
