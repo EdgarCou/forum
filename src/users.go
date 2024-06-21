@@ -159,7 +159,7 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
         io.Copy(f, file)
 
         updateSQL := `UPDATE utilisateurs SET profile_picture = ?  WHERE username = ?`
-        _, errQuery29 := db.ExecContext(context.Background(), updateSQL, "/static/uploads/"+handler.Filename, username)
+        _, errQuery29 := db.ExecContext(context.Background(), updateSQL, "./static/uploads/"+handler.Filename, username)
         if errQuery29 != nil {
             http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
             return
