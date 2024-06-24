@@ -3,10 +3,13 @@ package forum
 import (
 	"context"
 	"database/sql"
+	//"fmt"
 	"html/template"
 	"net/http"
 	"sort"
 	"time"
+
+	//"github.com/google/pprof/profile"
 	"github.com/gorilla/sessions"
 )
 
@@ -32,6 +35,7 @@ type Post struct {
 	Dislikes int
 	Date     string
 	Comments int
+	ProfilePicture string
 }
 
 type Comment struct {
@@ -72,7 +76,31 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, "session")
 		author := session.Values["username"].(string)
 
-		errPost := AddPostInDb(title, content, topics, author)
+
+		rows, errQuery19 := db.QueryContext(context.Background(), "SELECT profile_picture FROM utilisateurs WHERE username = ?", author)
+
+		if errQuery19 != nil {
+			http.Error(w, "Error while retrieving the profile picture", http.StatusInternalServerError)
+			return
+		}
+
+		if rows != nil {
+			defer rows.Close()
+		}
+
+		var profilePicture string
+
+		for rows.Next() {
+			errQuery20 := rows.Scan(&profilePicture)
+			if errQuery20 != nil {
+				http.Error(w, "Error while reading the profile picture", http.StatusInternalServerError)
+				return
+			}
+		}
+
+
+
+		errPost := AddPostInDb(title, content, topics, author,profilePicture)
 		if errPost != nil {
 			http.Error(w, "Error while adding the post", http.StatusInternalServerError)
 		} else {
@@ -112,11 +140,11 @@ func AddNewPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AddPostInDb(title string, content string, topics string, author string) error {
+func AddPostInDb(title string, content string, topics string, author string, profilePicture string) error {
 	db = OpenDb()
 	date := time.Now()
-	_, errQuery11 := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,topics,author,date) VALUES (?, ?, ?, ?, ?)`,
-		title, content, topics, author, date)
+	_, errQuery11 := db.ExecContext(context.Background(), `INSERT INTO posts (title,content,topics,author,date,profile_picture) VALUES (?, ?, ?, ?, ?, ?)`,
+		title, content, topics, author, date, profilePicture)
 	if errQuery11 != nil {
 		return errQuery11
 	}
@@ -130,7 +158,7 @@ func AddPostInDb(title string, content string, topics string, author string) err
 
 func DisplayPost(w http.ResponseWriter) []Post {
 	db = OpenDb()
-	rows, errQuery13 := db.QueryContext(context.Background(), "SELECT id,title, content, topics, author, likes, dislikes, date, comments FROM posts")
+	rows, errQuery13 := db.QueryContext(context.Background(), "SELECT id,title, content, topics, author, likes, dislikes, date, comments, profile_picture FROM posts")
 	if errQuery13 != nil {
 		http.Error(w, "Error while retrieving the posts", http.StatusInternalServerError)
 		return nil
@@ -142,7 +170,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	var posts []Post
 	for rows.Next() {
 		var inter Post
-		errScan6 := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
+		errScan6 := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments, &inter.ProfilePicture)
 		if errScan6 != nil {
 			http.Error(w, "Error while reading the", http.StatusInternalServerError)
 			return nil
@@ -153,7 +181,7 @@ func DisplayPost(w http.ResponseWriter) []Post {
 	if posts == nil {
 		date := time.Now()
 		date_string := date.Format("01-02-2024 15:04")
-		posts = append(posts, Post{Id: -1, Title: "No title", Content: "No content", Topics: "No topic", Author: "No author", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0})
+		posts = append(posts, Post{Id: -1, Title: "No title", Content: "No content", Topics: "No topic", Author: "No author", Likes: 0, Dislikes: 0, Date: date_string, Comments: 0, ProfilePicture: "No profile picture"})
 	}
 
 	sort.Slice(posts, func(i, j int) bool {

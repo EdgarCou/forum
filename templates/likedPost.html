@@ -9,11 +9,31 @@
     <link rel="stylesheet" type="text/css" href="/static/style/forum.css">
     <link rel="stylesheet" type="text/css" href="/static/style/style.css">
     <link rel="stylesheet" type="text/css" href="/static/style/likedPosts.css">
+    <link rel="icon" type="image/jpg" href="/static/IMG/favicon.png">
     <title>Forum</title>
 </head>
 <body>
     <div class="color-back">
         <header>
+            <div class="nav">
+                <button class="burger" onclick="show()">
+                    <div id="bar1" class="bar"></div>
+                    <div id="bar2" class="bar"></div>
+                    <div id="bar3" class="bar"></div>
+                </button>
+                <section class="nav-burger">
+                    <ul>
+                        <li class="home-link"><a href="/">Home</a></li>
+                        <li class="forum-link"><a href="/forum">Forum</a></li>
+                        {{if .UserInfo.IsLoggedIn}}
+                            <li class="members-link"><a href="/members">Members</a></li>
+                        {{else}}
+                            <li class="members-link"><a href="/login">Members</a></li>
+                        {{end}}
+                        <li class="about-link"><a href="/about">About</a></li>
+                    </ul>
+                </section>
+            </div>
             <div class="nav-bar">
                 <section class="logo">
                     <a href="/"> 
@@ -37,17 +57,24 @@
                 <section class="user-bar">
                     {{if .UserInfo.Username}}
                         <span class="pseudo">{{.UserInfo.Username}}</span>
-                        <a href="/user?username={{.UserInfo.Username}}" class="account-link"><i class="material-icons">
-                            account_circle
-                        </i></a>
+                        <div class="ProfilePicture">
+                            {{if .UserInfo.ProfilePicture}}
+                                <a href="/user?username={{.UserInfo.Username}}">
+                                    <img src="{{.UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                </a>
+                            {{else}}
+                                <a href="/user?username={{.UserInfo.Username}}">
+                                    <i class="material-icons" style="font-size:2rem;">account_circle</i>
+                                </a>
+                            {{end}}
+                        </div>
                     {{end}} 
                 </section>
                 <section class="button-connection">
                     {{if .UserInfo.IsLoggedIn}}
-                        <a href="/logout" class="log-button">Logout</a>
+                        <a href="/logout" class="log-button">Log out</a>
                     {{else}}
-                    <a href="/login" class="log-button">Login</a>
-                    <a href="/signup" class="log-button">Sign Up</a>
+                        <a href="/login" class="log-button">Log in</a>
                     {{end}}
                 </section>
             </div>
@@ -63,6 +90,11 @@
                     <a href="/login">My posts</a>
                     <a href="/login">Liked post</a>
                 {{end}}
+            </div>
+            <div class="main-part-Topic-zone">
+                <div class="Home-topics">
+                    <h1>LIKED POSTS</h1>
+                </div>
             </div>
             <div class="dropdown forum-dropdown">
                 <button onclick="myDropdownFunc(this)" class="dropbtn">Sort by: ▼</button>
@@ -91,7 +123,14 @@
                     {{else}}
                         <article class="post{{.Id}}">
                             <div class="top-post">
-                                <p class="author">{{.Author}}</p>
+                                <div class="profile-picture" style="display: flex;">
+                                    {{if .ProfilePicture}}
+                                        <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                    {{else}}
+                                        <i class="material-icons" style="font-size:50px;">account_circle</i>
+                                    {{end}}
+                                    <p class="author">{{.Author}}</p>
+                                </div>
                                 <div class="like-com-zone">
                                     <div class="liked-zone">
                                         {{if $UserInfo.IsLoggedIn}}
@@ -157,7 +196,21 @@
                 {{end}}
             </section>
         </main>
+        <footer>
+            <div class="typePage-phone">
+                <a href="/allTopics" >Topics</a>
+                <a href="/forum" >All posts</a>
+                {{if .UserInfo.IsLoggedIn}}
+                    <a href="/myPosts">My posts</a>
+                    <a href="/liked" class="typePage-OnPage" >Liked posts</a>
+                {{else}}
+                    <a href="/login">My posts</a>
+                    <a href="/login">Liked posts</a>
+                {{end}}
+            </div>
+        </footer>
     </div>
     <script src="/static/JS/index.js"></script>
+    <script src="/static/JS/burger.js"></script>
 </body>
 </html>

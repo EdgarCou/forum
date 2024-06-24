@@ -176,7 +176,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
     var likedPosts []Post
     for rows.Next() {
         var inter Post		
-        errScan4 := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments)
+        errScan4 := rows.Scan(&inter.Id, &inter.Title, &inter.Content, &inter.Topics, &inter.Author, &inter.Likes, &inter.Dislikes, &inter.Date, &inter.Comments, &inter.ProfilePicture)
         if errScan4 != nil {
             log.Println(errScan4)
             return

@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/static/style/header.css">
     <link rel="stylesheet" type="text/css" href="/static/style/style.css">
     <link rel="stylesheet" type="text/css" href="/static/style/user.css">
+    <link rel="icon" type="image/jpg" href="/static/IMG/favicon.png">
     <title>Forum</title>
 </head>
 
@@ -37,14 +38,14 @@
                         {{if .ProfilePicture}}
                             <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;">
                         {{else}}
-                            <i class="material-icons" style="font-size:150px;">account_circle</i>
+                            <i class="material-icons" style="font-size:50px;">account_circle</i>
                         {{end}}
                     </div>
                     {{end}}
                 </section>
                 <section class="button-connection">
                     {{if .IsLoggedIn}}
-                    <a href="/logout" class="log-button">Logout</a>
+                    <a href="/logout" class="log-button">Log out</a>
                     {{else}}
                     <a href="/login" class="log-button">Login</a>
                     <a href="/signup" class="log-button">Sign Up</a>
@@ -63,15 +64,15 @@
                 {{end}}
                 </div>
                     <form action="/user?username={{.Username}}" method="POST" enctype="multipart/form-data">
-                        <label for="profilepicture">Changer la photo de profil :</label>
-                        <input type="file" id="profilepicture" name="profilepicture" accept="image/*">
+                        <label for="profilepicture">Change your profile picture :</label>
+                        <input class="btn-pdp" type="file" id="profilepicture" name="profilepicture" accept="image/*">
+                        <label for="profilepicture" class="custom-file-upload">Choose a file</label>
                         <br>
-                        <input type="submit" value="Télécharger">
+                        <input class="btn-pdp2" type="submit" value="Download">
                     </form>
                     <h3>{{.Username}}</h3>
                 </div>
             </section>
-            <div class="separator"></div>
             <section class="right-part">
                 <h2 class="profil-title">User infos</h2>
                 <div class="profil-info">

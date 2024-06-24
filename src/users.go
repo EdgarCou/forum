@@ -5,10 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-	"net/http"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+
+	//"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -138,8 +140,6 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		lastname := r.FormValue("Lastname")
 		birthdate := r.FormValue("birthdate")
 
-		println(firstname, lastname, birthdate)
-
 		file, handler, errUpload := r.FormFile("profilepicture")
         if errUpload != nil {
             http.Error(w, "Error during file upload", http.StatusInternalServerError)
@@ -164,6 +164,16 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
             return
         }
+
+
+		session, _ := store.Get(r, "session")
+		session.Values["username"] = username
+
+		_,errQuery30 := db.ExecContext(context.Background(), `UPDATE posts SET profile_picture = ? WHERE author = ?`, "/static/uploads/"+handler.Filename, username)
+		if errQuery30 != nil {
+			http.Error(w, "Error updating the profile picture", http.StatusInternalServerError)
+			return
+		}		
 
         http.Redirect(w, r, fmt.Sprintf("/user?username=%s", username), http.StatusSeeOther)
 	
