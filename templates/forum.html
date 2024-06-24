@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/static/style/forum.css">
     <link rel="stylesheet" type="text/css" href="/static/style/forumOnly.css">
     <link rel="stylesheet" type="text/css" href="/static/style/style.css">
+    <link rel="icon" type="image/jpg" href="/static/IMG/favicon.png">
     <title>Forum</title>
 </head>
 <body>
@@ -52,7 +53,7 @@
                 </section>
                 <section class="button-connection">
                     {{if .UserInfo.IsLoggedIn}}
-                        <a href="/logout" class="log-button">Logout</a>
+                        <a href="/logout" class="log-button">Log out</a>
                     {{else}}
                         <a href="/login" class="log-button">Login</a>
                         <a href="/signup" class="log-button">Sign Up</a>

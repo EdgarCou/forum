@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/static/style/style.css">
     <link rel="stylesheet" type="text/css" href="/static/style/topics.css">
     <link rel="stylesheet" type="text/css" href="/static/style/particularTopic.css">
+    <link rel="icon" type="image/jpg" href="/static/IMG/favicon.png">
     <title>Forum</title>
 </head>
 <body>
@@ -45,7 +46,7 @@
                 </section>
                 <section class="button-connection">
                     {{if .UserInfo.IsLoggedIn}}
-                        <a href="/logout" class="log-button">Logout</a>
+                        <a href="/logout" class="log-button">Log out</a>
                     {{else}}
                         <a href="/login" class="log-button">Login</a>
                         <a href="/signup" class="log-button">Sign Up</a>
@@ -73,7 +74,14 @@
                     {{else}}
                         <article class="post{{.Id}}">
                             <div class="top-post">
-                                <p class="author">{{.Author}}</p>
+                                <div class="profile-picture" style="display: flex;">
+                                    {{if .ProfilePicture}}
+                                        <img src="{{.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                    {{else}}
+                                        <i class="material-icons" style="font-size:50px;">account_circle</i>
+                                    {{end}}
+                                    <p class="author">{{.Author}}</p>
+                                </div>
                                 <div class="like-com-zone">
                                     <div class="liked-zone">
                                         {{if $UserInfo.IsLoggedIn}}
