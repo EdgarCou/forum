@@ -50,6 +50,14 @@
     bottom: 0;
 }
 
+#noPosts{
+    cursor: not-allowed !important;
+}
+
+#post {
+    cursor: pointer !important;
+}
+
 .topic-bottom a {
     border-radius: 5px;
     background-color: rgb(217, 217, 217, 0.05);
@@ -57,7 +65,6 @@
     border: none;
     outline: 0.5px solid var(--light-grey);
     padding: 0.25% 1.25%;
-    cursor: pointer;
 }
 
 .topic-bottom a:hover {
@@ -69,6 +76,8 @@
     height: 0.5px;
     background-color: var(--light-grey);
 }
+
+
 
 
 

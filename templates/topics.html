@@ -108,7 +108,11 @@
                         <br>
                         <br>
                         <div class="topic-bottom">
-                            <a href="/particular?topic={{.Title}}">Go on</a>
+                            {{if eq .NbPost 0}}
+                                <a id="noPosts">Go on</a>
+                            {{else}}
+                                <a id="post" href="/particular?topic={{.Title}}">Go on</a>
+                            {{end}}
                             <p>{{.NbPost}} post on this topic</p>
                         </div>
                     </div>
