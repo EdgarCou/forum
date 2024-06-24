@@ -39,9 +39,13 @@
                         <span class="pseudo">{{.UserInfo.Username}}</span>
                         <div class="ProfilePicture">
                             {{if .UserInfo.ProfilePicture}}
-                                <img src="{{.UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                <a href="/user?username={{.UserInfo.Username}}">
+                                    <img src="{{.UserInfo.ProfilePicture}}" alt="alternative texte" style="height: 50px;width: 50px;border-radius: 50%;">
+                                </a>
                             {{else}}
-                                <i class="material-icons" style="font-size:2rem;">account_circle</i>
+                                <a href="/user?username={{.UserInfo.Username}}">
+                                    <i class="material-icons" style="font-size:2rem;">account_circle</i>
+                                </a>
                             {{end}}
                         </div>
                     {{end}} 

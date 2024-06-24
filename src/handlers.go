@@ -48,12 +48,16 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		dislikes INTEGER DEFAULT 0,
 		date TEXT,
 		comments INTEGER DEFAULT 0,
+		profile_picture TEXT,
 		FOREIGN KEY (author) REFERENCES utilisateurs(username)
 		ON DELETE CASCADE
     	ON UPDATE CASCADE
 		FOREIGN KEY (topics) REFERENCES topics(title)
 		ON DELETE CASCADE
-		ON UPDATE CASCADE		
+		ON UPDATE CASCADE	
+		FOREIGN KEY (profile_picture) REFERENCES utilisateurs(profile_picture)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE	
 		)`)
 	if errBdd2 != nil {
 		log.Fatal(errBdd2)

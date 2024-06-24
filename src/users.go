@@ -138,8 +138,6 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 		lastname := r.FormValue("Lastname")
 		birthdate := r.FormValue("birthdate")
 
-		println(firstname, lastname, birthdate)
-
 		file, handler, errUpload := r.FormFile("profilepicture")
         if errUpload != nil {
             http.Error(w, "Error during file upload", http.StatusInternalServerError)
