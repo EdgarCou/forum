@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-COPY utilisateurs.db /app/utilisateurs.db
+COPY forum.db /app/forum.db
 
 RUN go build -o main .
 

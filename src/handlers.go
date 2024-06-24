@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var db *sql.DB
+var db *sql.DB // Database variable
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, errWs := upgrader.Upgrade(w, r, nil)
@@ -21,10 +21,10 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	LikeHandlerWs(conn, r)
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	db = OpenDb()
+func HomeHandler(w http.ResponseWriter, r *http.Request) { //Function to handle the home page
+	db = OpenDb() // Open the database
 
-	_, errBdd := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS utilisateurs (
+	_, errBdd := db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS utilisateurs ( 
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL UNIQUE CHECK(length(username) >= 3 AND length(username) <= 20),
 		email TEXT NOT NULL UNIQUE CHECK(length(email) >= 3 AND length(email) <= 30),
@@ -33,7 +33,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		firstname TEXT,
 		lastname TEXT,
 		birthdate TEXT
-		)`)
+		)`) // Create the table utilisateurs
 	if errBdd != nil {
 		log.Fatal(errBdd)
 	}
@@ -58,7 +58,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		FOREIGN KEY (profile_picture) REFERENCES utilisateurs(profile_picture)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE	
-		)`)
+		)`) // Create the table posts
 	if errBdd2 != nil {
 		log.Fatal(errBdd2)
 	}
@@ -74,7 +74,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		FOREIGN KEY (idpost) REFERENCES posts(id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
-		)`)
+		)`) // Create the table likedBy
 
 	if errBdd3 != nil {
 		log.Fatal(errBdd3)
@@ -84,9 +84,9 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		nbpost INTEGER DEFAULT 0
-	)`)
+	)`) // Create the table topics
 
-	InitTopics()
+	InitTopics() // Initialize some topics
 
 	if errBdd4 != nil {
 		log.Fatal(errBdd4)
@@ -102,7 +102,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		FOREIGN KEY (idpost) REFERENCES posts(id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
-	)`)
+	)`) // Create the table comments
 	if errBdd5 != nil {
 		log.Fatal(errBdd5)
 	}

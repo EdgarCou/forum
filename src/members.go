@@ -6,18 +6,18 @@ import (
 	"net/http"
 )
 
-type Members struct {
+type Members struct { // Members structure
 	Username string
 	ProfilePicture string
 }
 
-type MembersData struct {
+type MembersData struct { // MembersData structure
 	UserInfo UserInfo
 	Members []Members
 }
 
-func MembersHandler(w http.ResponseWriter, r *http.Request) {
-	db = OpenDb()
+func MembersHandler(w http.ResponseWriter, r *http.Request) { // Function for handling the members
+	db = OpenDb() // Open the database
 	defer db.Close()
 
 	tmpl, errReading7 := template.ParseFiles("templates/members.html")
@@ -33,7 +33,7 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var members []Members
-	for rows.Next() {
+	for rows.Next() { // Get the members
 		var member Members
 		errScan5 := rows.Scan(&member.Username, &member.ProfilePicture)
 		if errScan5 != nil {
@@ -43,6 +43,6 @@ func MembersHandler(w http.ResponseWriter, r *http.Request) {
 		members = append(members, member)
 	}
 
-	newData := MembersData{CheckUserInfo(w, r), members}
+	newData := MembersData{CheckUserInfo(w, r), members} // Get the data to be displayed
 	tmpl.Execute(w, newData)
 }
