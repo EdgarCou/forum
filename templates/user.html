@@ -64,10 +64,11 @@
                 {{end}}
                 </div>
                     <form action="/user?username={{.Username}}" method="POST" enctype="multipart/form-data">
-                        <label for="profilepicture">Changer la photo de profil :</label>
-                        <input type="file" id="profilepicture" name="profilepicture" accept="image/*">
+                        <label for="profilepicture">Change your profile picture :</label>
+                        <input class="btn-pdp" type="file" id="profilepicture" name="profilepicture" accept="image/*">
+                        <label for="profilepicture" class="custom-file-upload">Choose a file</label>
                         <br>
-                        <input type="submit" value="Télécharger">
+                        <input class="btn-pdp2" type="submit" value="Download">
                     </form>
                     <h3>{{.Username}}</h3>
                 </div>

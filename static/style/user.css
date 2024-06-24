@@ -146,6 +146,37 @@ main {
     margin: 20px 0;
 }
 
+.btn-pdp {
+    display: none;
+  }
+
+  .custom-file-upload {
+    justify-content: center;
+    display: flex;
+    margin: 5% auto;
+    border-radius: 5px;
+    background-color: rgb(217, 217, 217, 0.05);
+    color: var(--light-grey);
+    border: none;
+    outline: 0.5px solid var(--light-grey);
+    cursor: pointer;
+  }
+
+.btn-pdp2 {
+    display: flex;
+    margin: 5% auto;
+    border-radius: 5px;
+    background-color: rgb(217, 217, 217, 0.05);
+    color: var(--light-grey);
+    border: none;
+    outline: 0.5px solid var(--light-grey);
+    cursor: pointer;
+}
+
+.btn-pdp2:hover, .custom-file-upload:hover {
+    background-color: rgb(217, 217, 217, 0.2);
+}
+
 @media screen and (max-width: 768px) {
     main {
         flex-direction: column;
